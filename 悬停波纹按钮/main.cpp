@@ -2,11 +2,12 @@
  * Qt版本：Qt 6.4.2
  * 使用qmake构建项目
  * 完成时间：2023/8/30
+ * 更新时间：2023/8/31 第一次更新：修bug
  ****************************************
  * **用C++重写Python的代码
  * **Python代码作者：B站：Rev_RoastDuck UID：439475163
  * **C++代码作者：B站：EMC方 UID：1843315943
- * **C++版本GitHub：https://github.com/BFEMCC/Qt-widget-Fancy_UI
+ * **C++版本 GitHub：https://github.com/BFEMCC/Qt-widget-Fancy_UI
  ********************************************************
  * ***在Python代码等效的C++代码上，进行了进一步优化，
  * ***Release编译后，相比Python版，cpu占用略微降低，内存占用降低了大概5倍！，极大的优化了性能（不同电脑环境可能不一样）
@@ -28,7 +29,6 @@
 #include <QPushButton>
 #include <QFont>
 #include <QTimer>
-#include <QPoint>
 #include <QEnterEvent>
 #include <QEvent>
 #include <QCursor>
@@ -38,9 +38,9 @@
 #include <QPen>
 #include <QRgb>
 #include <QPainterPath>
-#include <QRegExp>  /*--> <QRegExp>头文件需要在项目文件中添加：QT += core5compat <--*/
 #include <QtMath>
 #include <QPointF>
+#include <QRegularExpression>
 
 class mypushbutton : public QFrame
 {
@@ -52,7 +52,7 @@ private:
     int radius = 0;                     //绘制半径
     int radius_var = 2;                 //半径每次改变的值（增大或减小）
     QColor fill_color;                  //填充颜色
-    int btn_radius = 10;                //按钮圆角半径（默认10）
+    int btn_radius = 0;                 //按钮圆角半径
 
 public:
     QPushButton* btn = Q_NULLPTR;       //按钮对象
@@ -64,26 +64,28 @@ public:
                  QFont font = QFont("微软雅黑"),
                  QColor fontcolor = Qt::white); //设置文本内容
     void setFillColor(QColor fillcolor);        //设置填充颜色
-    void resize(QSize size);                    //重写父类resize
+    void resize(const QSize& size);                    //重写父类resize（“重写”这个词在这里可能用的不恰当，但我想不出其他词了）
     void resize(int w,int h);                   //重载版本
+    void setStyleSheet(const QString& style);    //重写父类setStyleSheet（“重写”这个词在这里可能用的不恰当）
 
 protected:
     virtual void enterEvent(QEnterEvent* event) override;//重写鼠标进入事件
     virtual void leaveEvent(QEvent*) override;           //重写鼠标离开事件
     virtual void paintEvent(QPaintEvent* event) override;//重写绘图事件
-private:
-    void initUI();  //初始化默认的UI效果，可以删除
+
 };
 
 mypushbutton::mypushbutton(QWidget* parent)
     :QFrame(parent),timer(new QTimer(this)),
     fill_color(qRgb(255,89,0)),btn(new QPushButton(this))
 {
-    initUI();
     timer->setInterval(timeInterval);                                   //设置定时器时间间隔
     btn->resize(size());                                                //重设按钮大小与父类一样
     max_radius = qSqrt(width() * width() + height() * height());        //计算最大半径
-    radius = QRegExp("border-radius:\\s*(\\d+)px").cap(1).toInt();      //正则获取圆角半径
+
+    static QRegularExpression re("border-radius:\\s*(\\d+)px");         //正则获取圆角半径
+    re.match(styleSheet()).hasMatch();
+    btn_radius = re.match(styleSheet()).captured(1).toInt();
     //connect(btn,&QPushButton::clicked,this,[]{qDebug()<<"clicked";}); //qDeubg测试按钮功能
 }
 
@@ -97,8 +99,8 @@ void mypushbutton::setText(QString text,QFont font,QColor fontcolor)
     btn->setFont(font);
     btn->setText(text);
     btn->setStyleSheet("color: rgb("+
-                        QString::number(fontcolor.red())+","+
-                        QString::number(fontcolor.green())+","+
+                       QString::number(fontcolor.red())+","+
+                       QString::number(fontcolor.green())+","+
                        QString::number(fontcolor.blue())+")");  //设置字体颜色（此处为狗屎代码，可以自行优化）
 }
 
@@ -107,7 +109,7 @@ void mypushbutton::setFillColor(QColor fillcolor)
     fill_color = fillcolor;
 }
 
-void mypushbutton::resize(QSize size)
+void mypushbutton::resize(const QSize& size)
 {
     QFrame::resize(size);           //调用父类resize，设置QFrame大小
     btn->resize(size);              //调用btn的resize，设置按钮大小和QFramer一样
@@ -119,6 +121,14 @@ void mypushbutton::resize(int w, int h) //重载版本
     QFrame::resize(w,h);
     btn->resize(w,h);
     max_radius = qSqrt(width() * width() + height() * height());
+}
+
+void mypushbutton::setStyleSheet(const QString& style)
+{
+    QFrame::setStyleSheet(style);
+    static QRegularExpression re("border-radius:\\s*(\\d+)px");         //正则获取圆角半径
+    re.match(styleSheet()).hasMatch();
+    btn_radius = re.match(styleSheet()).captured(1).toInt();
 }
 
 void mypushbutton::enterEvent(QEnterEvent* event)
@@ -168,22 +178,6 @@ void mypushbutton::paintEvent(QPaintEvent* event)
     return;
 }
 
-void mypushbutton::initUI()
-{
-    setStyleSheet("QFrame{"
-                  "background-color: rgb(46, 22, 177);}"            //设置QFrame背景颜色
-
-                  "*{"                                              //设置自身及其子类，去除边框，设置圆角，圆角半径为10
-                  "border: none; "
-                  "border-radius: 10px;}"
-
-                  "QPushButton{"                                    //设置按钮背景色透明
-                  "background-color: rgba(255, 255, 255, 0);}"
-                  );
-}
-
-
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -192,8 +186,35 @@ int main(int argc, char *argv[])
     mypushbutton btn(&w);
     btn.setText("悬浮会变色喔",QFont("微软雅黑",25),Qt::white);
     btn.setFillColor(QColor(255,102,153));
-    btn.move(290,280);
+    btn.move(200,400);
     btn.resize(440,140);
+    btn.setStyleSheet("*{"
+                      "border: none; "
+                      "border-radius: 10px;}"
+
+                      "QPushButton{"
+                      "background-color: rgba(0, 0, 0, 0);}"
+
+                      "QFrame{"
+                      "background-color: rgb(46, 22, 177);}");
+
+    //关于setStyleSheet函数，因为mypushbutton的父类是QFarme，所以为了达到效果，请设置时指定作用的对象
+    //如上方所示：设置背景色时请指定为：QFarme{/*...*/}
+    //并请确保设置按钮背景色为透明以达到效果，即：QPushButton{background-color: rgba(0, 0, 0, 0);}，最后一位数字为0即可
+    //设置圆角时可使用*号一起设置，这样更方便，也可QFrame和QpushButton分别单独设置
+    //通用示例：
+    /*
+        "*{"
+        "border: none; "
+        "border-radius: 10px;}"//设置圆角半径为10
+
+        "QPushButton{"
+        "background-color: rgba(0, 0, 0, 0);}"
+
+        "QFrame{"
+        "background-color: rgb(/*在这里填入想要的背景色的RGB值/*);}"
+    */
+
 
     w.resize(800,800);
     w.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #00bd39, "
