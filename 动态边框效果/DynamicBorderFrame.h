@@ -17,6 +17,8 @@
 
 class DynamicBorderFrame : public QFrame
 {
+    Q_OBJECT
+
 public:
     DynamicBorderFrame(QWidget* parent = Q_NULLPTR);
     ~DynamicBorderFrame();
