@@ -1,11 +1,7 @@
 # Qt-widget-Fancy_UI🥳
 花里胡哨的Ui😋😋，使用C++QT widget实现
 
-<b><font size=10 color=red style=background:yellow >使用Qt Creator 编译时请确保没有任何中文路径！！！</font></b>
-
-<b><font size=10 color=red style=background:yellow >Qt Creator 编译C++不支持中文路径！！！</font></b>
-
-<b><font size=10 color=red style=background:yellow >请手动修改文件夹名称</font></b>
+<b><font size=10 color=red style=background:yellow >**Qt Creator 编译C++不支持中文路径！！！使用Qt Creator 编译时请确保没有任何中文路径！！！请手动修改文件夹名称**</font></b>
 
 
 
