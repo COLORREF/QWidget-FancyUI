@@ -59,19 +59,25 @@ public:
 
 public:
     mypushbutton_QFrame(QWidget* parent = Q_NULLPTR);           //构造函数
+
     void setTimeInterval(const int timeinitval);                //设置定时器时间间隔，控制填充速度
+
     void setText(const QString& text,
                  const QFont& font = QFont("微软雅黑"),
                  const QColor& fontcolor = Qt::white);          //设置文本内容
+
     void setFillColor(const QColor& fillcolor);                 //设置填充颜色
-    void resize(const QSize& size);                             //重写父类resize（“重写”这个词在这里可能用的不恰当，但我想不出其他词了）
-    void resize(const int w, const int h);                      //重载版本
+
     void setStyleSheet(const QString& style);                   //重写父类setStyleSheet（“重写”这个词在这里可能用的不恰当）
 
 protected:
     virtual void enterEvent(QEnterEvent* event) override;       //重写鼠标进入事件
+
     virtual void leaveEvent(QEvent*) override;                  //重写鼠标离开事件
+
     virtual void paintEvent(QPaintEvent* event) override;       //重写绘图事件
+
+    virtual void resizeEvent(QResizeEvent *event) override;     //重写改变大小事件
 
 };
 

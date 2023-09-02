@@ -12,19 +12,21 @@ int main(int argc, char *argv[])
     btn1->move(290, 180);
     btn1->setText("PushButton1", QFont("微软雅黑",10), QColor(Qt::black));
     btn1->resize(130, 50);
-    btn1->setTimeInterval(10);
+    btn1->setTimeInterval(5);
 
     mypushbutton_QFrame* btn2 = new mypushbutton_QFrame(&w);
     btn2->move(430, 180);
     btn2->setText("Pushbutton2", QFont("微软雅黑",10), QColor(Qt::black));
     btn2->resize(130, 50);
-    btn2->setTimeInterval(10);
+    btn2->setTimeInterval(5);
+
+    //Win11按钮默认样式
     btn2->setStyleSheet("*{"
                       "border: none; "
                       "border-radius: 5px;}"
 
                       "QPushButton{"
-                      "background-color: rgba(0, 0, 0, 0);}"
+                      "background-color: rgba(0, 0, 0, 0);}"    //一定要把按钮背景色设置成透明才能显现效果，因为本质实在QFrame上绘制
 
                       "QFrame{"
                       "background-color: rgb(253,253,253);"
