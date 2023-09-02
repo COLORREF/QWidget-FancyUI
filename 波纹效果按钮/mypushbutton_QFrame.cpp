@@ -34,20 +34,6 @@ void mypushbutton_QFrame::setFillColor(const QColor& fillcolor)
     fill_color = fillcolor;
 }
 
-void mypushbutton_QFrame::resize(const QSize& size)
-{
-    QFrame::resize(size);           //调用父类resize，设置QFrame大小
-    btn->resize(size);              //调用btn的resize，设置按钮大小和QFramer一样
-    max_radius = qSqrt(width() * width() + height() * height());    //重新计算最大半径
-}
-
-void mypushbutton_QFrame::resize(const int w, const int h) //重载版本
-{
-    QFrame::resize(w,h);
-    btn->resize(w,h);
-    max_radius = qSqrt(width() * width() + height() * height());
-}
-
 void mypushbutton_QFrame::setStyleSheet(const QString& style)
 {
     QFrame::setStyleSheet(style);
@@ -101,4 +87,11 @@ void mypushbutton_QFrame::paintEvent(QPaintEvent* event)
         painter.drawEllipse(mouse_point,radius,radius);     //画圆
     }
     return;
+}
+
+void mypushbutton_QFrame::resizeEvent(QResizeEvent *event)
+{
+    QFrame::resizeEvent(event);
+    btn->resize(event->size());
+    max_radius = qSqrt(width() * width() + height() * height());        //重新计算最大半径
 }

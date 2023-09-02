@@ -27,22 +27,10 @@ void mypushbutton_QPushButton::setFillColor(const QColor& fillcolor)
     fill_color = fillcolor;
 }
 
-void mypushbutton_QPushButton::resize(const QSize& size)
-{
-    QPushButton::resize(size);
-    max_radius = qSqrt(width() * width() + height() * height());
-}
-
-void mypushbutton_QPushButton::resize(const int w, const int h)
-{
-    QPushButton::resize(w, h);
-    max_radius = qSqrt(width() * width() + height() * height());
-}
-
 void mypushbutton_QPushButton::setStyleSheet(const QString& style)
 {
     QPushButton::setStyleSheet(style);
-    QRegularExpression re("border-radius:\\s*(\\d+)px");
+    static QRegularExpression re("border-radius:\\s*(\\d+)px");
     re.match(styleSheet()).hasMatch();
     btn_radius = re.match(styleSheet()).captured(1).toInt();
 }
@@ -94,4 +82,11 @@ void mypushbutton_QPushButton::leaveEvent(QEvent*)
         update();
     });
     timer->start();
+}
+
+void mypushbutton_QPushButton::resizeEvent(QResizeEvent *event)
+{
+    QPushButton::resizeEvent(event);
+    resize(event->size());
+    max_radius = qSqrt(width() * width() + height() * height());
 }

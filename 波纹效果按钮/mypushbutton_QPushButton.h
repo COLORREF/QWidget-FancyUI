@@ -65,18 +65,16 @@ public:
 
     void setFillColor(const QColor& fillcolor);
 
-    void resize(const QSize& size);
-
-    void resize(const int w, const int h);
-
     void setStyleSheet(const QString& style);
 
 protected:
-    void paintEvent(QPaintEvent* event) override;
+    virtual void paintEvent(QPaintEvent* event) override;
 
-    void enterEvent(QEnterEvent* event) override;
+    virtual void enterEvent(QEnterEvent* event) override;
 
-    void leaveEvent(QEvent* event) override;
+    virtual void leaveEvent(QEvent* event) override;
+
+    virtual void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // MYPUSHBUTTON_QPUSHBUTTON_H
