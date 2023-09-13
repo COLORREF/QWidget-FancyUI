@@ -4,6 +4,12 @@
 <b><font size=10 color=red style=background:yellow >**Qt Creator 编译C++不支持中文路径！！！使用Qt Creator 编译时请确保没有任何中文路径！！！请手动修改文件夹名称**</font></b>
 
 
+# 白天黑夜切换按钮🌤️🌙
+## 效果
+![波纹效果按钮](./Effect_image/day_to_night_button.gif)
+## 代码功能
+编写中......😉
+源码有详细注释，可以先看源码。😊
 
 # 波纹效果按钮🐱
 ## 效果
