@@ -22,6 +22,7 @@ void SimpleButton_4::setFontColor(const QColor& initial, const QColor& hover)
 {
     font_initial_color = initial;
     font_hover_color = hover;
+    font_paint_color = font_initial_color;
 }
 
 void SimpleButton_4::setText(const QString& text)
