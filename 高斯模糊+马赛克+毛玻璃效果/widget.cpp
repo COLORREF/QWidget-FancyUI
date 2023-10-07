@@ -123,7 +123,7 @@ void GaussiamBlur(int r, qreal variance, QImage& img)//参数说明：模糊半�
     }
 
     //纵向
-    for (int x = 0; x < imgh; x++)
+    for (int x = 0; x < imgw; x++)
     {
         QVector<qreal> tempred(imgw);
         QVector<qreal> tempgreen(imgw);
@@ -132,7 +132,7 @@ void GaussiamBlur(int r, qreal variance, QImage& img)//参数说明：模糊半�
         qreal greensum = 0;
         qreal bluesum = 0;
 
-        for (int y = 0; y < imgw; y++)
+        for (int y = 0; y < imgh; y++)
         {
             QColor color(img.pixel(x, y));
             int q = y % kernelSize;
