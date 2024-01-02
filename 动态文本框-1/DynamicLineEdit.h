@@ -16,8 +16,8 @@ class DynamicLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    explicit DynamicLineEdit_1(QWidget *parent = nullptr);
-    explicit DynamicLineEdit_1(const QString &text, QWidget *parent = nullptr);
+    explicit DynamicLineEdit(QWidget *parent = nullptr);
+    explicit DynamicLineEdit(const QString &text, QWidget *parent = nullptr);
 
     void setLineColor(QColor focusOutcolor, QColor focusIncolor); // 设置线条颜色，参数：失去焦点颜色，获取焦点颜色
     void setFontColor(QColor fontColor);                          // 设置字体颜色
