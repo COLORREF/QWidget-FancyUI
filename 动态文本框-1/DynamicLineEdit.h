@@ -6,7 +6,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QFocusEvent>
-#include <QFocusEvent>
 #include <QTimer>
 #include <QColor>
 #include <QPainterPath>
@@ -17,7 +16,8 @@ class DynamicLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    DynamicLineEdit(QWidget *parent = nullptr);
+    explicit DynamicLineEdit_1(QWidget *parent = nullptr);
+    explicit DynamicLineEdit_1(const QString &text, QWidget *parent = nullptr);
 
     void setLineColor(QColor focusOutcolor, QColor focusIncolor); // 设置线条颜色，参数：失去焦点颜色，获取焦点颜色
     void setFontColor(QColor fontColor);                          // 设置字体颜色
@@ -29,16 +29,13 @@ private:
     int line_height{2};        // 线的高度(像素)
     int line_width_anim{-1};   // 线条长度(坐标)
     int line_width_offset{10}; // 线条长度的增量
-
     int msec{10}; // 定时器间隔
     QTimer *timer;
-
     QColor line_color_1{qRgb(66, 66, 66)};  // 未获得焦点时的颜色
     QColor line_color_2{qRgb(0, 123, 255)}; // 获得焦点时的颜色
 
 private slots:
     void inFocus(); // 获得焦点的槽函数
-
     void outFocus(); // 失去焦点的槽函数
 
 protected:
