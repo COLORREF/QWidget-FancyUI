@@ -13,6 +13,11 @@ DynamicLineEdit::DynamicLineEdit(QWidget *parent)
                             padding-left:10px;
                         })");
 }
+DynamicLineEdit_1::DynamicLineEdit_1(const QString &text, QWidget *parent)
+    : DynamicLineEdit_1::DynamicLineEdit_1(parent)
+{
+    this->setText(text);
+}
 
 void DynamicLineEdit::setLineColor(QColor focusOutcolor, QColor focusIncolor)
 {
