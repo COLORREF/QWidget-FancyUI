@@ -26,7 +26,6 @@ public:
     void setLineHeight(int lineHeight);                                         // 设置线条像素高度
 
 private:
-    int border_radius{10};     // 圆角半径
     int line_height{2};        // 线的高度(像素)
     int line_width_anim{-1};   // 线条长度(坐标)
     int line_width_offset{10}; // 线条长度的增量
