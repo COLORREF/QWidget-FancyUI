@@ -1,36 +1,26 @@
-# Qt-widget-Fancy_UI🥳
-花里胡哨的Ui😋😋，使用C++QT widget实现
-
-<b><font size=10 color=red style=background:yellow >**Qt Creator 编译C++不支持中文路径！！！使用Qt Creator 编译时请确保没有任何中文路径！！！请手动修改文件夹名称**</font></b>
-
-
-# 白天黑夜切换按钮🌤️🌙
-## 效果
-![波纹效果按钮](./Effect_image/day_to_night_button.gif)
-## 代码功能
-编写中......😉
-源码有详细注释，可以先看源码。😊
-
-# 透明窗口+自定义标题栏
-## 效果
-![透明窗口+自定义标题栏](./Effect_image/Customizing_Windows.gif)
-## 代码功能
-编写中......😉
-源码有详细注释，可以先看源码😊
-
-# 波纹效果按钮🐱
-## 效果
-![波纹效果按钮](./Effect_image/Corrugated_button.gif)
-## 代码功能
-编写中......😉
-源码有详细注释，可以先看源码。😊
-
-# 动态边框效果😶‍🌫️
-## 效果
-![动态边框效果](./Effect_image/Dynamic_border_effect.gif)
-## 代码功能
-编写中......😉
-源码有详细注释，可以先看源码😊
+<div align="center">
+  <h1>FancyUi - Qt Widget</h1>
+</div>
 
 
+<div align="center">
+  <img src="https://img.shields.io/badge/License-GPLv3-green?logoColor=63%2C%20185%2C%2017&label=license&labelColor=63%2C%20185%2C%2017&color=63%2C%20185%2C%2017">
+<img src="https://img.shields.io/badge/Language-c++-rgb(243,75,125)">
+    <img src="https://img.shields.io/badge/Qt-Qt%20Widget-63%2C%20185%2C%2017">
+</div>
+
+
+<div align="center">
+    <img src="https://img.shields.io/github/stars/BFEMCC/Qt-widget-Fancy_UI?style=default&label=⭐️stars">
+    <img src="https://img.shields.io/github/forks/BFEMCC/Qt-widget-Fancy_UI?style=default">
+    <img src="https://img.shields.io/github/watchers/BFEMCC/Qt-widget-Fancy_UI?style=default">
+</div>
+
+
+<p align="center">
+ 简体中文 | <a href="./README_EN.md">English</a>
+</p>
+<div align="center">
+  <h1>编写中......</h1>
+</div>
 
