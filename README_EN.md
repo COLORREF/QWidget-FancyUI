@@ -17,6 +17,6 @@
 English | <a href="./README.md">简体中文</a>
 </p>
 <div align="center">
-  <h1>编写中......</h1>
+  <h1>In writing......</h1>
 </div>
 
