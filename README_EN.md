@@ -5,7 +5,8 @@
 
 <div align="center">
   <img src="https://img.shields.io/badge/License-GPLv3-green?logoColor=63%2C%20185%2C%2017&label=license&labelColor=63%2C%20185%2C%2017&color=63%2C%20185%2C%2017">
-<img src="https://img.shields.io/badge/Language-c++-rgb(243,75,125)">
+<img src="https://img.shields.io/badge/Language-C++-rgb(243,75,125)">
+    <img src="https://img.shields.io/badge/Qt-QMake-rgb(158,106,3)">
     <img src="https://img.shields.io/badge/Qt-Qt%20Widget-63%2C%20185%2C%2017">
 </div>
 <div align="center">
