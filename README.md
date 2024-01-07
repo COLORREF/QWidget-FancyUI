@@ -11,7 +11,7 @@
 
 
 <div align="center">
-    <img src="https://img.shields.io/github/stars/BFEMCC/Qt-widget-Fancy_UI?style=default&label=⭐️stars">
+    <img src="https://img.shields.io/github/stars/BFEMCC/Qt-widget-Fancy_UI?style=default&label=%E2%AD%90%EF%B8%8Fstars">
     <img src="https://img.shields.io/github/forks/BFEMCC/Qt-widget-Fancy_UI?style=default">
     <img src="https://img.shields.io/github/watchers/BFEMCC/Qt-widget-Fancy_UI?style=default">
 </div>
