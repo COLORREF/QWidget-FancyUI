@@ -131,12 +131,6 @@
             <td>自定义的笔刷样式</td>
         </tr>
         <tr>
-            <td>void setFillBrush</td>
-            <td>设置填充内容绘制笔刷</td>
-            <td>const QBrush &</td>
-            <td>自定义的笔刷样式</td>
-        </tr>
-        <tr>
             <td>void setAnimationType</td>
             <td>设置动画类型,预提供了5种动画</td>
             <td>AnimationType枚举类</td>
