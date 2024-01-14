@@ -4,7 +4,7 @@
 
 
 <div align="center">
-  <img src="https://img.shields.io/badge/License-GPLv3-green?logoColor=63%2C%20185%2C%2017&label=license&labelColor=63%2C%20185%2C%2017&color=63%2C%20185%2C%2017">
+  <img src="https://img.shields.io/badge/License-GPLv3-green?logoColor=63%2C%20185%2C%2017&label=License&labelColor=63%2C%20185%2C%2017&color=63%2C%20185%2C%2017">
   <img src="https://img.shields.io/badge/Language-C++-rgb(243,75,125)">
   <img src="https://img.shields.io/badge/Qt-QMake-rgb(158,106,3)">
   <img src="https://img.shields.io/badge/Qt-Qt%20Widget-63%2C%20185%2C%2017">
@@ -19,6 +19,134 @@
 <p align="center">
  简体中文 | <a href="./README_EN.md">English</a>
 </p>
+<h4>
+    控件目录
+</h4>
+<ul>
+  <li>按钮
+    <ul>
+      <li>悬浮填充按钮 • HoverFillButton</li>
+    </ul>
+  </li>
+<!-- 
+  <li>单行文本框</li>
+    <ul>
+      <li>动态下划线单行文本框 • DynamicUnderlineLineEdit</li>
+    </ul>
+-->
+  <li>其余控件整理中......</li>
+</ul>
+
+
+# 按钮
+
+## 悬浮填充按钮 - HoverFillButton
+
+### GIF示例
+
+<img src="./GIF/HoverFillButton.gif" style="zoom:150%;" />
+
+### 构造函数和枚举类
+
+枚举类：
+
+- `AnimationType` 
+
+  作用域：`HoverFillButtonBase`、`HoverFillButton`
+
+  ```c++
+  enum class AnimationType
+  {
+      CircularFill,      // 进入点圆形填充
+      CrossFill,         // 左右两个小圆交叉填充
+      DiagonalRectangle, // 斜着的矩形填充
+      BottomCircle,      // 底部圆形填充
+      LeftRectangle      // 左侧矩形填充
+  };
+  ```
+
+构造函数：
+
+- 同`QPushButton`类，但额外添加参数：`AnimationType`枚举，用于控制动画类型，默认动画类型为`AnimationType`
+- 在designer中通过拖拽或“提升为”使用时，可以通过`void setAnimationType`设置动画类型
+
+### 成员函数说明
+
+<table>
+    <thead>
+        <tr>
+            <th>成员函数</th>
+            <th>功能</th>
+            <th>参数</th>
+            <th>参数说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>void addShadow</td>
+            <td>为按钮添加阴影效果</td>
+            <td>int<br>
+                int<br>
+                qreal<br>
+                const QColor&</td>
+            <td>阴影右偏移量<br>
+                阴影下偏移量<br>
+                模糊半径<br>
+                阴影颜色</td>
+        </tr>
+        <tr>
+            <td>void setTextColor</td>
+            <td>设置按钮文字默认颜色和悬浮时颜色</td>
+            <td>const QColor&<br>const QColor&</td>
+            <td>按钮默认文字颜色<br>按钮悬浮时文字颜色</td>
+        </tr>
+        <tr>
+            <td>QPalette &palette</td>
+            <td>返回按钮对象的QPalette的非const引用</td>
+            <td>无</td>
+            <td>无</td>
+        </tr>
+        <tr>
+            <td>void refreshRadius</td>
+            <td>使用样式表修改按钮的圆角半径后,需调用此函数更新圆角半径</td>
+            <td>int</td>
+            <td>圆角半径</td>
+        </tr>
+        <tr>
+            <td>void refreshRadius</td>
+            <td>使用样式表修改按钮的圆角半径后,需调用此函数更新圆角半径</td>
+            <td>int</td>
+            <td>对应样式表中的圆角半径值</td>
+        </tr>
+        <tr>
+            <td>void setFillSpeed</td>
+            <td>控制填充速度</td>
+            <td>int</td>
+            <td>越小填充越快,最小值为1</td>
+        </tr>
+        <tr>
+            <td>void setFillBrush</td>
+            <td>设置填充内容绘制笔刷</td>
+            <td>const QBrush &</td>
+            <td>自定义的笔刷样式</td>
+        </tr>
+        <tr>
+            <td>void setFillBrush</td>
+            <td>设置填充内容绘制笔刷</td>
+            <td>const QBrush &</td>
+            <td>自定义的笔刷样式</td>
+        </tr>
+        <tr>
+            <td>void setAnimationType</td>
+            <td>设置动画类型,预提供了5种动画</td>
+            <td>AnimationType枚举类</td>
+            <td>动画类型枚举</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
 <div align="center">
-  <h1>编写中......</h1>
+  <h1>其余控件编写中......</h1>
 </div>
