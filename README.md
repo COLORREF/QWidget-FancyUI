@@ -67,7 +67,7 @@
 
 构造函数：
 
-- 同`QPushButton`类，但额外添加参数：`AnimationType`枚举，用于控制动画类型，默认动画类型为`AnimationType`
+- 同`QPushButton`类，但额外添加参数：`AnimationType`枚举，用于控制动画类型，默认动画类型为`AnimationType::CircularFill`
 - 在designer中通过拖拽或“提升为”使用时，可以通过`void setAnimationType`设置动画类型
 
 ### 成员函数说明
