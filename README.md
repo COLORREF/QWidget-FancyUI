@@ -76,7 +76,7 @@
     <thead>
         <tr>
             <th>成员函数</th>
-            <th>功能</th>
+            <th>功能说明</th>
             <th>参数</th>
             <th>参数说明</th>
         </tr>
