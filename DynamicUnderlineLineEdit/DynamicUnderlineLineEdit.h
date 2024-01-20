@@ -20,7 +20,7 @@ public:
     explicit DynamicUnderlineLineEdit(const QString &text, QWidget *parent = nullptr);
 
     void setLinePen( const QPen &focusInPen,
-                    const QPen &focusOutPen = QPen(QBrush(QColor(66,66,66)),2)); // 设置线条的绘制画笔，参数：失去焦点的绘制画笔，获取焦点的绘制画笔
+                    const QPen &focusOutPen = QPen(QBrush(QColor(66,66,66)),2)); // 设置线条的绘制画笔，参数：获取焦点的绘制画笔，失去焦点的绘制画笔
     void setTextColor(const QColor &textColor);                                 // 设置输入文字颜色
     void setPlaceholderTextColor(const QColor &placeholderText);                // 设置预设背景文字颜色
     void setLineSpeed(int speed);                                               // 设置线条填速度,越小越快，最小为1,实际使用可根据文本框的长度不同设置不同的速度以达到最佳观感
