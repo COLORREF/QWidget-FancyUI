@@ -28,14 +28,13 @@
       <li>悬浮填充按钮 • HoverFillButton</li>
     </ul>
   </li>
-<!-- 
   <li>单行文本框</li>
     <ul>
       <li>动态下划线单行文本框 • DynamicUnderlineLineEdit</li>
     </ul>
--->
   <li>其余控件整理中......</li>
 </ul>
+
 
 
 # 按钮
@@ -138,7 +137,58 @@
         </tr>
     </tbody>
 </table>
+# 单行文本框
 
+## 动态下划线单行文本框 - DynamicUnderlineLineEdit
+
+### GIF示例
+
+<img src="./GIF/DynamicUnderlineLineEdit.gif" style="zoom:150%;" />
+
+### 构造函数
+
+- 同`QLineEdit`
+
+### 成员函数说明
+
+<table>
+    <thead>
+        <tr>
+            <th>成员函数</th>
+            <th>功能说明</th>
+            <th>参数</th>
+            <th>参数说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>void setLinePen</td>
+            <td>设置线条的绘制画笔</td>
+            <td>const QPen&<br>
+                const QPen&<br>
+            <td>获取焦点时的绘制画笔<br>
+                失去焦点时的绘制画笔<br>
+        </tr>
+        <tr>
+            <td>void setTextColor</td>
+            <td>设置输入文字颜色</td>
+            <td>const QColor&</td>
+            <td>输入文字的颜色</td>
+        </tr>
+        <tr>
+            <td>void setPlaceholderTextColor</td>
+            <td>设置预设背景文字颜色</td>
+            <td>const QColor &</td>
+            <td>背景提示文字颜色</td>
+        </tr>
+        <tr>
+            <td>void setLineSpeed</td>
+            <td>设置线条填填充速度</td>
+            <td>int</td>
+            <td>越小填充越快,最小为1</td>
+        </tr>
+    </tbody>
+</table>
 
 
 <div align="center">
