@@ -1,8 +1,12 @@
 #include <QApplication>
+
+//for example
 #include <QCheckBox>
 #include <QTimer>
 #include <QRandomGenerator>
 #include "windoweffect.h"
+
+//MinGW编译请查看 windoweffect.cpp中的注释
 
 struct Widget :public QWidget
 {
@@ -17,16 +21,29 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+
+    // QWidget w;
+    // WindowEffect::setBorderColor((HWND)w.winId(),TRANSPARENT_COLOR);//隐藏窗口边框(默会有一个浅浅的描边)
+    // WindowEffect::setTitleBarColor((HWND)w.winId(),RGB(255,192,203));
+    // w.show();
+
+    // QWidget w1;
+    // WindowEffect::setTitleBarColor((HWND)w1.winId(),RGB(255,192,203));
+    // w1.show();
+
+
     //作为子窗口时,可能会不会生效,或产生一些问题,未经测试,请尽量作为主窗口使用
 
     //修改标题栏颜色(每0.5秒修改成随机颜色)
     QWidget w;
     QTimer timer(&w);
     QApplication::connect(&timer,&QTimer::timeout,&w,[&w]{
-        WindowEffect::setTitleBarColor((HWND)w.winId(),
-                                       QRandomGenerator::global()->bounded(256),
-                                       QRandomGenerator::global()->bounded(256),
-                                       QRandomGenerator::global()->bounded(256));
+        WindowEffect::setTitleBarColor(
+            (HWND)w.winId(),
+            RGB(QRandomGenerator::global()->bounded(256),
+                QRandomGenerator::global()->bounded(256),
+                QRandomGenerator::global()->bounded(256))
+            );
     });
     timer.start(500);
     w.show();
