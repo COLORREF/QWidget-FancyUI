@@ -9,6 +9,7 @@
 #define DEFAULT_COLOR 0xFFFFFFFF
 
 //大部分功能均需设置窗口透明
+//此类不依赖Qt，windows窗口均可使用
 class WindowEffect
 {
 private:
@@ -98,17 +99,15 @@ public:
 
     static void setAcrylicEffect(const HWND hwnd);//亚克力
 
-    //下面前两个函数在未使用上方的函数设置窗口效果时，仅标题栏生效
+    //设置深色浅色模式若未使用上方的函数设置窗口效果时，仅标题栏生效，Areo仅标题栏生效
 
     static bool setWindowDarkMode(const HWND hwnd);//设置窗口深色模式
 
     static bool setWindowLightMode(const HWND hwnd);//设置窗口浅色模式
 
-    static bool setHeaderTextColor(const HWND hWnd, COLORREF rgb);//设置标题文字颜色//使用RGB宏生成颜色//恢复系统默认的颜色：DWMWA_COLOR_DEFAULT
+    static bool setHeaderTextColor(const HWND hWnd, COLORREF rgb);//设置标题文字颜色//使用RGB宏生成颜色//恢复系统默认的颜色：DEFAULT_COLOR
 
     static bool setBorderColor(const HWND hWnd, COLORREF rgb);//设置边框颜色//颜色参数设置：TRANSPARENT_COLOR宏可使边框隐藏，DEFAULT_COLOR可恢复默认边框
-
-    //其余功能封装中......
 
 protected:
     WindowEffect();
