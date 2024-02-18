@@ -114,12 +114,6 @@
             <td>void refreshRadius</td>
             <td>使用样式表修改按钮的圆角半径后,需调用此函数更新圆角半径</td>
             <td>int</td>
-            <td>圆角半径</td>
-        </tr>
-        <tr>
-            <td>void refreshRadius</td>
-            <td>使用样式表修改按钮的圆角半径后,需调用此函数更新圆角半径</td>
-            <td>int</td>
             <td>对应样式表中的圆角半径值</td>
         </tr>
         <tr>
