@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QApplication, QPushButton
 
 from BorderlessWindow import BorderlessWindow
 

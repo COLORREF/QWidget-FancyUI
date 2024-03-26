@@ -4,6 +4,14 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSp
 
 
 class TitleBarUI:
+    # def __init__(self):
+    #     self.close_button = None
+    #     self.max_button = None
+    #     self.mini_button = None
+    #     self.horizontalSpacer = None
+    #     self.title_label = None
+    #     self.horizontalLayout = None
+
     def setupUi(self, parent: QWidget):
         parent.setFixedHeight(28)
 
@@ -31,32 +39,33 @@ class TitleBarUI:
         self.close_button.setFixedSize(35, 20)
 
         self.mini_button.setStyleSheet("QPushButton {"
-                                       "    color: white;"
+                                       "    color: black;"
                                        "    border: none;"
                                        "    background-color: rgba(0,0,0,0); "
                                        "    border-radius: 5px"
                                        "}"
                                        "QPushButton:hover {"
-                                       "    background-color: rgba(229,234,239,50);"
+                                       "    background-color: rgba(209,214,219,255);"
                                        "}")
 
         self.max_button.setStyleSheet("QPushButton {"
-                                      "    color: white;"
+                                      "    color: black;"
                                       "    border: none;"
                                       "    background-color: rgba(0,0,0,0); "
                                       "    border-radius: 5px"
                                       "}"
                                       "QPushButton:hover {"
-                                      "    background-color: rgba(229,234,239,50);"
+                                      "    background-color: rgba(209,214,219,255);"
                                       "}")
 
         self.close_button.setStyleSheet("QPushButton {"
-                                        "    color: white;"
+                                        "    color: black;"
                                         "    border: none;"
                                         "    background-color: rgba(0,0,0,0); "
                                         "    border-radius: 5px"
                                         "}"
                                         "QPushButton:hover {"
+                                        "    color: white;"
                                         "    background-color: rgba(196,43,28,255);"
                                         "}")
 
@@ -66,7 +75,7 @@ class TitleBar(QWidget):
     MoveWindow = Signal()
 
     def __init__(self, parent):
-        super(TitleBar, self).__init__(parent)
+        super().__init__(parent)
         self.ui = TitleBarUI()
         self.ui.setupUi(self)
 
@@ -77,7 +86,7 @@ class TitleBar(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor(127, 127, 127))
+        painter.setBrush(QColor(240, 240, 240))
         painter.drawRect(self.rect())
 
     def mousePressEvent(self, event):
@@ -85,6 +94,7 @@ class TitleBar(QWidget):
             self.MoveWindow.emit()
             if self.window().isMaximized():
                 self.ui.max_button.setText("🗖")
+                self.window().update()
 
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -93,10 +103,10 @@ class TitleBar(QWidget):
     @Slot()
     def MaximizeButtonClicked(self):
         if not self.window().isMaximized():
-            self.window().showMaximized()
             self.ui.max_button.setText("🗗")
+            self.window().showMaximized()
+            self.window().update()
         else:
-            self.window().showNormal()
             self.ui.max_button.setText("🗖")
-
-
+            self.window().showNormal()
+            self.window().update()
