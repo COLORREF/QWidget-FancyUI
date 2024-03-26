@@ -63,11 +63,11 @@ class Border(QWidget):
                 self.setCursor(Qt.CursorShape.SizeBDiagCursor)
         return super().mouseMoveEvent(event)
 
-    def paintEvent(self, event: QPaintEvent):
-        painter = QPainter(self)
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor(255, 255, 255, 1))
-        painter.drawRect(self.rect())
+    # def paintEvent(self, event: QPaintEvent):
+    #     painter = QPainter(self)
+    #     painter.setPen(Qt.PenStyle.NoPen)
+    #     painter.setBrush(QColor(255, 255, 255, 1))
+    #     painter.drawRect(self.rect())
 
     def FixedSize(self):
         """固定大小"""
