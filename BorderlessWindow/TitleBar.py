@@ -1,5 +1,4 @@
 from PySide6.QtCore import Qt, Signal, Slot
-from PySide6.QtGui import QPainter, QColor
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSpacerItem, QWidget
 
 
@@ -73,6 +72,7 @@ class TitleBarUI:
 class TitleBar(QWidget):
     """标题栏"""
     MoveWindow = Signal()
+    Maximized = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -83,18 +83,11 @@ class TitleBar(QWidget):
         self.ui.max_button.clicked.connect(self.MaximizeButtonClicked)
         self.ui.close_button.clicked.connect(self.window().close)
 
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor(240, 240, 240))
-        painter.drawRect(self.rect())
-
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.MoveWindow.emit()
             if self.window().isMaximized():
                 self.ui.max_button.setText("🗖")
-                self.window().update()
+            self.MoveWindow.emit()
 
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
@@ -110,3 +103,4 @@ class TitleBar(QWidget):
             self.ui.max_button.setText("🗖")
             self.window().showNormal()
             self.window().update()
+        self.Maximized.emit()
