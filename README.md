@@ -88,22 +88,24 @@
     </thead>
     <tbody>
         <tr>
-            <td>void addShadow</td>
-            <td>为按钮添加阴影效果</td>
-            <td>int<br>
-                int<br>
-                qreal<br>
-                const QColor&</td>
-            <td>阴影右偏移量<br>
-                阴影下偏移量<br>
-                模糊半径<br>
-                阴影颜色</td>
+            <td rowspan="2">void addShadow</td>
+            <td rowspan="2">为按钮添加阴影效果</td>
+            <td>int</td>
+            <td>阴影右偏移量</td>
         </tr>
         <tr>
-            <td>void setTextColor</td>
-            <td>设置按钮文字默认颜色和悬浮时颜色</td>
-            <td>const QColor&<br>const QColor&</td>
-            <td>按钮默认文字颜色<br>按钮悬浮时文字颜色</td>
+            <td>int</td>
+            <td>阴影下偏移量</td>
+        </tr>
+        <tr>
+            <td rowspan="2">void setTextColor</td>
+            <td rowspan="2">设置按钮文字默认颜色和悬浮时颜色</td>
+            <td>const QColor&</td>
+            <td>按钮默认文字颜色</td>
+        </tr>
+        <tr>
+            <td>const QColor&</td>
+            <td>按钮悬浮时文字颜色</td>
         </tr>
         <tr>
             <td>QPalette &palette</td>
@@ -136,7 +138,7 @@
             <td>动画类型枚举</td>
         </tr>
     </tbody>
-</table>
+    </table>
 
 # 单行文本框
 
