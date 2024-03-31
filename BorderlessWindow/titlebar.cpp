@@ -4,12 +4,12 @@
 
 TitleBar::TitleBar(QWidget *parent)
     : QWidget{parent},
-    horizontalLayout{new QHBoxLayout(this)},
-    title_label{new QLabel("窗口标题",this)},
-    horizontalSpacer{new QSpacerItem(214, 20, QSizePolicy::Expanding, QSizePolicy::Minimum)},
-    mini_button{new QPushButton("🗕",this)},
-    max_button{new QPushButton("🗖",this)},
-    close_button{new QPushButton("🗙",this)}
+      horizontalLayout{new QHBoxLayout(this)},
+      title_label{new QLabel("窗口标题", this)},
+      horizontalSpacer{new QSpacerItem(214, 20, QSizePolicy::Expanding, QSizePolicy::Minimum)},
+      mini_button{new QPushButton("🗕", this)},
+      max_button{new QPushButton("🗖", this)},
+      close_button{new QPushButton("🗙", this)}
 {
     this->setFixedHeight(28);
 
@@ -26,9 +26,9 @@ TitleBar::TitleBar(QWidget *parent)
     this->max_button->setFixedSize(35, 20);
     this->close_button->setFixedSize(35, 20);
 
-    this->connect(this->mini_button,&QPushButton::clicked,this->window(),&QWidget::showMinimized);
-    this->connect(this->max_button,&QPushButton::clicked,this,&TitleBar::MaximizeButtonClicked);
-    this->connect(this->close_button,&QPushButton::clicked,this->window(),&QWidget::close);
+    this->connect(this->mini_button, &QPushButton::clicked, this->window(), &QWidget::showMinimized);
+    this->connect(this->max_button, &QPushButton::clicked, this, &TitleBar::MaximizeButtonClicked);
+    this->connect(this->close_button, &QPushButton::clicked, this->window(), &QWidget::close);
 
     this->mini_button->setStyleSheet("QPushButton {"
                                      "    color: black;"
@@ -60,21 +60,19 @@ TitleBar::TitleBar(QWidget *parent)
                                       "    color: white;"
                                       "    background-color: rgba(196,43,28,255);"
                                       "}");
-
 }
 
 void TitleBar::mouseMoveEvent(QMouseEvent *event)
 {
-
-    if(event->buttons() & Qt::LeftButton)
+    if (event->buttons() & Qt::MouseButton::LeftButton)
     {
-        if(this->window()->isMaximized())
+        if (this->window()->isMaximized())
         {
             this->max_button->setText("🗖");
-            for(Border* border : this->window()->findChildren<Border*>())
-                if(border->isHidden())
+            for (Border *border : this->window()->findChildren<Border *>())
+                if (border->isHidden())
                     border->show();
-            this->window()->layout()->setContentsMargins(20,0,20,20);
+            this->window()->layout()->setContentsMargins(20, 0, 20, 20);
         }
 
         this->window()->windowHandle()->startSystemMove();
@@ -84,22 +82,22 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
 
 void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::MouseButton::LeftButton)
+    if (event->button() == Qt::MouseButton::LeftButton)
         this->MaximizeButtonClicked();
 }
 
 void TitleBar::MaximizeButtonClicked()
 {
-    if(!this->window()->isMaximized())
+    if (!this->window()->isMaximized())
     {
         this->max_button->setText("🗗");
-        dynamic_cast<BorderlessWindow*>(this->window())->showMaximized();
+        dynamic_cast<BorderlessWindow *>(this->window())->showMaximized();
         this->window()->update();
     }
     else
     {
         this->max_button->setText("🗖");
-        dynamic_cast<BorderlessWindow*>(this->window())->showNormal();
+        dynamic_cast<BorderlessWindow *>(this->window())->showNormal();
         this->window()->update();
     }
     this->isMax = true;
