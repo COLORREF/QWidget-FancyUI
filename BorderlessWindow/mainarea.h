@@ -15,11 +15,7 @@ class CustomerAreaWidget : public QWidget
     Q_OBJECT
 public:
     explicit CustomerAreaWidget(QWidget *parent);
-
-private:
-    QGraphicsDropShadowEffect* shadow = nullptr;
 };
-
 
 class MainArea : public QWidget
 {
@@ -30,14 +26,14 @@ public:
     TitleBar *titleBar();
 
 private:
-    QVBoxLayout* vertical_layout = nullptr;
-    TitleBar* title_bar = nullptr;
-    CustomerAreaWidget* customer_area_widget = nullptr;
+    QVBoxLayout *vertical_layout = nullptr;
+    TitleBar *title_bar = nullptr;
+    CustomerAreaWidget *customer_area_widget = nullptr;
 
-    QGraphicsDropShadowEffect* shadow = nullptr;
+    QGraphicsDropShadowEffect *shadow = nullptr;
 
 protected:
-    void paintEvent(QPaintEvent* event)override;
+    void paintEvent(QPaintEvent *event) override;
 };
 
 #endif // MAINAREA_H

@@ -2,17 +2,16 @@
 #include "titlebar.h"
 
 CustomerAreaWidget::CustomerAreaWidget(QWidget *parent)
-    :QWidget{parent},
-    shadow{new QGraphicsDropShadowEffect(this)}
+    : QWidget{parent}
 {
 }
 
 MainArea::MainArea(QWidget *parent)
     : QWidget{parent},
-    vertical_layout{new QVBoxLayout(this)},
-    title_bar{new TitleBar(this)},
-    customer_area_widget{new CustomerAreaWidget(this)},
-    shadow{new QGraphicsDropShadowEffect(this)}
+      vertical_layout{new QVBoxLayout(this)},
+      title_bar{new TitleBar(this)},
+      customer_area_widget{new CustomerAreaWidget(this)},
+      shadow{new QGraphicsDropShadowEffect(this)}
 {
     this->vertical_layout->setContentsMargins(0, 0, 0, 0);
     this->vertical_layout->setSpacing(0);
@@ -40,6 +39,6 @@ void MainArea::paintEvent(QPaintEvent *event)
     painter.setBrush(QColor(240, 240, 240));
     if (!(this->title_bar->isMax and this->window()->isMaximized()))
         painter.drawRoundedRect(this->rect(), 10, 10);
-    else if(this->title_bar->isMax || this->window()->isMaximized())
+    else if (this->title_bar->isMax || this->window()->isMaximized())
         painter.drawRect(this->rect());
 }

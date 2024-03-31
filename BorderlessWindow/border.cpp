@@ -1,9 +1,8 @@
 #include "border.h"
 
 Border::Border(QWidget *parent, BorderType bordertype)
-    :QWidget{parent},
-    border_type{bordertype},
-    shadow{new QGraphicsDropShadowEffect(this)}
+    : QWidget{parent},
+      border_type{bordertype}
 {
     this->setMouseTracking(true);
 
@@ -17,11 +16,11 @@ Border::Border(QWidget *parent, BorderType bordertype)
 
 void Border::mousePressEvent(QMouseEvent *event)
 {
-    if(this->window()->isMaximized())
+    if (this->window()->isMaximized())
         return QWidget::mousePressEvent(event);
-    if(event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
     {
-        switch(this->border_type)
+        switch (this->border_type)
         {
         case BorderType::top_border:
             this->window()->windowHandle()->startSystemResize(Qt::Edge::TopEdge);
@@ -54,12 +53,12 @@ void Border::mousePressEvent(QMouseEvent *event)
 
 void Border::mouseMoveEvent(QMouseEvent *event)
 {
-    if(this->window()->isMaximized())
+    if (this->window()->isMaximized())
     {
         this->setCursor(Qt::CursorShape::ArrowCursor);
         return QWidget::mouseMoveEvent(event);
     }
-    switch(this->border_type)
+    switch (this->border_type)
     {
     case BorderType::top_border:
         this->setCursor(Qt::CursorShape::SizeVerCursor);
@@ -73,13 +72,13 @@ void Border::mouseMoveEvent(QMouseEvent *event)
     case BorderType::right_border:
         this->setCursor(Qt::CursorShape::SizeHorCursor);
         break;
-    case BorderType::left_top_border :
+    case BorderType::left_top_border:
         this->setCursor(Qt::CursorShape::SizeFDiagCursor);
         break;
     case BorderType::right_bottom_border:
         this->setCursor(Qt::CursorShape::SizeFDiagCursor);
         break;
-    case BorderType::left_bottom_border :
+    case BorderType::left_bottom_border:
         this->setCursor(Qt::CursorShape::SizeBDiagCursor);
         break;
     case BorderType::right_top_border:

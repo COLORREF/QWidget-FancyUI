@@ -21,18 +21,18 @@ public:
     void showNormal();
 
 private:
-    QGridLayout* gridLayout = nullptr;
+    QGridLayout *gridLayout = nullptr;
 
-    Border* left_border = nullptr;
-    Border* left_top_border = nullptr;
-    Border* right_top_border = nullptr;
-    Border* top_border = nullptr;
-    Border* bottom_border = nullptr;
-    Border* left_bottom_border = nullptr;
-    Border* right_border = nullptr;
-    Border* right_bottom_border = nullptr;
+    Border *left_border = nullptr;
+    Border *left_top_border = nullptr;
+    Border *right_top_border = nullptr;
+    Border *top_border = nullptr;
+    Border *bottom_border = nullptr;
+    Border *left_bottom_border = nullptr;
+    Border *right_border = nullptr;
+    Border *right_bottom_border = nullptr;
 
-    MainArea* main_area = nullptr;
+    MainArea *main_area = nullptr;
 };
 
 #endif // BORDERLESSWINDOW_H
