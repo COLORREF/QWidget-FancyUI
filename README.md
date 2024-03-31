@@ -101,11 +101,11 @@
             <td rowspan="2">void setTextColor</td>
             <td rowspan="2">设置按钮文字默认颜色和悬浮时颜色</td>
             <td>const QColor&</td>
-            <td>按钮默认文字颜色</td>
+            <td>默认文字颜色</td>
         </tr>
         <tr>
             <td>const QColor&</td>
-            <td>按钮悬浮时文字颜色</td>
+            <td>悬浮时文字颜色</td>
         </tr>
         <tr>
             <td>QPalette &palette</td>
@@ -165,12 +165,14 @@
     </thead>
     <tbody>
         <tr>
-            <td>void setLinePen</td>
-            <td>设置线条的绘制画笔</td>
-            <td>const QPen&<br>
-                const QPen&<br>
-            <td>获取焦点时的绘制画笔<br>
-                失去焦点时的绘制画笔<br>
+            <td rowspan="2">void setLinePen</td>
+            <td rowspan="2">设置线条的绘制画笔</td>
+            <td>const QPen&</td>
+            <td>获取焦点时的绘制画笔</td>
+        </tr>
+        <tr>
+            <td>const QPen&</td>
+            <td>失去焦点时的绘制画笔</td>
         </tr>
         <tr>
             <td>void setTextColor</td>
@@ -192,6 +194,7 @@
         </tr>
     </tbody>
 </table>
+
 
 
 <div align="center">
