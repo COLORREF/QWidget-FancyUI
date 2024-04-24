@@ -72,7 +72,6 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
             for (Border *border : this->window()->findChildren<Border *>())
                 if (border->isHidden())
                     border->show();
-            this->window()->layout()->setContentsMargins(20, 0, 20, 20);
         }
 
         this->window()->windowHandle()->startSystemMove();

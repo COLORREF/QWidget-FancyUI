@@ -87,3 +87,11 @@ void Border::mouseMoveEvent(QMouseEvent *event)
     }
     return QWidget::mouseMoveEvent(event);
 }
+
+void Border::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.setPen(Qt::PenStyle::NoPen);
+    painter.setBrush(QColor(0,0,0,1));
+    painter.drawRect(rect());
+}
