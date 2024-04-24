@@ -27,10 +27,7 @@ public:
 
     static bool setWindowLightMode(const HWND hWnd);//设置窗口浅色模式
 
-    static bool setEntireWindowFullyTransparent(const HWND hWnd);//整个窗口全透明
-
-protected:
-    DwmWindowEffect();
+    static bool setEntireWindowFullyTransparent(const HWND hWnd);//整个窗口全透明(win8以下是模糊窗口效果)
 };
 
 #endif // DWMWINDOWEFFECT_H

@@ -3,9 +3,9 @@
 bool DwmWindowEffect::setMicaEffect(const HWND hWnd)
 {
     MARGINS margins{-1};
-    DwmExtendFrameIntoClientArea(hWnd, &margins);
+    DwmExtendFrameIntoClientArea_(hWnd, &margins);
     DWM_SYSTEMBACKDROP_TYPE system_backdrop_type = DWM_SYSTEMBACKDROP_TYPE::DWMSBT_MAINWINDOW;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_SYSTEMBACKDROP_TYPE,
         &system_backdrop_type,
@@ -15,9 +15,9 @@ bool DwmWindowEffect::setMicaEffect(const HWND hWnd)
 bool DwmWindowEffect::setMicaAltEffect(const HWND hWnd)
 {
     MARGINS margins{ -1};
-    DwmExtendFrameIntoClientArea(hWnd, &margins);
+    DwmExtendFrameIntoClientArea_(hWnd, &margins);
     DWM_SYSTEMBACKDROP_TYPE system_backdrop_type = DWM_SYSTEMBACKDROP_TYPE::DWMSBT_TABBEDWINDOW;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_SYSTEMBACKDROP_TYPE,
         &system_backdrop_type,
@@ -27,9 +27,9 @@ bool DwmWindowEffect::setMicaAltEffect(const HWND hWnd)
 bool DwmWindowEffect::setAcrylicEffect(const HWND hWnd)
 {
     MARGINS margins{-1};
-    DwmExtendFrameIntoClientArea(hWnd, &margins);
+    DwmExtendFrameIntoClientArea_(hWnd, &margins);
     DWM_SYSTEMBACKDROP_TYPE system_backdrop_type = DWM_SYSTEMBACKDROP_TYPE::DWMSBT_TRANSIENTWINDOW;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_SYSTEMBACKDROP_TYPE,
         &system_backdrop_type,
@@ -38,7 +38,7 @@ bool DwmWindowEffect::setAcrylicEffect(const HWND hWnd)
 
 bool DwmWindowEffect::setTitleBarColor(const HWND hWnd, COLORREF rgb)
 {
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,
         &rgb,
@@ -47,7 +47,7 @@ bool DwmWindowEffect::setTitleBarColor(const HWND hWnd, COLORREF rgb)
 
 bool DwmWindowEffect::setHeaderTextColor(const HWND hWnd, COLORREF rgb)
 {
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_TEXT_COLOR,
         &rgb,
@@ -56,7 +56,7 @@ bool DwmWindowEffect::setHeaderTextColor(const HWND hWnd, COLORREF rgb)
 
 bool DwmWindowEffect::setBorderColor(const HWND hWnd, COLORREF rgb)
 {
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd, DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR,
         &rgb,
         sizeof(COLORREF));
@@ -65,7 +65,7 @@ bool DwmWindowEffect::setBorderColor(const HWND hWnd, COLORREF rgb)
 bool DwmWindowEffect::disabledNonClientRendering(const HWND hWnd)
 {
     DWMNCRENDERINGPOLICY value = DWMNCRENDERINGPOLICY::DWMNCRP_DISABLED;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_NCRENDERING_POLICY,
         &value,
@@ -75,7 +75,7 @@ bool DwmWindowEffect::disabledNonClientRendering(const HWND hWnd)
 bool DwmWindowEffect::enabledNonClientRendering(const HWND hWnd)
 {
     DWMNCRENDERINGPOLICY value = DWMNCRENDERINGPOLICY::DWMNCRP_ENABLED;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_NCRENDERING_POLICY,
         &value,
@@ -85,7 +85,7 @@ bool DwmWindowEffect::enabledNonClientRendering(const HWND hWnd)
 bool DwmWindowEffect::setWindowDarkMode(const HWND hWnd)
 {
     BOOL value = TRUE;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
         &value,
@@ -95,7 +95,7 @@ bool DwmWindowEffect::setWindowDarkMode(const HWND hWnd)
 bool DwmWindowEffect::setWindowLightMode(const HWND hWnd)
 {
     BOOL value = FALSE;
-    return DwmSetWindowAttribute(
+    return DwmSetWindowAttribute_(
         hWnd,
         DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
         &value,
@@ -106,7 +106,5 @@ bool DwmWindowEffect::setEntireWindowFullyTransparent(const HWND hWnd)
 {
     DWM_BLURBEHIND blur_behind = {DWM_BB_ENABLE|DWM_BB_BLURREGION|DWM_BB_TRANSITIONONMAXIMIZED,TRUE,NULL,TRUE};
     MARGINS margins = {-1};
-    return DwmExtendFrameIntoClientArea(hWnd,&margins) &&DwmEnableBlurBehindWindow(hWnd,&blur_behind);
+    return DwmExtendFrameIntoClientArea_(hWnd,&margins) && DwmEnableBlurBehindWindow_(hWnd,&blur_behind);
 }
-
-DwmWindowEffect::DwmWindowEffect() {}

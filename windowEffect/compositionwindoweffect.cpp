@@ -34,6 +34,3 @@ void CompositionWindowEffect::setClientAreaFullyTransparent(const HWND hwnd)
     WINDOWCOMPOSITIONATTRIBDATA data{ WINDOWCOMPOSITIONATTRIB::WCA_ACCENT_POLICY, &accent,sizeof(ACCENT_POLICY) };
     SetWindowCompositionAttribute(hwnd, &data);
 }
-
-
-CompositionWindowEffect::CompositionWindowEffect() {}
