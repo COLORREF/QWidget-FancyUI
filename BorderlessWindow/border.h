@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QWindow>
 #include <QMouseEvent>
+#include <QPainter>
 
 enum class BorderType
 {
@@ -31,6 +32,7 @@ private:
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent*event)override;
 };
 
 #endif // BORDER_H

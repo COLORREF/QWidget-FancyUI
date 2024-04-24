@@ -20,8 +20,7 @@ BorderlessWindow::BorderlessWindow(QWidget *parent)
     this->resize(640, 480);
 
     this->gridLayout->setSpacing(0);
-    this->gridLayout->setContentsMargins(20, 0, 20, 20);
-
+    this->gridLayout->setContentsMargins(0, 0, 0, 0);
     this->gridLayout->addWidget(this->left_border, 1, 1, 1, 1);
     this->gridLayout->addWidget(this->left_top_border, 0, 1, 1, 1);
     this->gridLayout->addWidget(this->right_top_border, 0, 3, 1, 1);
@@ -35,8 +34,6 @@ BorderlessWindow::BorderlessWindow(QWidget *parent)
 
 void BorderlessWindow::showMaximized()
 {
-    this->gridLayout->setContentsMargins(0, 0, 0, 0);
-
     for (Border *border : this->findChildren<Border *>())
         if (!border->isHidden())
             border->hide();
@@ -48,6 +45,5 @@ void BorderlessWindow::showNormal()
     for (Border *border : this->findChildren<Border *>())
         if (border->isHidden())
             border->show();
-    this->gridLayout->setContentsMargins(20, 0, 20, 20);
     QWidget::showNormal();
 }

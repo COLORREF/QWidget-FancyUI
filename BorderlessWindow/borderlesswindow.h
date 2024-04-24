@@ -19,7 +19,6 @@ public:
 
     void showMaximized();
     void showNormal();
-
 private:
     QGridLayout *gridLayout = nullptr;
 

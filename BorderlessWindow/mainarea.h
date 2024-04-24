@@ -6,7 +6,8 @@
 #include <QVBoxLayout>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QGraphicsDropShadowEffect>
+// #include <QGraphicsDropShadowEffect>
+#include <QPainterPath>
 
 class TitleBar;
 
@@ -29,8 +30,6 @@ private:
     QVBoxLayout *vertical_layout = nullptr;
     TitleBar *title_bar = nullptr;
     CustomerAreaWidget *customer_area_widget = nullptr;
-
-    QGraphicsDropShadowEffect *shadow = nullptr;
 
 protected:
     void paintEvent(QPaintEvent *event) override;
