@@ -20,9 +20,15 @@ public:
 
     static bool disableTitleBar(const HWND hWnd);//禁用标题栏
 
+    static bool setWindowTop(const HWND hWnd);//窗口置顶
+
+    static bool cancelWindowTop(const HWND hWnd);//取消窗口置顶
+
+    static bool allowWindowCaptured(const HWND hWnd);//允许窗口捕获
+
+    static bool prohibitWindowCaptured(const HWND hWnd);//禁止窗口捕获
 
 protected:
-    WindowManager();
 
     enum class WINDOWCOMPOSITIONATTRIB
     {
@@ -87,21 +93,26 @@ protected:
 
     static BOOL SetWindowCompositionAttribute(HWND hWnd, WINDOWCOMPOSITIONATTRIBDATA* data);
 
-    static bool DwmSetWindowAttribute(HWND hwnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
+    static bool DwmSetWindowAttribute_(HWND hwnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
 
-    static bool DwmExtendFrameIntoClientArea(HWND hWnd, const MARGINS* pMarInset);
+    static bool DwmExtendFrameIntoClientArea_(HWND hWnd, const MARGINS* pMarInset);
 
     static LRESULT SendMessage_(HWND hWnd,UINT Msg, WPARAM wParam, LPARAM lParam);
 
-    static bool DwmEnableBlurBehindWindow(HWND hWnd, const DWM_BLURBEHIND* pBlurBehind);
+    static bool DwmEnableBlurBehindWindow_(HWND hWnd, const DWM_BLURBEHIND* pBlurBehind);
 
     static LONG_PTR SetWindowLongPtr_(HWND hWnd,int nIndex,LONG_PTR dwNewLong);
 
     static LONG_PTR GetWindowLongPtr_(HWND hWnd,int nIndex);
 
+    static bool SetWindowPos_(HWND hWnd,HWND hWndInsertAfter,int X,int Y,int cx, int cy,UINT uFlags);
+
+    static bool SetWindowDisplayAffinity_(HWND hWnd, DWORD dwAffinity);
+
 private:
     static BOOL(WINAPI* SetWindowCompositionAttributePtr)(HWND, WINDOWCOMPOSITIONATTRIBDATA*);
 
+    WindowManager();
 };
 
 

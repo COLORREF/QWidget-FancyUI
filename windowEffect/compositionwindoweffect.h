@@ -15,9 +15,6 @@ public:
     static void setAreoEffect(const HWND hwnd,COLORREF abgr);//Areo,16进制颜色,每两位表示一个像素分量//使用ABGR宏生成颜色
 
     static void setClientAreaFullyTransparent(const HWND hwnd);//客户区全透明//即不包括标题栏
-
-protected:
-    CompositionWindowEffect();
 };
 
 #endif // COMPOSITIONWINDOWEFFECT_H
