@@ -83,6 +83,9 @@ void Sidebar::addItem(QLayoutItem *item)
 void Sidebar::setIncreasedWidth(quint32 increasedWidth)
 {
     this->increasedWidth = increasedWidth;
+	// 展开时增加的宽度改变了，动画的结束位置也要进行改变
+    this->endSize.rwidth() = this->initialSize.rwidth() + increasedWidth;
+    this->endSize.rheight() = this->initialSize.rheight();
 }
 
 void Sidebar::setExpandTime(int ms)
