@@ -4,7 +4,7 @@ SidebarOptionsButton::SidebarOptionsButton(QWidget *parent, int index, int minim
     : QRadioButton{parent},
       icon_label{new QLabel(this)},
       text_label{new QLabel(this)},
-      index{index}
+      index_{index}
 {
     QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
     sizePolicy.setHorizontalStretch(0);
@@ -25,11 +25,12 @@ SidebarOptionsButton::SidebarOptionsButton(QWidget *parent, int index, int minim
             {
                 if(isClicked)
                 {
-                    emit this->selectedIndex(this->index); 
+                    emit this->selectedIndex(this->index_);
                     this->background_brush.setColor(this->clicked_color);
-                } 
-                else 
-                this->background_brush.setColor(this->dis_clicked_Color);this->update(); 
+                }
+                else
+                    this->background_brush.setColor(this->dis_clicked_Color);
+                this->update();
             });
 }
 
@@ -68,9 +69,14 @@ void SidebarOptionsButton::setFilletRadius(int radius)
     this->fillet_radius = radius;
 }
 
+int SidebarOptionsButton::index()
+{
+    return this->index_;
+}
+
 void SidebarOptionsButton::setIndex(int index)
 {
-    this->index = index;
+    this->index_ = index;
 }
 
 void SidebarOptionsButton::setIcon(const QPixmap &icon)

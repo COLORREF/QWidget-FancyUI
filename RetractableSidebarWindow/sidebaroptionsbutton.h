@@ -32,6 +32,7 @@ public:
     void setPromptLineColor(const QColor &color);      // 设置选中时的提示线条颜色
     void setDrawPromptLineEnable(bool enable = true);  // 设置是否绘制选中时的提示线条
     void setFilletRadius(int radius);                  // 设置圆角半径
+    int index();                                       // 获取索引值
 
 public slots:
     void setIndex(int index);          // 设置索引
@@ -59,7 +60,7 @@ private:
     QBrush background_brush{dis_clicked_Color};
     QLabel *icon_label = nullptr;
     QLabel *text_label = nullptr;
-    int index = 0; // 索引,默认0
+    int index_ = 0; // 索引值
     bool is_draw_prompt_line = true;
     int fillet_radius = 4;
 };
