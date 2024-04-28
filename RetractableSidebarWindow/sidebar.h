@@ -57,7 +57,6 @@ private:
     bool isExpanded = false;                     // 是否展开
     QPropertyAnimation *animation = nullptr;     // 属性动画
     QVBoxLayout *verticalLayout = nullptr;       // 垂直布局
-    quint32 increasedWidth = 270;                // 展开时增加宽度
     QSize initialSize;                           // 初始尺寸
     QSize endSize;                               // 终止尺寸
     QBrush backgroundBrush{qRgb(243, 243, 243)}; // 背景色绘制笔刷

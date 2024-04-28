@@ -15,11 +15,11 @@ Sidebar::Sidebar(QWidget *parent, int initialWidth)
         if(this->initialSize.height()!=this->window()->height())
         {
             //动画结束,高度和父窗口不等,说明动画进行的过程中改变了窗口大小,需重新设置高度
-            this->initialSize.rheight()=window()->height();
+            this->initialSize.rheight()=this->window()->height();
             this->endSize.rheight() = this->initialSize.rheight();
             this->animation->setStartValue(this->initialSize);
             this->animation->setEndValue(this->endSize);
-            this->resize(width(),window()->height());
+            this->resize(this->width(),this->window()->height());
         }
         //设置展开状态和动画运行状态,根据展开状态发射相应信号
         this->isExpanded = !this->isExpanded;
@@ -35,15 +35,15 @@ Sidebar::Sidebar(QWidget *parent, int initialWidth)
     this->initialSize.rheight() = this->window()->height();
 
     // 动画结束高度和动画起始高度始终相等,动画结束宽度为动画起始宽度加上展开增加宽度
-    this->endSize.rwidth() = this->initialSize.rwidth() + increasedWidth;
+    this->endSize.rwidth() = this->initialSize.rwidth() + 270;
     this->endSize.rheight() = this->initialSize.rheight();
 
-    this->resize(initialWidth, window()->height());
+    this->resize(initialWidth, this->window()->height());
 }
 
 Sidebar::~Sidebar()
 {
-    animation->deleteLater();
+    this->animation->deleteLater();
 }
 
 void Sidebar::autoExpand()
@@ -82,7 +82,8 @@ void Sidebar::addItem(QLayoutItem *item)
 
 void Sidebar::setIncreasedWidth(quint32 increasedWidth)
 {
-    this->increasedWidth = increasedWidth;
+    // increasedWidth - (this->endSize.rwidth() - this->initialSize.rwidth());
+    this->endSize.rwidth() += increasedWidth - this->endSize.rwidth() + this->initialSize.rwidth();
 }
 
 void Sidebar::setExpandTime(int ms)
@@ -140,5 +141,5 @@ void Sidebar::paintEvent(QPaintEvent *)
     painter.setPen(Qt::PenStyle::NoPen);
     painter.drawRect(this->rect());
     painter.setPen(this->borderLinePen);
-    painter.drawLine(width(), 0, width(), height());
+    painter.drawLine(this->width(), 0, this->width(), this->height());
 }
