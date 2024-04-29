@@ -44,7 +44,11 @@ signals:
 
 protected:
     bool hitButton(const QPoint &pos) const override;    // 有效范围重设
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
     void enterEvent(QEnterEvent *event) override;        // 进入
+#else
+    void enterEvent(QEvent *event) override;
+#endif
     void leaveEvent(QEvent *event) override;             // 离开
     void mousePressEvent(QMouseEvent *event) override;   // 点击
     void mouseReleaseEvent(QMouseEvent *event) override; // 松开
