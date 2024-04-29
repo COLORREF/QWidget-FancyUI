@@ -1,6 +1,8 @@
 - 改写自PyQt-Fluent-Widgets组件库
-
 - 请遵循 GPL-3.0 开源协议
+- Qt官方的流式布局示例代码：[Flow Layout Example | Qt Widgets 5.15.16](https://doc.qt.io/qt-5/qtwidgets-layouts-flowlayout-example.html)
+
+
 
 - 原作者：bilibili@呆唯男友，uid：471587058
 - PyQt-Fluent-Widgets开源地址：https://github.com/zhiyiYo/PyQt-Fluent-Widgets
