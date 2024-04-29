@@ -1,5 +1,5 @@
 #include "sidebar.h"
-
+#include <QLibraryInfo>
 Sidebar::Sidebar(QWidget *parent, int initialWidth)
     : QWidget{parent},
       animation{new QPropertyAnimation(this, "size")},
@@ -104,7 +104,12 @@ void Sidebar::setBorderLinePen(const QPen &pen)
 int Sidebar::childrenCumulativeHeight()
 {
     int cumulativeHeight = 0;                                                                  // 累计高度
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6,3,0))
     auto children(this->findChildren<QWidget *>(Qt::FindChildOption::FindDirectChildrenOnly)); // 查找直接子控件
+#else
+    auto children(this->findChildren<QWidget *>(QRegularExpression(QString(R"([\s\S]+)")),Qt::FindChildOption::FindDirectChildrenOnly));
+#endif
     for (auto &child : children)
         cumulativeHeight += child->height(); // 累加直接子控件高度
 

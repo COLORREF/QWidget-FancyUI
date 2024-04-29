@@ -94,6 +94,7 @@ bool SidebarOptionsButton::hitButton(const QPoint &) const
     return true;
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
 void SidebarOptionsButton::enterEvent(QEnterEvent *event)
 {
     QRadioButton::enterEvent(event);
@@ -103,6 +104,17 @@ void SidebarOptionsButton::enterEvent(QEnterEvent *event)
         this->background_brush.setColor(this->dis_clicked_enter_color);
     this->update();
 }
+#else
+void SidebarOptionsButton::enterEvent(QEvent *event)
+{
+    QRadioButton::enterEvent(event);
+    if (this->isChecked())
+        this->background_brush.setColor(this->clicked_enter_color);
+    else
+        this->background_brush.setColor(this->dis_clicked_enter_color);
+    this->update();
+}
+#endif
 
 void SidebarOptionsButton::leaveEvent(QEvent *event)
 {
