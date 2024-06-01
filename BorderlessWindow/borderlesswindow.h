@@ -16,9 +16,11 @@ class BorderlessWindow : public QWidget
     Q_OBJECT
 public:
     explicit BorderlessWindow(QWidget *parent = nullptr);
-
-    void showMaximized();
-    void showNormal();
+    QWidget *qWidgetUseInSetupUi();
+    void setWindowTitle(const QString& title);
+    void setWindowIcon(const QPixmap& icon);
+protected:
+    virtual void changeEvent(QEvent *event) override;
 private:
     QGridLayout *gridLayout = nullptr;
 

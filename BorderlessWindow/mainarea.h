@@ -6,30 +6,22 @@
 #include <QVBoxLayout>
 #include <QPaintEvent>
 #include <QPainter>
-// #include <QGraphicsDropShadowEffect>
 #include <QPainterPath>
+#include "./titlebale/standardtitlebar.h"
 
-class TitleBar;
-
-class CustomerAreaWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit CustomerAreaWidget(QWidget *parent);
-};
 
 class MainArea : public QWidget
 {
     Q_OBJECT
 public:
     explicit MainArea(QWidget *parent);
-
-    TitleBar *titleBar();
+    QWidget *customerAreaWidget();
+    StandardTitleBar *titleBar();
 
 private:
     QVBoxLayout *vertical_layout = nullptr;
-    TitleBar *title_bar = nullptr;
-    CustomerAreaWidget *customer_area_widget = nullptr;
+    StandardTitleBar *title_bar = nullptr;
+    QWidget *customer_area_widget = nullptr;
 
 protected:
     void paintEvent(QPaintEvent *event) override;

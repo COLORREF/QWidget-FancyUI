@@ -1,25 +1,23 @@
 #include "mainarea.h"
-#include "titlebar.h"
-
-CustomerAreaWidget::CustomerAreaWidget(QWidget *parent)
-    : QWidget{parent}
-{
-}
 
 MainArea::MainArea(QWidget *parent)
     : QWidget{parent},
       vertical_layout{new QVBoxLayout(this)},
-      title_bar{new TitleBar(this)},
-      customer_area_widget{new CustomerAreaWidget(this)}
+      title_bar{new StandardTitleBar(this)},
+      customer_area_widget{new QWidget(this)}
 {
     this->vertical_layout->setContentsMargins(0, 0, 0, 0);
     this->vertical_layout->setSpacing(0);
-
     this->vertical_layout->addWidget(this->title_bar);
     this->vertical_layout->addWidget(this->customer_area_widget);
 }
 
-TitleBar *MainArea::titleBar()
+QWidget *MainArea::customerAreaWidget()
+{
+    return this->customer_area_widget;
+}
+
+StandardTitleBar *MainArea::titleBar()
 {
     return this->title_bar;
 }
@@ -32,12 +30,12 @@ void MainArea::paintEvent(QPaintEvent *event)
 
     painter.setBrush(QColor(240, 240, 240));
 
-    if (!(this->title_bar->isMax and this->window()->isMaximized()))
+    if (!this->window()->isMaximized())
     {
         const_cast<QPen&>((painter.pen())).setWidth(0);
         painter.drawRoundedRect(1,1,width()-2,height()-2,10,10);
     }
-    else if (this->title_bar->isMax or this->window()->isMaximized())
+    else if (this->window()->isMaximized())
     {
         painter.setPen(Qt::PenStyle::NoPen);
         painter.drawRect(this->rect());
