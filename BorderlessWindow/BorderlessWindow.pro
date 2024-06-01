@@ -13,15 +13,36 @@ SOURCES += \
     borderlesswindow.cpp \
     main.cpp \
     mainarea.cpp \
-    titlebar.cpp
+    titlebale/closebutton.cpp \
+    titlebale/colormanagement.cpp \
+    titlebale/maximizebutton.cpp \
+    titlebale/minimizebutton.cpp \
+    titlebale/simpletitlebar.cpp \
+    titlebale/standardtitlebar.cpp \
+    titlebale/titlebarbase.cpp \
+    titlebale/titlebarbutton.cpp
 
 HEADERS += \
     border.h \
     borderlesswindow.h \
     mainarea.h \
-    titlebar.h
+    titlebale/closebutton.h \
+    titlebale/colormanagement.h \
+    titlebale/maximizebutton.h \
+    titlebale/minimizebutton.h \
+    titlebale/simpletitlebar.h \
+    titlebale/standardtitlebar.h \
+    titlebale/titlebarbase.h \
+    titlebale/titlebarbutton.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    rcc.qrc \
+    titlebale/rec.qrc
+
+FORMS += \
+    form.ui
