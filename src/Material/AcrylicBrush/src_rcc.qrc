@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/"/>
+    <qresource prefix="/acrylicbrush">
+        <file>noise.png</file>
+    </qresource>
+</RCC>
