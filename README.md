@@ -15,10 +15,10 @@
   <img src="https://img.shields.io/badge/Qt-QMake-rgb(158,106,3)">
   <img src="https://img.shields.io/badge/Qt-Qt%20Widget-63%2C%20185%2C%2017">
 </div>
-
 <p align="center">
  简体中文 | <a href="./README_EN.md">English</a>
 </p>
+
 
 # 重要说明
 
