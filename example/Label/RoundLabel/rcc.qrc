@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>star_rail.png</file>
+    </qresource>
+</RCC>
