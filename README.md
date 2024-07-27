@@ -28,16 +28,15 @@
 - MinGW编译器对Windows API支持非常差，理论上可以使用MinGW编译，但非常不建议
 - 部分代码未使用Windows API，支持跨平台，部分代码支持Qt 5，详细请自行测试
 - 后续将专为Windows系统开发和更新，不再考虑跨平台、Python语言支持以及适配Qt 5
-- 后续将对部分使用`GPL-3.0`协议的代码进行重新实现，待完成后，此仓库会改为`MIT`协议
 
 # OpenCV环境配置
 
 部分控件使用了`OpenCV`库，需要配置`OpenCV`，详细步骤：
 
-- 下载`OpenCV（此仓库使用的是 Windows 64位 4.10版本）`安装包，选择以压缩包方式打开（或已安装）
-- 将`....安装包路径(或安装路径)\opencv\build\`中的`include`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\`文件夹中
-- 将`....安装包路径(或安装路径)\opencv\build\x64\vc16\`中的`lib`和`bin`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\`文件夹中
-- 将`....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\bin`添加到系统环境变量，若已经安装并添加过，请忽略这一步
+- 下载`OpenCV`安装包，选择以压缩包方式打开（或已安装），此仓库使用的是 Windows 64位 4.10版本，可根据实际环境选择
+- 将`....安装包路径(或安装路径)\opencv\build\`中的`include`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\OpenCV\`文件夹中
+- 将`....安装包路径(或安装路径)\opencv\build\x64\vc16\`中的`lib`和`bin`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\OpenCV\`文件夹中
+- 将`....\QtWidget-FancyUI\src\utils\OpenCV\bin`添加到系统环境变量，若已经安装并添加过，请忽略这一步
 
 若使用MinGW编译器，需要自行使用MinGW编译OpenCV源码。（不推荐，过于繁琐）
 
