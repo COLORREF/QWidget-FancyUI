@@ -1,2 +1,0 @@
-HEADERS += \
-    $$PWD/precompile.h \
