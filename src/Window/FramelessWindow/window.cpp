@@ -8,26 +8,30 @@ FramelessWindowBase::FramelessWindowBase(QWidget *parent)
 
 void FramelessWindowBase::setThemeColor(const QColor &light, const QColor &dark)
 {
-    if (!this->_themeColorAnimation)return;
+    if (!this->_themeColorAnimation)
+        return;
     this->_themeColorAnimation->setStartValue(light);
     this->_themeColorAnimation->setEndValue(dark);
 }
 
 QColor FramelessWindowBase::lightThemeColor()
 {
-    if (!this->_themeColorAnimation)return QColor();
+    if (!this->_themeColorAnimation)
+        return QColor();
     return this->_themeColorAnimation->lightColor();
 }
 
 QColor FramelessWindowBase::darkThemeColor()
 {
-    if (!this->_themeColorAnimation)return QColor();
+    if (!this->_themeColorAnimation)
+        return QColor();
     return this->_themeColorAnimation->darkColor();
 }
 
 void FramelessWindowBase::setThemeColorToggleTime(int msecs)
 {
-    if (!this->_themeColorAnimation)return;
+    if (!this->_themeColorAnimation)
+        return;
     this->_themeColorAnimation->setDuration(msecs);
 }
 
@@ -85,7 +89,7 @@ void FramelessWindowBase::initialize(Type type)
     this->_horizontalLayout = new QHBoxLayout(this);
     this->_horizontalLayout->setSpacing(0);
     this->_horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    this->_mainArea = new QWidget(this);//用于包裹垂直布局
+    this->_mainArea = new QWidget(this); // 用于包裹垂直布局
     this->_horizontalLayout->addWidget(this->_mainArea);
 
     this->_verticalLayout = new QVBoxLayout(this->_mainArea);
@@ -104,7 +108,7 @@ void FramelessWindowBase::initialize(Type type)
     }
 
     this->_themeColorAnimation = new ThemeColorManagement(this);
-    this->connect(this->_themeColorAnimation,&ThemeColorManagement::valueChanged, this, static_cast<void(FramelessWindowBase::*)()>(&FramelessWindowBase::update));
+    this->connect(this->_themeColorAnimation, &ThemeColorManagement::valueChanged, this, static_cast<void (FramelessWindowBase::*)()>(&FramelessWindowBase::update));
     this->_verticalLayout->setSpacing(0);
     this->_verticalLayout->setContentsMargins(0, 0, 0, 0);
     this->_verticalLayout->addWidget(this->_titleBar);
@@ -222,7 +226,7 @@ F_DEFINITION_PAINTEVENT(FramelessWindowBase)
 
 SimpleFramelessWindow::SimpleFramelessWindow(QWidget *parent)
     : FramelessWindowBase(parent, Type::Simple),
-    maximize_button((MaximizeButton *)((SimpleTitleBar *)this->_titleBar)->maximizeButton())
+      maximize_button((MaximizeButton *)((SimpleTitleBar *)this->_titleBar)->maximizeButton())
 {
 }
 
@@ -268,11 +272,11 @@ F_DEFINITION_NATIVEEVENT(SimpleFramelessWindow)
                     p.y = t.y();
                 }
             }
-            QPoint widget_point(p.x, p.y);                                                   // Qt相对坐标
-            widget_point /= this->_dpi;                                                             // 除以缩放dpi
+            QPoint widget_point(p.x, p.y); // Qt相对坐标
+            widget_point /= this->_dpi;    // 除以缩放dpi
 
-            QRect max_btn_rect(maximize_button->mapTo(this,QPoint(0,0)),maximize_button->size());// 最大化按钮区域
-            if (max_btn_rect.contains(widget_point))                                         // 鼠标在最大化按钮内
+            QRect max_btn_rect(maximize_button->mapTo(this, QPoint(0, 0)), maximize_button->size()); // 最大化按钮区域
+            if (max_btn_rect.contains(widget_point))                                                 // 鼠标在最大化按钮内
             {
                 *result = HTMAXBUTTON;
                 if (this->maximize_button->isPressed()) // 鼠标按下
@@ -290,7 +294,8 @@ F_DEFINITION_NATIVEEVENT(SimpleFramelessWindow)
                 emit this->maximize_button->leave();
             break;
         case WM_NCLBUTTONDBLCLK: // 鼠标左键位于窗口非工作区双击时发出
-        case WM_NCLBUTTONUP:     // 鼠标左键非客户区松开,相当于点击最大化按钮
+            [[fallthrough]];
+        case WM_NCLBUTTONUP: // 鼠标左键非客户区松开,相当于点击最大化按钮
             if (msg->wParam == HTMAXBUTTON)
             {
                 emit this->maximize_button->leave();
@@ -344,7 +349,7 @@ F_DEFINITION_CHANEGEVENT(SimpleFramelessWindow)
         if (stateChangeEvent->oldState() & Qt::WindowState::WindowMaximized && !(this->windowState() & Qt::WindowState::WindowMaximized))
         {
             emit this->maximize_button->stateChange(MaximizeButton::State::NORMAL);
-            this->_verticalLayout->setContentsMargins(0,0,0,0);
+            this->_verticalLayout->setContentsMargins(0, 0, 0, 0);
             this->update();
         }
     }
@@ -381,67 +386,67 @@ void FramelessWindow::setTitleColor(const QColor &lightColor, const QColor &dark
     ((StandardTitleBar *)(this->_titleBar))->setTitleColor(lightColor, darkColor);
 }
 
-TransparentEffectWindowBase::TransparentEffectWindowBase(QWidget *parent, WindowEffectType effectType):
-    FramelessWindow{parent},
-    effect_type{effectType}
+TransparentEffectWindowBase::TransparentEffectWindowBase(QWidget *parent, WindowEffectType effectType) : FramelessWindow{parent},
+                                                                                                         effect_type{effectType}
 {
     bool isWindows11 = WindowManager::isWindows11();
     bool isWindowsVersionBelowWindows10 = WindowManager::isWindowsVersionBelowWindows10();
 
-    if(isWindowsVersionBelowWindows10)
+    if (isWindowsVersionBelowWindows10)
     {
-        qWarning()<<"Operating systems younger than Windows10 May not be supported or may have unknown errors";
-        qWarning()<<"The window has been initialized as the default window";
+        qWarning() << "Operating systems younger than Windows10 May not be supported or may have unknown errors";
+        qWarning() << "The window has been initialized as the default window";
         this->effect_type = WindowEffectType::DEFAULT;
     }
 
     switch (effect_type)
     {
-    case WindowEffectType::ACRYLIC://亚克力，仅支持 Windows11
-        if(isWindows11)
+    case WindowEffectType::ACRYLIC: // 亚克力，仅支持 Windows11
+        if (isWindows11)
             this->setAcrylicEffect((HWND)this->winId());
         else
         {
-            qWarning()<<"The acrylic effect is only supported in Windows11";
-            qWarning()<<"The window has been initialized as the default window";
+            qWarning() << "The acrylic effect is only supported in Windows11";
+            qWarning() << "The window has been initialized as the default window";
             this->effect_type = WindowEffectType::DEFAULT;
         }
         return;
-    case WindowEffectType::AREO:return;//毛玻璃的初始化将在毛玻璃窗口类中（子类）中完成，支持 Windows10 和 Windows11
-    case WindowEffectType::FULLYTRANSPARENT://全透明，支持 Windows10 和 Windows11
+    case WindowEffectType::AREO:
+        return;                              // 毛玻璃的初始化将在毛玻璃窗口类中（子类）中完成，支持 Windows10 和 Windows11
+    case WindowEffectType::FULLYTRANSPARENT: // 全透明，支持 Windows10 和 Windows11
         this->setClientAreaFullyTransparent((HWND)this->winId());
         return;
-    case WindowEffectType::MICA://云母，仅支持 Windows11
-        if(isWindows11)
+    case WindowEffectType::MICA: // 云母，仅支持 Windows11
+        if (isWindows11)
             this->setMicaEffect((HWND)this->winId());
         else
         {
-            qWarning()<<"The mica effect is only supported in Windows11";
-            qWarning()<<"The window has been initialized as the default window";
+            qWarning() << "The mica effect is only supported in Windows11";
+            qWarning() << "The window has been initialized as the default window";
             this->effect_type = WindowEffectType::DEFAULT;
         }
         return;
-    case WindowEffectType::MICAALT://云母alt，仅支持 Windows11
-        if(isWindows11)
+    case WindowEffectType::MICAALT: // 云母alt，仅支持 Windows11
+        if (isWindows11)
             this->setMicaAltEffect((HWND)this->winId());
         else
         {
-            qWarning()<<"The mica alt effect is only supported in Windows11";
-            qWarning()<<"The window has been initialized as the default window";
+            qWarning() << "The mica alt effect is only supported in Windows11";
+            qWarning() << "The window has been initialized as the default window";
             this->effect_type = WindowEffectType::DEFAULT;
         }
         return;
-    case WindowEffectType::SYSTEMCOLOR://系统色，支持 Windows10 和 Windows11
+    case WindowEffectType::SYSTEMCOLOR: // 系统色，支持 Windows10 和 Windows11
         this->setFollowingSystemColor((HWND)this->winId());
         return;
-    case WindowEffectType::DEFAULT://默认窗口
+    case WindowEffectType::DEFAULT: // 默认窗口
         return;
     }
 }
 
 F_DEFINITION_PAINTEVENT(TransparentEffectWindowBase)
 {
-    if(this->effect_type != WindowEffectType::DEFAULT)
+    if (this->effect_type != WindowEffectType::DEFAULT)
     {
         QPainter painter(this);
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
@@ -452,20 +457,20 @@ F_DEFINITION_PAINTEVENT(TransparentEffectWindowBase)
 }
 
 AreoWindow::AreoWindow(QWidget *parent)
-    : TransparentEffectWindowBase{parent,WindowEffectType::AREO}
+    : TransparentEffectWindowBase{parent, WindowEffectType::AREO}
 {
     this->init();
 }
 
 AreoWindow::AreoWindow(COLORREF abgr, QWidget *parent)
-    : TransparentEffectWindowBase{parent,WindowEffectType::AREO}
+    : TransparentEffectWindowBase{parent, WindowEffectType::AREO}
 {
     this->init(abgr);
 }
 
 void AreoWindow::changeColor(COLORREF abgr)
 {
-    if(WindowManager::isWindows10() || WindowManager::isWindows11())
+    if (WindowManager::isWindows10() || WindowManager::isWindows11())
     {
         if (this->window_color < 0)
         {
@@ -499,7 +504,7 @@ void AreoWindow::changeColor(COLORREF abgr)
 
 void AreoWindow::init(long long abgr)
 {
-    if(WindowManager::isWindows10() || WindowManager::isWindows11())
+    if (WindowManager::isWindows10() || WindowManager::isWindows11())
     {
         if (abgr < 0)
             this->setAreoEffect((HWND)(this->winId()));
@@ -512,11 +517,11 @@ void AreoWindow::init(long long abgr)
 }
 
 LightAndDarkWidget::LightAndDarkWidget(QWidget *parent, QColor light, QColor dark)
-    :QWidget{parent},
-    _themeColorManagement{new ThemeColorManagement(this,light,dark)}
+    : QWidget{parent},
+      _themeColorManagement{new ThemeColorManagement(this, light, dark)}
 {
     this->_isClearBeforeNewPaint = false;
-    this->connect(this->_themeColorManagement,&ThemeColorManagement::valueChanged, this, static_cast<void(QWidget::*)()>(&QWidget::update));
+    this->connect(this->_themeColorManagement, &ThemeColorManagement::valueChanged, this, static_cast<void (QWidget::*)()>(&QWidget::update));
 }
 
 F_DEFINITION_PAINTEVENT(LightAndDarkWidget)
@@ -535,27 +540,26 @@ F_DEFINITION_PAINTEVENT(LightAndDarkWidget)
     painter.drawRect(this->rect());
 }
 
-NTQQWindow::NTQQWindow(QWidget *parent):
-    SimpleFramelessWindow(parent)
+NTQQWindow::NTQQWindow(QWidget *parent) : SimpleFramelessWindow(parent)
 {
-    QWidget* sidebar_area = new QWidget(this);
-    QHBoxLayout* sidbar_area_layout = new QHBoxLayout(sidebar_area);
+    QWidget *sidebar_area = new QWidget(this);
+    QHBoxLayout *sidbar_area_layout = new QHBoxLayout(sidebar_area);
     sidbar_area_layout->setSpacing(0);
-    sidbar_area_layout->setContentsMargins(0,0,0,0);
-    this->_sidebar = new LightAndDarkWidget(this,QColor(242,242,242,105),QColor(17, 17, 17, 105));
+    sidbar_area_layout->setContentsMargins(0, 0, 0, 0);
+    this->_sidebar = new LightAndDarkWidget(this, QColor(242, 242, 242, 105), QColor(17, 17, 17, 105));
     sidbar_area_layout->addWidget(this->_sidebar);
-    this->_horizontalLayout->insertWidget(0,sidebar_area);
+    this->_horizontalLayout->insertWidget(0, sidebar_area);
     this->_sidebar->setMinimumWidth(58);
-    this->_themeColorAnimation->setThemeColor(QColor(242,242,242),QColor(17,17,17));
+    this->_themeColorAnimation->setThemeColor(QColor(242, 242, 242), QColor(17, 17, 17));
     this->setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground);
 
-    if(WindowManager::isWindows11())
+    if (WindowManager::isWindows11())
     {
         DwmWindowEffect::setAcrylicEffect(((HWND)this->winId()));
-        MARGINS margins = {INT_MAX,0,0,0};
+        MARGINS margins = {INT_MAX, 0, 0, 0};
         ::DwmExtendFrameIntoClientArea(((HWND)this->winId()), &margins);
     }
-    else if(WindowManager::isWindows10())
+    else if (WindowManager::isWindows10())
     {
         MARGINS margins = {0, 0, 1, 0};
         ::DwmExtendFrameIntoClientArea(((HWND)this->winId()), &margins);
@@ -564,23 +568,22 @@ NTQQWindow::NTQQWindow(QWidget *parent):
     else
     {
         qWarning()
-            <<"The QQNT window with fuzzy sidebar effect is only effective in Windows11 operating system,"
-            <<"and the sidebar of Windows10 operating system will not have fuzzy effect."
-            <<"The effect of the operating system below Windows10 is unknown, and unknown errors may occur.";
+            << "The QQNT window with fuzzy sidebar effect is only effective in Windows11 operating system,"
+            << "and the sidebar of Windows10 operating system will not have fuzzy effect."
+            << "The effect of the operating system below Windows10 is unknown, and unknown errors may occur.";
     }
 }
 
 void NTQQWindow::setUnmaskSidebarColor(bool isUnmask)
 {
-    if(isUnmask)
+    if (isUnmask)
     {
-        this->_sidebar->themeColorManagement()->setThemeColor(Qt::GlobalColor::transparent,Qt::GlobalColor::transparent);
+        this->_sidebar->themeColorManagement()->setThemeColor(Qt::GlobalColor::transparent, Qt::GlobalColor::transparent);
         this->_sidebar->themeColorManagement()->setEnable(false);
-
     }
     else
     {
-        this->_sidebar->themeColorManagement()->setThemeColor(QColor(242,242,242,105),QColor(17, 17, 17, 105));
+        this->_sidebar->themeColorManagement()->setThemeColor(QColor(242, 242, 242, 105), QColor(17, 17, 17, 105));
         this->_sidebar->themeColorManagement()->setEnable(true);
     }
 }
@@ -591,15 +594,14 @@ F_DEFINITION_PAINTEVENT(NTQQWindow)
     QPainter painter(this);
     painter.setPen(Qt::PenStyle::NoPen);
     painter.setBrush(this->_themeColorAnimation->runTimeColor());
-    painter.drawRect(QRect(this->_mainArea->mapToParent(QPoint(0,0)),this->_mainArea->size()));
+    painter.drawRect(QRect(this->_mainArea->mapToParent(QPoint(0, 0)), this->_mainArea->size()));
     painter.setCompositionMode(QPainter::CompositionMode_Clear);
-    painter.eraseRect(QRect(this->_sidebar->mapFromParent(QPoint(0,0)) ,this->_sidebar->size()));
+    painter.eraseRect(QRect(this->_sidebar->mapFromParent(QPoint(0, 0)), this->_sidebar->size()));
 }
 
-MSWindow::MSWindow(QWidget *parent, WindowEffectType effectType):
-    TransparentEffectWindowBase(parent, effectType)
+MSWindow::MSWindow(QWidget *parent, WindowEffectType effectType) : TransparentEffectWindowBase(parent, effectType)
 {
-    QWidget* parent_master_scope = TransparentEffectWindowBase::clientArea();
+    QWidget *parent_master_scope = TransparentEffectWindowBase::clientArea();
     this->_horizontalLayout = new QHBoxLayout(parent_master_scope);
     this->_clientArea = new MSFilletedCornerWidget(parent_master_scope);
     this->_sidebar = new QWidget(parent_master_scope);
@@ -619,22 +621,22 @@ F_DEFINITION_PAINTEVENT(MSFilletedCornerWidget)
     painter.setBrush(this->_themeColorManagement->runTimeColor());
     QRect rect = this->rect();
     QPainterPath path;
-    path.moveTo(0,10);
+    path.moveTo(0, 10);
     path.lineTo(rect.bottomLeft());
     path.lineTo(rect.bottomRight());
     path.lineTo(rect.topRight());
-    path.lineTo(10,0);
+    path.lineTo(10, 0);
     path.arcTo(QRect(rect.left(), rect.top(), 20, 20), 90, 90);
     path.closeSubpath();
-    if(Theme::isLigth())
-        painter.setPen(QPen(QColor(0, 0, 0, 17),1));
+    if (Theme::isLigth())
+        painter.setPen(QPen(QColor(0, 0, 0, 17), 1));
     else
-        painter.setPen(QPen(QColor(0, 0, 0, 46),1));
+        painter.setPen(QPen(QColor(0, 0, 0, 46), 1));
     painter.drawPath(path);
 }
 
 AdaptiveLayoutWindow::AdaptiveLayoutWindow(QWidget *parent, WindowEffectType effectType)
-    :MSWindow{parent,effectType}
+    : MSWindow{parent, effectType}
 {
     this->_isExpand = true;
     this->_animation = new QVariantAnimation(this);
@@ -642,14 +644,13 @@ AdaptiveLayoutWindow::AdaptiveLayoutWindow(QWidget *parent, WindowEffectType eff
     this->_animation->setStartValue(300);
     this->_animation->setEndValue(50);
 
-    connect(this->_animation,&QVariantAnimation::valueChanged,this,[=](const QVariant& value){
-        this->_sidebar->setFixedWidth(value.value<int>());
-    });
+    connect(this->_animation, &QVariantAnimation::valueChanged, this, [=](const QVariant &value)
+            { this->_sidebar->setFixedWidth(value.value<int>()); });
 
-    connect(this->_animation,&QVariantAnimation::finished,this,[=](){
+    connect(this->_animation, &QVariantAnimation::finished, this, [=]()
+            {
         this->_isExpand = !this->_isExpand;
-        this->checkWidth();
-    });
+        this->checkWidth(); });
     this->_sidebar->setFixedWidth(300);
 
     // if(stackWindow)
@@ -662,13 +663,13 @@ AdaptiveLayoutWindow::AdaptiveLayoutWindow(QWidget *parent, WindowEffectType eff
 void AdaptiveLayoutWindow::checkWidth()
 {
     int w = this->width();
-    if( w < 850 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
+    if (w < 850 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Forward);
         this->_animation->start();
     }
 
-    else if( w > 850 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
+    else if (w > 850 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Backward);
         this->_animation->start();
@@ -680,4 +681,3 @@ F_DEFINITION_RESIZEEVENT(AdaptiveLayoutWindow)
     this->checkWidth();
     QWidget::resizeEvent(event);
 }
-

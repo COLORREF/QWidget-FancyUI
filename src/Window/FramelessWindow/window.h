@@ -17,12 +17,12 @@
 #include <QVariantAnimation>
 #include <QStackedWidget>
 
+// #include <windows.devices.lights.effects.h>
 #include <Windows.h>
 #include <WinUser.h>
 #include <windowsx.h>
 #include <dwmapi.h>
 #include <wingdi.h>
-// #include <windows.devices.lights.effects.h>
 
 #include "utils/theme.h"
 #include "utils/precompile.h"
