@@ -2,19 +2,18 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QLabel>
-#include <QPainter>
-#include <QGridLayout>
 
-class RoundLabel;
+class AcrylicMaterial;
 class Widget : public QWidget
 {
     Q_OBJECT
 
 public:
     Widget(QWidget *parent = nullptr);
+    ~Widget();
+protected:
+    void paintEvent(QPaintEvent* event)override;
 private:
-    RoundLabel* label;
-    RoundLabel* label_2;
+    AcrylicMaterial* acrylicMaterial;
 };
 #endif // WIDGET_H

@@ -23,6 +23,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     rcc.qrc
 
-
-include( ../../../src/Label/RoundLabel/RoundLabel.pri)
+include( ../../../src/Material/AcrylicMaterial/acrylicmaterial.pri)
 INCLUDEPATH += ../../../src
