@@ -26,15 +26,14 @@ English | <a href="./README.md">简体中文</a>
 - MinGW compiler has very poor support for Windows API. Theoretically, it can be used for compilation, but it is highly discouraged.
 - Some code does not use Windows API, supports cross-platform, and some code supports Qt 5. Please test in detail.
 - Future development and updates will be exclusively for Windows systems, with no further consideration for cross-platform support, Python language support, or Qt 5 compatibility.
-- In the future, parts of the code currently using the `GPL-3.0` license will be re-implemented. Once completed, this repository will switch to the `MIT` license.
 
 # OpenCV Environment Configuration
 
 Some widgets use the `OpenCV` library, so you need to configure `OpenCV`. Detailed steps:
 
-- Download the `OpenCV` package (this repository uses the Windows 64-bit version 4.10), and open it as a compressed package (or install it).
-- Copy the `include` folder from `....package path (or installation path)\opencv\build\` to `....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\`.
-- Copy the `lib` and `bin` folders from `....package path (or installation path)\opencv\build\x64\vc16\` to `....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\`.
+- Download the 'OpenCV' installer and choose to open it as a compressed package (or already installed). This repository uses Windows 64-bit version 4.10, which can be selected according to your environment.
+- Copy the `include` folder from `....package path (or installation path)\opencv\build\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
+- Copy the `lib` and `bin` folders from `....package path (or installation path)\opencv\build\x64\vc16\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
 - Add `....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\bin` to the system environment variables. If already installed and added, skip this step.
 
 If using the MinGW compiler, you need to compile the OpenCV source code yourself. (Not recommended, too cumbersome)
