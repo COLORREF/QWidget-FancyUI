@@ -1,4 +1,4 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
@@ -15,5 +15,6 @@ public:
     Widget(QWidget *parent = nullptr);
 private:
     RoundLabel* label;
+    RoundLabel* label_2;
 };
 #endif // WIDGET_H

@@ -25,5 +25,4 @@ RESOURCES += \
 
 
 include( ../../../src/Label/RoundLabel/RoundLabel.pri)
-INCLUDEPATH += ../../../src/Label
-INCLUDEPATH += ../../../src/utils/
+INCLUDEPATH += ../../../src

@@ -1,18 +1,6 @@
 ﻿#include "widget.h"
-#include "FramelessWindow/framelesswindowbase.h"
-#include "FramelessWindow/simpleframelesswindow.h"
-#include "FramelessWindow/areowindow.h"
-#include "FramelessWindow/fullytransparentwindow.h"
-#include "FramelessWindow/systemcolorwindow.h"
-#include "FramelessWindow/framelesswindow.h"
-#include "FramelessWindow/micaeffectwindow.h"
-#include "FramelessWindow/micaalteffectwindow.h"
-#include "FramelessWindow/acryliceffectwindow.h"
-#include "FramelessWindow/toolbutton.h"
-#include "FramelessWindow/standardtitlebar.h"
-#include "FramelessWindow/mswindow.h"
-#include "FramelessWindow/ntqqwindow.h"
-#include "FramelessWindow/adaptivelayoutwindow.h"
+#include "Window/FramelessWindow/window.h"
+#include "Window/FramelessWindow/toolbutton.h"
 #include "ui_form.h"
 #include "ui_example.h"
 
@@ -96,6 +84,7 @@ void Widget::showExample(int index)
             break;
         case 9:
             w = new FramelessWindow; // 自定义标题栏示例窗口
+            master_scope = nullptr;
             ((FramelessWindow *)w)->setWindowTitle("自定义标题栏示例");
             {
                 QHBoxLayout *layout = ((StandardTitleBar *)(((FramelessWindow *)w)->titleBar()))->horizontalLayout();// 获取标题栏的水平布局
@@ -117,11 +106,8 @@ void Widget::showExample(int index)
                 search_btn->setPressLeaveBrush(QColor(123, 123, 123));
                 search_btn->setFixedSize(30, 25);
                 layout->insertWidget(4, search_btn); // 单行文本框后
-
-                w->show();
-                this->hide();
-                return;
             }
+            break;
         case 10:
             w = new MSWindow;//微软商店风格窗口
             master_scope = ((MSWindow *)w)->clientArea();//MSWindow重新实现了qWidgetUseInSetupUi，不能使用父类的此函数
@@ -142,12 +128,17 @@ void Widget::showExample(int index)
 
         Ui::form *ui = new Ui::form;
         Uis.push_back(ui);
-        ui->setupUi(master_scope);
-        ui->light->setChecked(true);
-        Theme::setTheme(Theme::Type::LIGHT);
-        connect(ui->light, &QRadioButton::clicked, w, &Theme::toggleLight);
-        connect(ui->dark, &QRadioButton::clicked, w, &Theme::toggleDark);
-        connect(ui->system, &QRadioButton::clicked, w, &Theme::followSystem);
+        if(master_scope)
+        {
+            ui->setupUi(master_scope);
+            ui->light->setChecked(true);
+            Theme::setTheme(Theme::Type::LIGHT);
+            connect(ui->light, &QRadioButton::clicked, w, &Theme::toggleLight);
+            connect(ui->dark, &QRadioButton::clicked, w, &Theme::toggleDark);
+            connect(ui->system, &QRadioButton::clicked, w, &Theme::followSystem);
+        }
+
+
         w->setAttribute(Qt::WA_DeleteOnClose, true); // 窗口关闭（区别于hide）后，不可以再次show，必须delete，设置此属性自动delete
         connect(w, &QWidget::destroyed, this, &QWidget::show);
 

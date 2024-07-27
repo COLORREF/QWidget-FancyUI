@@ -34,6 +34,4 @@ FORMS += \
 # }
 
 include( ../../../src/Window/FramelessWindow/FramelessWindow.pri)
-include( ../../../src/utils/precompile_utils/precompile.pri)
 INCLUDEPATH += ../../../src/Window
-INCLUDEPATH += ../../../src/utils
