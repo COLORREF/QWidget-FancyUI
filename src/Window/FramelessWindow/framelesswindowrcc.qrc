@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/maximize_black.svg</file>
+        <file>icon/restore_black.svg</file>
+        <file>icon/maximize_white.svg</file>
+        <file>icon/restore_white.svg</file>
+        <file>icon/minimize_black.svg</file>
+        <file>icon/minimize_white.svg</file>
+        <file>icon/close_black.svg</file>
+        <file>icon/close_white.svg</file>
+        <file>icon/question_black.svg</file>
+        <file>icon/question_white.svg</file>
+        <file>icon/search_black.svg</file>
+        <file>icon/search_white.svg</file>
+        <file>icon/wrench_black.svg</file>
+        <file>icon/wrench_white.svg</file>
+        <file>icon/bluetooth_black.svg</file>
+        <file>icon/bluetooth_white.svg</file>
+        <file>icon/wifi_black.svg</file>
+        <file>icon/wifi_white.svg</file>
+        <file>icon/three_horizontal_lines_black.svg</file>
+        <file>icon/three_horizontal_lines_white.svg</file>
+        <file>icon/three_horizontal_points_black.svg</file>
+        <file>icon/three_horizontal_points_white.svg</file>
+        <file>icon/gear_black.svg</file>
+        <file>icon/gear_white.svg</file>
+        <file>icon/sun_moon_black.svg</file>
+        <file>icon/sun_moon_white.svg</file>
+        <file>icon/left_arrow_black.svg</file>
+        <file>icon/left_arrow_white.svg</file>
+    </qresource>
+</RCC>
