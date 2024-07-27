@@ -132,7 +132,6 @@ void Widget::showExample(int index)
         {
             ui->setupUi(master_scope);
             ui->light->setChecked(true);
-            Theme::setTheme(Theme::Type::LIGHT);
             connect(ui->light, &QRadioButton::clicked, w, &Theme::toggleLight);
             connect(ui->dark, &QRadioButton::clicked, w, &Theme::toggleDark);
             connect(ui->system, &QRadioButton::clicked, w, &Theme::followSystem);
@@ -159,6 +158,7 @@ void Widget::showExample(int index)
             w->connect(checkbox,&QCheckBox::clicked,(NTQQWindow*)w,&NTQQWindow::setUnmaskSidebarColor);
         }
 
+        Theme::setTheme(Theme::Type::LIGHT);
         w->show();
         this->hide();
     }
