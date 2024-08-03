@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QByteArray>
 #include <QDebug>
+#include <QRandomGenerator>
 #include <opencv2/opencv.hpp>
 
 class FImage
@@ -20,15 +21,24 @@ public:
     FImage();
     explicit FImage(const QString& fileName, const char *format = nullptr);
     explicit FImage(const QImage& image);
-    FImage(QImage &&other) noexcept;
-    FImage(const FImage& fimage);
-    FImage(FImage&& fimage) noexcept;
+    explicit FImage(QImage &&other) noexcept;
+    explicit FImage(const FImage& fimage);
+    explicit FImage(FImage&& fimage) noexcept;
     FImage &operator=(const FImage & fimage);
     FImage &operator=(FImage&& fimage) noexcept;
     operator QImage();
     [[nodiscard]] cv::Mat mat() const;
-    FImage& GaussianBlur(int radius = 30);
-    QPixmap toQPixmap();
+
+    FImage& gaussianBlur(int radius = 30);//高斯模糊
+    FImage& horizontalGaussianBlur(int radius = 30);//水平高斯模糊
+    FImage& verticalGaussianBlur(int radius = 30);//垂直高斯模糊
+    FImage& uniformBlur(int radius = 30);//均匀模糊
+    FImage& horizontalUniforBlur(int radius = 30);//水平均匀模糊
+    FImage &verticalUniforBlur(int radius = 30);// 垂直均匀模糊
+    FImage &impulseNoise(double noiseRatio = 0.3); // 椒盐噪声
+    FImage &greyScale();//8bit 单通道 灰度图
+
+    QPixmap toQPixmap()const;
     QImage& qImage();
 private:
     QImage _qimage;
