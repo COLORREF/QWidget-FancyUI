@@ -52,20 +52,94 @@ cv::Mat FImage::mat() const
     return this->_mat.clone();
 }
 
-FImage& FImage::GaussianBlur(int radius)
+FImage& FImage::gaussianBlur(int radius)
 {
     if(radius > 0)
     {
         int ksize = radius * 2 + 1;
         cv::GaussianBlur(_mat, _mat, cv::Size(ksize,ksize), 0, 0);
     }
-    if(radius < 0)
-        qWarning()<<"The blur radius must be greater than 0";
+    else if(radius < 0)
+        qWarning()<<"The blur radius must be greater than or equal to 0";
 
     return *this;
 }
 
-QPixmap FImage::toQPixmap()
+FImage &FImage::horizontalGaussianBlur(int radius)
+{
+    if(radius > 0)
+        cv::GaussianBlur(_mat, _mat, cv::Size(radius * 2 + 1,1), 0, 0);
+    else if(radius < 0)
+        qWarning()<<"The blur radius must be greater than 0";
+    return *this;
+}
+
+FImage &FImage::verticalGaussianBlur(int radius)
+{
+    if(radius > 0)
+        cv::GaussianBlur(_mat, _mat, cv::Size(1,radius * 2 + 1), 0, 0);
+    else if(radius < 0)
+        qWarning()<<"The blur radius must be greater than or equal to 0";
+    return *this;
+}
+
+FImage &FImage::uniformBlur(int radius)
+{
+    if(radius > 0)
+        cv::blur(_mat, _mat, cv::Size(radius, radius));
+    if(radius < 0)
+        qWarning()<<"The blur radius must be greater than 0";
+    return *this;
+}
+
+FImage &FImage::horizontalUniforBlur(int radius)
+{
+    if(radius > 0)
+        cv::filter2D(_mat, _mat, -1, cv::Mat::ones(1, radius, CV_32F) / static_cast<float>(radius));
+    if(radius < 0)
+        qWarning()<<"The blur radius must be greater than 0";
+    return *this;
+}
+
+FImage &FImage::verticalUniforBlur(int radius)
+{
+    if(radius > 0)
+        cv::filter2D(_mat, _mat, -1, cv::Mat::ones(radius, 1, CV_32F) / static_cast<float>(radius));
+    if(radius < 0)
+        qWarning()<<"The blur radius must be greater than 0";
+    return *this;
+}
+
+FImage &FImage::impulseNoise(double noiseRatio)
+{
+    QRgb white = qRgba(255,255,255,255);
+    QRgb black = qRgba(0,0,0,255);
+    if(noiseRatio > 0.0 && noiseRatio < 1.0)
+    {
+        for(int x = 0; x< _qimage.width(); x++)
+            for(int y = 0; y<_qimage.height(); y++)
+                if(QRandomGenerator::global()->bounded(1.0) <= noiseRatio) //命中测试 [0,1.0)
+                    _qimage.setPixel(x, y, QRandomGenerator::global()->bounded(0, 2) ? black : white);
+    }
+    else if(noiseRatio >= 1.0)
+    {
+        for(int x = 0; x< _qimage.width(); x++)
+            for(int y = 0; y<_qimage.height(); y++)
+                _qimage.setPixel(x, y, QRandomGenerator::global()->bounded(0, 2) ? black : white);
+    }
+    else if(noiseRatio < 0.0)
+        qWarning()<<"Noise ratio must be greater than or equal to 0";
+
+    return *this;
+}
+
+FImage &FImage::greyScale()
+{
+    _qimage = _qimage.convertToFormat(QImage::Format_Grayscale8);
+    _mat = cv::Mat(_mat.rows,_mat.cols, CV_8UC1, (void*)(_qimage.constBits()), _qimage.bytesPerLine());
+    return *this;
+}
+QPixmap FImage::toQPixmap()const
 {
     return QPixmap::fromImage(_qimage);
 }
@@ -82,6 +156,9 @@ void FImage::inItMat()
     case QImage::Format_Grayscale8: // 8-bit, 1 channel 灰度图
         _mat = cv::Mat(_qimage.height(),_qimage.width(),CV_8UC1, (void*)(_qimage.constBits()),_qimage.bytesPerLine());
         break;
+    case QImage::Format_Grayscale16:// 16-bit, 1 channel 灰度图
+        _mat = cv::Mat(_qimage.height(),_qimage.width(),CV_16UC1, (void*)(_qimage.constBits()),_qimage.bytesPerLine());
+        break;
     case QImage::Format_ARGB32: // uint32存储0xAARRGGBB，pc一般小端存储低位在前，实际字节顺序就成了BGRA
         [[fallthrough]];
     case QImage::Format_RGB32: // Alpha为FF
@@ -97,8 +174,22 @@ void FImage::inItMat()
         _mat = cv::Mat(_qimage.height(),_qimage.width(),CV_16UC4, (void*)(_qimage.constBits()),_qimage.bytesPerLine());
         cv::cvtColor(this->_mat, this->_mat, cv::COLOR_RGBA2BGRA);// opencv以BGRA顺序存储，需要转换顺序
         break;
+
+    case QImage::Format_Mono://1 bit, 1 channel 黑白位图
+    {
+        // opencv 无法通过内存数据直接加载此格式图片
+        QByteArray byteArray;
+        QBuffer buffer(&byteArray);
+        buffer.open(QIODevice::WriteOnly);
+        _qimage.save(&buffer, "jpg");
+        buffer.close();
+        _qimage = QImage::fromData(byteArray);
+        this->inItMat();
+    }
+    break;
+
     default:
-        qWarning("QImage type not handled in switch: ", this->_qimage.format());
+        qWarning()<<"QImage type not handled in switch:"<<this->_qimage.format();
         break;
     }
 }
@@ -189,7 +280,7 @@ cv::Mat ImageUtils::GaussianBlur(const cv::Mat &MatImg, int radius)
 {
     if(radius <= 0)
     {
-        qWarning()<<"The blur radius must be greater than 0";
+        qWarning()<<"The blur radius must be greater than or equal to 0";
         return MatImg;
     }
     int ksize = radius * 2 + 1;

@@ -13,8 +13,5 @@ class Widget : public QWidget
 
 public:
     Widget(QWidget *parent = nullptr);
-private:
-    RoundLabel* label;
-    RoundLabel* label_2;
 };
 #endif // WIDGET_H
