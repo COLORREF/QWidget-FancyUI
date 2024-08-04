@@ -57,6 +57,12 @@ If using the MinGW compiler, you need to compile the OpenCV source code yourself
 - Buttons
   - Fill Animation Button
 - Labels
-  - Circular Image Label - High quality without jaggies, circular image display, supports Gaussian blur (requires OpenCV configuration)
+  - Circular Image Label - High quality without jaggies, circular image display
 - Material Filters
   - Gaussian Blur Filter - Default effect is acrylic material (requires OpenCV configuration)
+- `FImage `image processing class
+
+  - Gaussian blur
+  - Uniform blur
+  - Salt and pepper noise
+  - Grayscale image conversion
