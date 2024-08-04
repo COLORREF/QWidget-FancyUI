@@ -1,4 +1,4 @@
-#ifndef HOVERFILLBUTTON_H
+﻿#ifndef HOVERFILLBUTTON_H
 #define HOVERFILLBUTTON_H
 
 #include <QObject>
