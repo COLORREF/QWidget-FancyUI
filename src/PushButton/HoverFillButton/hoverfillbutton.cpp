@@ -1,4 +1,4 @@
-#include "hoverfillbutton.h"
+﻿#include "hoverfillbutton.h"
 
 HoverFillButton::HoverFillButton(QWidget *parent, AnimationType animationType) :
     QPushButton::QPushButton(parent)
@@ -189,8 +189,11 @@ void HoverFillButton::calculatedMaximumRadius()
         max_painte_value = qSqrt(width() * width() + height() * height()); // 计算最大半径
         break;
     case AnimationType::CrossFill:         // 左右两个小圆交叉填充
+        [[fallthrough]];
     case AnimationType::DiagonalRectangle: // 斜着的矩形填充
+        [[fallthrough]];
     case AnimationType::BottomCircle:      // 底部圆形填充
+        [[fallthrough]];
     case AnimationType::LeftRectangle:     // 左侧矩形填充
         max_painte_value = qPow(qPow(width(), 2) + qPow(height(), 2), 0.5);
         break;
