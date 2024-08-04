@@ -9,7 +9,7 @@ FImage::FImage(const QString &fileName, const char *format):
 }
 
 FImage::FImage(const QImage &image):
-    _qimage{std::forward<const QImage&>(image)}
+    _qimage{image}
 {
     this->inItMat();
 }
@@ -26,23 +26,41 @@ FImage::FImage(const FImage &fimage):
 }
 
 FImage::FImage(FImage &&fimage) noexcept:
-    FImage(std::forward<QImage&&>(fimage._qimage))
+    FImage(std::move(fimage._qimage))
 {
 }
 
 FImage &FImage::operator=(const FImage &fimage)
 {
-    _qimage = fimage._qimage;
+    *this = fimage._qimage;
     return *this;
 }
 
 FImage &FImage::operator=(FImage &&fimage) noexcept
 {
-    _qimage = std::forward<QImage&&>(fimage._qimage);
+    *this = std::move(fimage._qimage);
     return *this;
 }
 
-FImage::operator QImage()
+FImage &FImage::operator=(const QImage &qimage)
+{
+    this->_qimage = qimage;
+    this->inItMat();
+    return *this;
+}
+
+FImage &FImage::operator=(QImage&& qimage)noexcept
+{
+    /*外部调用等效于：
+    fimage.qImage() = qimage.copy();
+    fimage.loadMat();
+    */
+    this->_qimage = std::forward<QImage&&>(qimage);
+    this->inItMat();
+    return *this;
+}
+
+FImage::operator QImage() const
 {
     return _qimage;
 }
@@ -142,11 +160,6 @@ FImage &FImage::greyScale()
 QPixmap FImage::toQPixmap()const
 {
     return QPixmap::fromImage(_qimage);
-}
-
-QImage& FImage::qImage()
-{
-    return _qimage;
 }
 
 void FImage::inItMat()

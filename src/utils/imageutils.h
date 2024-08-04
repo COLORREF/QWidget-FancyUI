@@ -26,7 +26,9 @@ public:
     explicit FImage(FImage&& fimage) noexcept;
     FImage &operator=(const FImage & fimage);
     FImage &operator=(FImage&& fimage) noexcept;
-    operator QImage();
+    FImage &operator=(const QImage& qimage);
+    FImage &operator=(QImage&& qimage)noexcept;
+    operator QImage()const;
     [[nodiscard]] cv::Mat mat() const;
 
     FImage& gaussianBlur(int radius = 30);//高斯模糊
@@ -39,7 +41,9 @@ public:
     FImage &greyScale();//8bit 单通道 灰度图
 
     QPixmap toQPixmap()const;
-    QImage& qImage();
+    inline QImage& qImage(){return _qimage;};
+
+    inline void loadMat(){inItMat();};
 private:
     QImage _qimage;
     cv::Mat _mat;

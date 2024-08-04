@@ -1,23 +1,24 @@
 ﻿#include "acrylicmaterial.h"
-#include "utils/imageutils.h"
 
-AcrylicMaterial::AcrylicMaterial(QWidget *device,const QPixmap& pixmap, int _blurRadius,bool isPixmapFixed)
-    :QObject(device)
+AcrylicMaterial::AcrylicMaterial(QWidget *device,const QPixmap& pixmap, int blurRadius,bool isPixmapFixed)
+    :QObject(device),
+    _device(device),
+    _blurRadius(blurRadius),
+    _maskLayerColor(QColor(242,242,242,154)),
+    _originalImage(pixmap.toImage()),
+    _drawImage(_originalImage.copy()),
+    _isPixmapFixed(isPixmapFixed)
 {
-    this->_device = device;
-    this->_originalImage = pixmap.toImage();
-    this->_drawImage = ImageUtils::GaussianBlur(pixmap.toImage().copy(), _blurRadius);
-    this->_blurRadius = _blurRadius;
-    this->_isPixmapFixed = isPixmapFixed;
-    this->_maskLayerColor = QBrush(QColor(242,242,242,154));
+    this->_drawImage.gaussianBlur(blurRadius);
 }
 
 void AcrylicMaterial::setBlurRadius(int radius)
 {
     if (radius == this->_blurRadius)
         return;
-    this->_drawImage = ImageUtils::GaussianBlur(this->_originalImage.copy(),radius);
+    this->_drawImage = this->_originalImage.copy();
     this->_blurRadius = radius;
+    this->_drawImage.gaussianBlur(radius);
     this->_device->update();
 }
 
@@ -36,7 +37,8 @@ void AcrylicMaterial::setClipPath(const QPainterPath &path)
 void AcrylicMaterial::setPixmap(const QPixmap &pixmap)
 {
     this->_originalImage = pixmap.toImage();
-    this->_drawImage = ImageUtils::GaussianBlur(pixmap.toImage().copy(),_blurRadius);
+    this->_drawImage = this->_originalImage.copy();
+    this->_drawImage.gaussianBlur(this->_blurRadius);
     this->_device->update();
 }
 
@@ -50,9 +52,9 @@ void AcrylicMaterial::paint()
 
     //绘制图像
     if(_isPixmapFixed)
-        painter.drawImage(0, 0, _drawImage);
+        painter.drawImage(0, 0, this->_drawImage);
     else
-        painter.drawImage(0,0,_drawImage.scaled(this->_device->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        painter.drawImage(0,0,this->_drawImage.qImage().scaled(this->_device->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 
     //绘制遮罩
     painter.fillPath(this->_path,this->_maskLayerColor);

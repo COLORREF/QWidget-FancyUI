@@ -1,4 +1,4 @@
-#ifndef ACRYLICMATERIAL_H
+﻿#ifndef ACRYLICMATERIAL_H
 #define ACRYLICMATERIAL_H
 
 #include <QObject>
@@ -11,6 +11,7 @@
 #include <QString>
 #include <QRect>
 #include <QPaintDevice>
+#include "utils/imageutils.h"
 
 class AcrylicMaterial: public QObject
 {
@@ -23,8 +24,8 @@ private:
     int _blurRadius; // 高斯模糊半径
     QBrush _maskLayerColor;//遮罩画刷
     QPainterPath _path;//绘制路径
-    QImage _drawImage;//高斯模糊后图像
     QImage _originalImage;//原始图像
+    FImage _drawImage;//高斯模糊后图像
     bool _isPixmapFixed;
 
 public:
