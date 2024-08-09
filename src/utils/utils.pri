@@ -9,10 +9,12 @@ SOURCES += \
 
 HEADERS += \
     $$PWD/compositionwindoweffect.h \
+    $$PWD/controlcolors.h \
     $$PWD/dwmwindoweffect.h \
     $$PWD/imageutils.h \
     $$PWD/mouseeventcolormanagement.h \
     $$PWD/precompile.h \
+    $$PWD/simpleanimation.h \
     $$PWD/theme.h \
     $$PWD/themecolormanagement.h \
     $$PWD/windowmanager.h
