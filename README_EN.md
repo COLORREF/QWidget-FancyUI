@@ -56,11 +56,13 @@ If using the MinGW compiler, you need to compile the OpenCV source code yourself
   - Adaptive Layout Window - Dynamically adjusts sidebar width based on window size
 - Buttons
   - Fill Animation Button
+- Radio Buttons
+  - Animation Effect Radio Button - Supports global theme color settings
 - Labels
   - Circular Image Label - High quality without jaggies, circular image display
 - Material Filters
   - Gaussian Blur Filter - Default effect is acrylic material (requires OpenCV configuration)
-- `FImage `image processing class
+- `FImage `image processing class (requires OpenCV configuration)
 
   - Gaussian blur
   - Uniform blur
