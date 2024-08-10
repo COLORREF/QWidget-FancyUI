@@ -20,51 +20,51 @@ English | <a href="./README.md">简体中文</a>
 
 # Important Notes
 
-- Only supports Windows systems
+- Only supports Windows OS
 - Only supports compilation with MSVC compiler
 - Only supports Qt 6
-- MinGW compiler has very poor support for Windows API. Theoretically, it can be used for compilation, but it is highly discouraged.
-- Some code does not use Windows API, supports cross-platform, and some code supports Qt 5. Please test in detail.
-- Future development and updates will be exclusively for Windows systems, with no further consideration for cross-platform support, Python language support, or Qt 5 compatibility.
+- MinGW compiler has poor support for Windows API. It is theoretically possible to use MinGW for compilation, but it is highly discouraged.
+- Some code does not use Windows API, which makes it cross-platform, and some code supports Qt 5. Please test these features yourself.
+- Future development and updates will focus exclusively on Windows, without consideration for cross-platform compatibility, Python language support, or Qt 5 adaptation.
 
 # OpenCV Environment Configuration
 
-Some widgets use the `OpenCV` library, so you need to configure `OpenCV`. Detailed steps:
+Some components use the `OpenCV` library, and you need to configure `OpenCV` as follows:
 
-- Download the 'OpenCV' installer and choose to open it as a compressed package (or already installed). This repository uses Windows 64-bit version 4.10, which can be selected according to your environment.
-- Copy the `include` folder from `....package path (or installation path)\opencv\build\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
-- Copy the `lib` and `bin` folders from `....package path (or installation path)\opencv\build\x64\vc16\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
-- Add `....\QtWidget-FancyUI\src\utils\image_utils\OpenCV\bin` to the system environment variables. If already installed and added, skip this step.
+- Download the `OpenCV` installation package, preferably in compressed file format (or use an existing installation). This repository uses the 64-bit Windows version 4.10, but you can choose according to your actual environment.
+- Copy the `include` folder from `....path-to-installation-package(or-installation-path)\opencv\build\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
+- Copy the `lib` and `bin` folders from `....path-to-installation-package(or-installation-path)\opencv\build\x64\vc16\` to `....\QtWidget-FancyUI\src\utils\OpenCV\`.
+- Add `....\QtWidget-FancyUI\src\utils\OpenCV\bin` to the system environment variables. If it has already been added, you can skip this step.
 
-If using the MinGW compiler, you need to compile the OpenCV source code yourself. (Not recommended, too cumbersome)
+If you are using the MinGW compiler, you need to compile the OpenCV source code yourself. (Not recommended, as it is too cumbersome.)
 
-# Features Implemented (see the example folder for details)
+# Implemented Features (See the example folder for details)
 
-- Light and Dark Theme Switching - Supports automatic switching based on system theme, as well as manual switching
+- Themes
+  - Dark/Light theme switching—automatic switching based on the system theme or manual switching
+  - Custom theme colors—customize the theme colors of the controls
 - Frameless Windows
-  - Basic Frameless Window - Only has a close button
-  - Simple Frameless Window - Has minimize, maximize, and close buttons
-  - Standard Frameless Window - Common window style: icon, window title, minimize, maximize, and close buttons
-  - Frosted Glass Window
-  - Fully Transparent Window
-  - System Color Follow Window
-  - Mica Window - Only supports Windows 11
-  - Mica Alt Window - Only supports Windows 11
-  - Acrylic Window - Only supports Windows 11
-  - Microsoft Store Style Window
-  - NT-QQ Style Window
-  - Adaptive Layout Window - Dynamically adjusts sidebar width based on window size
-- Buttons
-  - Fill Animation Button
-- Radio Buttons
-  - Animation Effect Radio Button - Supports global theme color settings
-- Labels
-  - Circular Image Label - High quality without jaggies, circular image display
+  - Base frameless window—only a close button
+  - Simple frameless window—minimize, maximize, and close buttons
+  - Standard frameless window—common window style: icon, window title, minimize, maximize, and close buttons
+  - Frosted glass window
+  - Fully transparent window
+  - System color window
+  - Mica window—Windows 11 only
+  - Mica Alt window—Windows 11 only
+  - Acrylic window—Windows 11 only
+  - Microsoft Store style window
+  - NT-QQ style window
+  - Adaptive layout window—dynamically adjusts the sidebar width based on the window size
+- Basic Controls
+  - Radio buttons
+  - Checkboxes
+  - Fill animation button
+  - Circular image label
 - Material Filters
-  - Gaussian Blur Filter - Default effect is acrylic material (requires OpenCV configuration)
-- `FImage `image processing class (requires OpenCV configuration)
-
+  - Gaussian blur filter—default effect is acrylic material (requires OpenCV configuration)
+- `FImage` Image Processing Class (requires OpenCV configuration)
   - Gaussian blur
   - Uniform blur
   - Salt and pepper noise
-  - Grayscale image conversion
+  - Grayscale conversion
