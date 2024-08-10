@@ -10,14 +10,12 @@ RadioButtonStyle::RadioButtonStyle(QRadioButton *target):
     _animation->setUpdate(target);
     connect(_animation,&QVariantAnimation::valueChanged,this,[r = &_radius](const QVariant &value)mutable{*r = value.toInt();});
     connect(_target,&QRadioButton::toggled,_animation,&SimpleAnimation::reverseDirectionAndStart);
-    if(_target->text().isNull())
-        _target->setText(" ");
 }
 
 QRect RadioButtonStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
     if(element == SE_RadioButtonIndicator)
-        return QProxyStyle::subElementRect(SE_RadioButtonIndicator, option, widget).adjusted(1,0,1,0);
+        return QProxyStyle::subElementRect(SE_RadioButtonIndicator, option, widget).translated(1,1);
     return QProxyStyle::subElementRect(element,option,widget);
 }
 
@@ -26,7 +24,7 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
     if (element == PE_IndicatorRadioButton)
     {
         QStyle::State op_state = option->state;
-        QRect indicator = QProxyStyle::subElementRect(SE_RadioButtonIndicator, option, widget).adjusted(1,0,1,0);
+        QRect indicator = subElementRect(SE_RadioButtonIndicator, option, widget);
         QPoint center(indicator.x()+indicator.width()/2,indicator.y()+indicator.height()/2);
         quint8 state = 0;
 

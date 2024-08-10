@@ -14,22 +14,16 @@
 class RadioButtonStyle : public QProxyStyle
 {
 public:
-    RadioButtonStyle(QRadioButton *target); // target is alse parent
-
+    explicit RadioButtonStyle(QRadioButton *target);
+    virtual QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget = nullptr) const override;
+    virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
     F_PRIVATE_POINTER_PUBLIC_GET(SimpleAnimation *, animation);
-    F_PRIVATE_POINTER_PUBLIC_GET(ControlColors *, controlColors);
-
 private:
+    ControlColors * _controlColors;
     mutable int _radius;
     mutable bool _UnEnableOn = false;
     QRadioButton *_target;
-
-public:
-    virtual QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget = nullptr) const override;
-
-    virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
-
-    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
 };
 
 #endif // RADIOBUTTONSTYLE_H

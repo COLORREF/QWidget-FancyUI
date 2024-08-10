@@ -11,6 +11,11 @@ class RadioButton : public QRadioButton
 public:
     explicit RadioButton(QWidget *parent = nullptr);
     explicit RadioButton(const QString &text, QWidget *parent = nullptr);
+    void setText(const QString &text);
+    QString text() const;
+private:
+    bool _userSetEmptyText = false;
+    bool _userSetNullText = false;
 };
 
 #endif // RADIOBUTTON_H
