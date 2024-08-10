@@ -1,6 +1,5 @@
 ﻿#ifndef IMAGEUTILS_H
 #define IMAGEUTILS_H
-#ifdef _MSC_VER
 #include <QImage>
 #include <QString>
 #include <QPixmap>
@@ -74,5 +73,5 @@ public:
 private:
     ImageUtils();
 };
-#endif
+
 #endif // IMAGEUTILS_H

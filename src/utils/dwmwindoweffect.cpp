@@ -1,3 +1,4 @@
+﻿#ifdef _WIN32
 #include "dwmwindoweffect.h"
 
 bool DwmWindowEffect::setMicaEffect(const HWND hWnd)
@@ -184,3 +185,4 @@ bool DwmWindowEffect::setEntireWindowFullyTransparent(const HWND hWnd)
     MARGINS margins{-1,-1,-1,-1};
     return DwmExtendFrameIntoClientArea_(hWnd, &margins) && DwmEnableBlurBehindWindow_(hWnd, &blur_behind);
 }
+#endif

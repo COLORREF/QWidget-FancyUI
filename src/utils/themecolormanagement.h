@@ -1,6 +1,6 @@
 ﻿#ifndef THEMECOLORMANAGEMENT_H
 #define THEMECOLORMANAGEMENT_H
-
+#ifdef _WIN32
 #include <QObject>
 #include <QVariantAnimation>
 #include <QWidget>
@@ -24,5 +24,5 @@ private slots:
     void updateRunTimeColor(const QVariant &value);
     void onThemeChange(Theme::Type type);
 };
-
+#endif
 #endif // THEMECOLORMANAGEMENT_H

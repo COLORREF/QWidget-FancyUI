@@ -1,6 +1,6 @@
 ﻿#ifndef DWMWINDOWEFFECT_H
 #define DWMWINDOWEFFECT_H
-
+#ifdef _WIN32
 #include "windowmanager.h"
 
 // 设置非客户区效果，默认拓展非客户区到整个窗口
@@ -29,5 +29,5 @@ public:
 
     static bool setEntireWindowFullyTransparent(const HWND hWnd); // 整个窗口全透明(win8以下是模糊窗口效果)
 };
-
+#endif
 #endif // DWMWINDOWEFFECT_H

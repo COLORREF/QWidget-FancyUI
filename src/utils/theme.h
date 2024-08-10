@@ -1,6 +1,6 @@
 ﻿#ifndef THEME_H
 #define THEME_H
-
+#ifdef _WIN32
 #include <QObject>
 #include <QThread>
 #include <QSettings>
@@ -52,5 +52,5 @@ private:
 signals:
     void themeChange(Theme::Type);
 };
-
+#endif
 #endif // THEME_H
