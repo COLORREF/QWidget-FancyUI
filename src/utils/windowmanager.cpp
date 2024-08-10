@@ -1,4 +1,5 @@
-﻿#include "windowmanager.h"
+﻿#ifdef _WIN32
+#include "windowmanager.h"
 #include <QDebug>
 
 HMODULE WindowManager::user32dll = GetModuleHandle(TEXT("user32.dll"));
@@ -160,3 +161,4 @@ bool WindowManager::SetWindowDisplayAffinity_(HWND hWnd, DWORD dwAffinity)
 }
 
 WindowManager::WindowManager() {}
+#endif

@@ -1,5 +1,6 @@
-#ifndef COMPOSITIONWINDOWEFFECT_H
+﻿#ifndef COMPOSITIONWINDOWEFFECT_H
 #define COMPOSITIONWINDOWEFFECT_H
+#ifdef _WIN32
 #include "windowmanager.h"
 
 class CompositionWindowEffect : protected WindowManager
@@ -15,5 +16,5 @@ public:
 
     static void setClientAreaFullyTransparent(const HWND hwnd); // 客户区全透明
 };
-
+#endif
 #endif // COMPOSITIONWINDOWEFFECT_H

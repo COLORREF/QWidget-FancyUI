@@ -1,5 +1,4 @@
 ﻿#include "imageutils.h"
-#ifdef _MSC_VER
 FImage::FImage() {}
 
 FImage::FImage(const QString &fileName, const char *format) : _qimage{fileName, format}
@@ -314,4 +313,3 @@ QPixmap ImageUtils::grabPixmap(QWidget *widget, const QRect &rect)
 }
 
 ImageUtils::ImageUtils() {}
-#endif

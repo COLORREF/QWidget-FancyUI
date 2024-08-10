@@ -1,4 +1,5 @@
-﻿#include "theme.h"
+﻿#ifdef _WIN32
+#include "theme.h"
 #define THEME_REGEDIT_PATH "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
 #define FULL_THEME_REGEDIT_PATH "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
 
@@ -93,6 +94,7 @@ ListeningSystemTheme::ListeningSystemTheme(QObject *parent)
 {
 }
 
+
 void ListeningSystemTheme::stop()
 {
     ::SetEvent(this->hEventArray[1]);
@@ -159,3 +161,4 @@ void ListeningSystemTheme::run()
         }
     }
 }
+#endif

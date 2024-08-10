@@ -1,3 +1,4 @@
+﻿#ifdef _WIN32
 #include "themecolormanagement.h"
 
 ThemeColorManagement::ThemeColorManagement(QObject *parent, const QColor &light, const QColor &dark)
@@ -54,3 +55,4 @@ void ThemeColorManagement::updateRunTimeColor(const QVariant &value)
 {
     this->_runTimeColor = value.value<QColor>();
 }
+#endif

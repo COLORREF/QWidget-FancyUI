@@ -1,5 +1,7 @@
-#ifndef WINDOWMANAGER_H
+﻿#ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
+#ifdef _WIN32
+
 #define ABGR(a, b, g, r) ((COLORREF)(((a & 0xffu) << 24) | ((b & 0xffu) << 16) | ((g & 0xffu) << 8) | (r & 0xffu)))
 #define TRANSPARENT_COLOR 0xFFFFFFFE // 仅对边框生效
 #define DEFAULT_COLOR 0xFFFFFFFF
@@ -139,5 +141,5 @@ private:
 
     WindowManager();
 };
-
+#endif
 #endif // WINDOWMANAGER_H
