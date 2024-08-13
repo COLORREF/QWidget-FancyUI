@@ -6,7 +6,7 @@
 
 Widget::Widget(QWidget *parent)
     : QWidget{parent},
-    ui{new Ui::example}
+      ui{new Ui::example}
 {
     this->setWindowTitle("示例程序");
     ui->setupUi(this);
@@ -36,7 +36,7 @@ void Widget::showExample(int index)
 {
     {
         QWidget *w;
-        QWidget* master_scope;
+        QWidget *master_scope;
         switch (index)
         {
         case 0:
@@ -87,10 +87,10 @@ void Widget::showExample(int index)
             master_scope = nullptr;
             ((FramelessWindow *)w)->setWindowTitle("自定义标题栏示例");
             {
-                QHBoxLayout *layout = ((StandardTitleBar *)(((FramelessWindow *)w)->titleBar()))->horizontalLayout();// 获取标题栏的水平布局
-                ToolButton* theme_btn = new ToolButton(w, ToolButton::ToolType::SUN_MOON);//太阳月亮按钮
-                layout->insertWidget(3, theme_btn);                                   // 第三个位置插入，即最小化按钮前
-                connect(theme_btn,&ToolButton::clicked,Theme::themeObject(),&Theme::toggleTheme);//自动切换深浅主题
+                QHBoxLayout *layout = ((StandardTitleBar *)(((FramelessWindow *)w)->titleBar()))->horizontalLayout();         // 获取标题栏的水平布局
+                ToolButton *theme_btn = new ToolButton(w, ToolButton::ToolType::SUN_MOON);                                    // 太阳月亮按钮
+                layout->insertWidget(3, theme_btn);                                                                           // 第三个位置插入，即最小化按钮前
+                connect(theme_btn, &ToolButton::clicked, Theme::themeObject(), &Theme::toggleTheme);                          // 自动切换深浅主题
                 layout->insertItem(3, new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum)); // 弹簧
                 QLineEdit *edit = new QLineEdit(w);
                 edit->setStyleSheet("QLineEdit{border:1px solid rgb(123,123,123)}");
@@ -109,18 +109,18 @@ void Widget::showExample(int index)
             }
             break;
         case 10:
-            w = new MSWindow;//微软商店风格窗口
-            master_scope = ((MSWindow *)w)->clientArea();//MSWindow重新实现了qWidgetUseInSetupUi，不能使用父类的此函数
+            w = new MSWindow;                             // 微软商店风格窗口
+            master_scope = ((MSWindow *)w)->clientArea(); // MSWindow重新实现了qWidgetUseInSetupUi，不能使用父类的此函数
             ((FramelessWindow *)w)->setWindowTitle("微软商店风格窗口");
             break;
         case 11:
-            w = new NTQQWindow;//NT_QQ(新版QQ)风格窗口
-            master_scope = ((NTQQWindow *)w)->clientArea();          
+            w = new NTQQWindow; // NT_QQ(新版QQ)风格窗口
+            master_scope = ((NTQQWindow *)w)->clientArea();
             break;
         case 12:
-            w = new AdaptiveLayoutWindow;//自适应布局窗口
-            master_scope = ((AdaptiveLayoutWindow*)w)->clientArea();
-            ((AdaptiveLayoutWindow*)w)->setWindowTitle("自适应布局窗口");
+            w = new AdaptiveLayoutWindow; // 自适应布局窗口
+            master_scope = ((AdaptiveLayoutWindow *)w)->clientArea();
+            ((AdaptiveLayoutWindow *)w)->setWindowTitle("自适应布局窗口");
             break;
         default:
             return;
@@ -128,7 +128,7 @@ void Widget::showExample(int index)
 
         Ui::form *ui = new Ui::form;
         Uis.push_back(ui);
-        if(master_scope)
+        if (master_scope)
         {
             ui->setupUi(master_scope);
             ui->light->setChecked(true);
@@ -137,25 +137,23 @@ void Widget::showExample(int index)
             connect(ui->system, &QRadioButton::clicked, w, &Theme::followSystem);
         }
 
-
         w->setAttribute(Qt::WA_DeleteOnClose, true); // 窗口关闭（区别于hide）后，不可以再次show，必须delete，设置此属性自动delete
         connect(w, &QWidget::destroyed, this, &QWidget::show);
 
-        if(index == 3)
+        if (index == 3)
         {
-            QPushButton* btn = new QPushButton("设置颜色",w);
+            QPushButton *btn = new QPushButton("设置颜色", w);
             ui->expansion->addWidget(btn);
-            connect(btn,&QPushButton::clicked,w,[w](){
+            connect(btn, &QPushButton::clicked, w, [w]()
+                    {
                 QColor color = QColorDialog::getColor(QColor(255,255,255,105),w,"选择颜色",QColorDialog::ShowAlphaChannel);
-                ((AreoWindow*)w)->changeColor(ABGR(color.alpha(),color.blue(),color.green(),color.red()));
-            });
-
+                ((AreoWindow*)w)->changeColor(ABGR(color.alpha(),color.blue(),color.green(),color.red())); });
         }
-        if(index == 11)
+        if (index == 11)
         {
-            QCheckBox* checkbox = new QCheckBox("取消侧边栏遮罩色\n(这会使得侧边栏透明度更高)", w);
+            QCheckBox *checkbox = new QCheckBox("取消侧边栏遮罩色\n(这会使得侧边栏透明度更高)", w);
             ui->expansion->addWidget(checkbox);
-            w->connect(checkbox,&QCheckBox::clicked,(NTQQWindow*)w,&NTQQWindow::setUnmaskSidebarColor);
+            w->connect(checkbox, &QCheckBox::clicked, (NTQQWindow *)w, &NTQQWindow::setUnmaskSidebarColor);
         }
 
         Theme::setTheme(Theme::Type::LIGHT);
