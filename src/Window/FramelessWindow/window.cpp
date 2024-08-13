@@ -645,13 +645,14 @@ AdaptiveLayoutWindow::AdaptiveLayoutWindow(QWidget *parent, WindowEffectType eff
     this->_animation->setStartValue(300);
     this->_animation->setEndValue(50);
 
-    connect(this->_animation, &QVariantAnimation::valueChanged, this, [=](const QVariant &value)
-            { this->_sidebar->setFixedWidth(value.value<int>()); });
+    connect(this->_animation, &QVariantAnimation::valueChanged, this, [=](const QVariant &value){
+        this->_sidebar->setFixedWidth(value.value<int>());
+    });
 
-    connect(this->_animation, &QVariantAnimation::finished, this, [=]()
-            {
+    connect(this->_animation, &QVariantAnimation::finished, this, [this](){
         this->_isExpand = !this->_isExpand;
-        this->checkWidth(); });
+        this->checkWidth();
+    });
     this->_sidebar->setFixedWidth(300);
 
     // if(stackWindow)

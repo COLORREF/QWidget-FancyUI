@@ -76,6 +76,14 @@
     protected:virtual void mouseMoveEvent(QMouseEvent *event) override
 #define F_DEFINITION_MOUSEMOVEEVENT(CLASS) \
     void CLASS::mouseMoveEvent(QMouseEvent *event)
+#define F_MOUSEDOUBLECLICKEVENT \
+    protected:virtual void mouseDoubleClickEvent(QMouseEvent *event) override
+#define F_DEFINITION_MOUSEDOUBLECLICKEVENT(CLASS) \
+    void CLASS::mouseDoubleClickEvent(QMouseEvent *event)
+#define F_CONTEXTMENUEVENT\
+    protected:virtual void contextMenuEvent(QContextMenuEvent *event)override;
+#define F_DEFINITION_CONTEXTMENUEVENT(CLASS) \
+    void CLASS::contextMenuEvent(QContextMenuEvent *event)
 #define F_PAINTEVENT \
     protected:virtual void paintEvent(QPaintEvent *event) override
 #define F_DEFINITION_PAINTEVENT(CLASS) \
@@ -147,3 +155,13 @@ void CLASS::resizeEvent(QResizeEvent *event)
 #define runPath QCoreApplication::applicationDirPath() // 本程序运行时的路径，即调用的exe运行时的路径，该路径是动态的
 
 #endif // PRECOMPILE_H
+
+
+// #if (QT_VERSION >= QT_VERSION_CHECK(6, 3, 0))
+//     for(QWidget* children : this->findChildren<QWidget*>(Qt::FindChildrenRecursively))
+// #elif
+// #include <QRegularExpression>
+//     for(QWidget* children : this->findChildren<QWidget *>(QRegularExpression(QString(R"([\s\S]+)")),Qt::FindChildOption::FindDirectChildrenOnly))
+// #endif
+//         children->installEventFilter(this);
+//     this->installEventFilter(this);
