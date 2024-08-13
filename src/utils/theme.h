@@ -6,7 +6,7 @@
 #include <QSettings>
 #include <windows.h>
 
-//监听系统主题子线程
+// 监听系统主题子线程
 class ListeningSystemTheme final : public QThread
 {
 private:
@@ -19,8 +19,7 @@ protected:
     void run() override;
 };
 
-
-//使用单例模式，正常符合逻辑的使用不会出现数据竞争问题，没有使用互斥锁保护type变量
+// 使用单例模式，正常符合逻辑的使用不会出现数据竞争问题，没有使用互斥锁保护_type变量
 class Theme final : public QObject
 {
     Q_OBJECT
@@ -46,8 +45,8 @@ public slots:
     static void followSystem(); // 跟随系统
     static void toggleTheme();  // 切换主题
 private:
-    static Type type;
-    static bool is_follow_system;
+    static Type _type;
+    static bool _is_follow_system;
     ListeningSystemTheme *L;
 signals:
     void themeChange(Theme::Type);

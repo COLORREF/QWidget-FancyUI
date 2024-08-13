@@ -3,7 +3,6 @@
 #define THEME_REGEDIT_PATH "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
 #define FULL_THEME_REGEDIT_PATH "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
 
-
 Theme::Theme(QObject *parent)
     : QObject{parent}
 {
@@ -20,30 +19,27 @@ Theme::~Theme()
 
 void Theme::setTheme(Type themeType)
 {
-    if (Theme::type != themeType)
-    {
-        Theme::type = themeType;
-        emit Theme::themeObject() -> themeChange(Theme::type);
-    }
+    Theme::_type = themeType;
+    emit Theme::themeObject() -> themeChange(themeType);
 }
 
 void Theme::toggleLight()
 {
-    Theme::is_follow_system = false;
+    Theme::_is_follow_system = false;
     Theme::setTheme(Theme::Type::LIGHT);
 }
 
 void Theme::toggleDark()
 {
-    Theme::is_follow_system = false;
+    Theme::_is_follow_system = false;
     Theme::setTheme(Theme::Type::DARK);
 }
 
 void Theme::followSystem()
 {
-    if (!Theme::is_follow_system)
+    if (!Theme::_is_follow_system)
     {
-        Theme::is_follow_system = true;
+        Theme::_is_follow_system = true;
         QSettings settings(FULL_THEME_REGEDIT_PATH, QSettings::NativeFormat);
         if (settings.value("AppsUseLightTheme") == 0) // 深色主题
             Theme::setTheme(Theme::Type::DARK);
@@ -54,7 +50,7 @@ void Theme::followSystem()
 
 Theme::Type Theme::themeType()
 {
-    return Theme::type;
+    return Theme::_type;
 }
 
 Theme *Theme::themeObject()
@@ -65,17 +61,17 @@ Theme *Theme::themeObject()
 
 bool Theme::isLigth()
 {
-    return Theme::type == Theme::Type::LIGHT;
+    return Theme::_type == Theme::Type::LIGHT;
 }
 
 bool Theme::isDark()
 {
-    return Theme::type == Theme::Type::DARK;
+    return Theme::_type == Theme::Type::DARK;
 }
 
 void Theme::toggleTheme()
 {
-    if (Theme::type == Theme::Type::LIGHT)
+    if (Theme::_type == Theme::Type::LIGHT)
         Theme::setTheme(Theme::Type::DARK);
     else
         Theme::setTheme(Theme::Type::LIGHT);
@@ -83,17 +79,16 @@ void Theme::toggleTheme()
 
 bool Theme::isFollowSystem()
 {
-    return Theme::is_follow_system;
+    return Theme::_is_follow_system;
 }
 
-Theme::Type Theme::type = Type::LIGHT;
-bool Theme::is_follow_system = false;
+Theme::Type Theme::_type = Type::LIGHT;
+bool Theme::_is_follow_system = false;
 
 ListeningSystemTheme::ListeningSystemTheme(QObject *parent)
     : QThread::QThread{parent}
 {
 }
-
 
 void ListeningSystemTheme::stop()
 {
