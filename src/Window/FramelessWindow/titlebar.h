@@ -17,6 +17,7 @@
 #include <QApplication>
 #include <QPalette>
 
+
 #include "utils/theme.h"
 #include "utils/precompile.h"
 #include "utils/mouseeventcolormanagement.h"
@@ -130,7 +131,7 @@ public:
     F_PROTECTED_POINTER_PUBLIC_GET(CloseButton*, closeButton)
     F_PROTECTED_POINTER_PUBLIC_GET(QHBoxLayout *,horizontalLayout)
     F_PROTECTED_POINTER_PUBLIC_GET(QSpacerItem *,horizontalSpacer)
-protected:
+
     F_MOUSEPRESSEVENT;
 };
 
@@ -140,9 +141,7 @@ class SimpleTitleBar : public TitleBarBase
 public:
     explicit SimpleTitleBar(QWidget *parent);
 
-protected:
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-
+    F_MOUSEDOUBLECLICKEVENT;
     F_PROTECTED_POINTER_PUBLIC_GET(MinimizeButton*, minimizeButton);
     F_PROTECTED_POINTER_PUBLIC_GET(MaximizeButton*, maximizeButton);
 };

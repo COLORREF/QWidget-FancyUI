@@ -40,7 +40,8 @@ F_DEFINITION_LEAVEEVENT(TitleBarButton){
 
 F_DEFINITION_MOUSEPRESSEVENT(TitleBarButton)
 {
-    this->setMouseState(MouseState::PRESSEDHOVER);
+    if(event->button() == Qt::LeftButton)
+        this->setMouseState(MouseState::PRESSEDHOVER);
     QPushButton::mousePressEvent(event);
 }
 
@@ -252,6 +253,7 @@ void CloseButton::onThemeChange(Theme::Type themeType)
     else
         this->setIcon(QPixmap(":/icon/close_white.svg"));
 }
+
 F_DEFINITION_ENTEREVENT(CloseButton)
 {
     if (Theme::isLigth())
@@ -298,8 +300,9 @@ TitleBarBase::TitleBarBase(QWidget *parent)
     this->_horizontalLayout->addWidget(this->_closeButton);
 }
 
-void TitleBarBase::mousePressEvent(QMouseEvent *)
+F_DEFINITION_MOUSEPRESSEVENT(TitleBarBase)
 {
+    Q_UNUSED(event)
     this->window()->windowHandle()->startSystemMove();
 }
 
@@ -312,7 +315,7 @@ SimpleTitleBar::SimpleTitleBar(QWidget *parent)
     this->_horizontalLayout->insertWidget(1, this->_minimizeButton);
 }
 
-void SimpleTitleBar::mouseDoubleClickEvent(QMouseEvent *event)
+F_DEFINITION_MOUSEDOUBLECLICKEVENT(SimpleTitleBar)
 {
     if (event->button() == Qt::MouseButton::LeftButton)
     {
