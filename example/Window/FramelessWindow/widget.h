@@ -1,4 +1,4 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QObject>
@@ -9,9 +9,10 @@
 #include <QCheckBox>
 #include <QColorDialog>
 
-namespace Ui {
-class form;
-class example;
+namespace Ui
+{
+    class form;
+    class example;
 }
 
 class Widget : public QWidget
@@ -22,6 +23,7 @@ public:
     ~Widget();
 private slots:
     void showExample(int index);
+
 private:
     Ui::example *ui;
     QVector<Ui::form *> Uis;
