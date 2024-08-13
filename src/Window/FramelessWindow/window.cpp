@@ -131,6 +131,7 @@ void FramelessWindowBase::initialize(Type type)
     this->setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint);
     ::SetWindowLongPtr((HWND)this->winId(), GWL_STYLE, ::GetWindowLongPtr((HWND)this->winId(), GWL_STYLE) | WS_BORDER | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU);
     this->connect(Theme::themeObject(), &Theme::themeChange, this, &FramelessWindowBase::onThemeChange);
+    this->connect(this->windowHandle(),&QWindow::screenChanged,this,[this](QScreen *screen){this->_dpi = screen->devicePixelRatio();});
     this->resize(640, 480);
 }
 
@@ -194,7 +195,7 @@ F_DEFINITION_NATIVEEVENT(FramelessWindowBase)
     }
     break;
     case WM_DISPLAYCHANGE: // 分辨率或dpi改变
-        this->_dpi = screen()->devicePixelRatio();
+        this->_dpi = this->screen()->devicePixelRatio();
 #ifdef _MSC_VER
         this->X_BORDER_WIDTH = ::GetSystemMetrics(SM_CXSIZEFRAME);
         this->Y_BORDER_WIDTH = ::GetSystemMetrics(SM_CYSIZEFRAME);
