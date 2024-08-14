@@ -12,6 +12,8 @@ CheckBoxStyle::CheckBoxStyle(QCheckBox *target):
 
 QRect CheckBoxStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
+    if(element == SE_CheckBoxIndicator)
+        return QProxyStyle::subElementRect(SE_CheckBoxIndicator, option, widget).translated(1,1);
     return QProxyStyle::subElementRect(element,option,widget);
 }
 
@@ -78,8 +80,6 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
 
         QPainterPath clip_path;// 圆角矩形裁剪路径
         QPoint center(indicator_rect.x()+indicator_rect.width()/2,indicator_rect.y()+indicator_rect.height()/2);
-        if(state == 5)
-            indicator_rect.adjust(2,2,-2,-2);
         clip_path.addRoundedRect(indicator_rect, 3, 3);
         painter->setClipPath(clip_path);
         painter->drawEllipse(center,_radius,_radius);
@@ -87,14 +87,18 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
         // 绘制勾
         if(on)
         {
+            int x = indicator_rect.x();
+            int y = indicator_rect.y();
+            int l = indicator_rect.width();
             pen = QPen(Qt::white);
             if(over)
                 pen.setWidth(2);
+            if(state == 5)
+                pen.setWidth(1);
             painter->setPen(pen);
-            QPointF p1(4.5,11.5);
-            QPointF p2(7.5,15);
-            QPointF p3(14.5,6.5);
-
+            QPointF p1(0.21875*l+x,0.53125*l+y);
+            QPointF p2(0.40625*l+x,0.75*l+y);
+            QPointF p3(0.84375*l+x,0.21875*l+y);
             painter->drawLine(p1,p2);
             painter->drawLine(p2,p3);
         }
