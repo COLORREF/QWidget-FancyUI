@@ -1,70 +1,51 @@
 ﻿#include "radiobuttonstyle.h"
+#include "utils/animation.h"
+#include "utils/customcontrol.h"
+
+static constexpr int Time = 150;
+static constexpr int FillCircleRadius = 5;
+static constexpr int HalfIndicator = 8;
 
 RadioButtonStyle::RadioButtonStyle(QRadioButton *target):
     QProxyStyle(nullptr),
-    _animation(new SimpleAnimation(0,5,150,false,target)),// 最大半径为5,150毫秒完成动画
     _controlColors(ControlColors::controlColors()),
-    _radius(_animation->startValue().toInt()),
     _target(target)
 {
-    _animation->setUpdate(target);
-    connect(_animation,&QVariantAnimation::valueChanged,this,[r = &_radius](const QVariant &value)mutable{*r = value.toInt();});
-    connect(_target,&QRadioButton::toggled,_animation,&SimpleAnimation::reverseDirectionAndStart);
-}
-
-QRect RadioButtonStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
-{
-    if(element == SE_RadioButtonIndicator)
-        return QProxyStyle::subElementRect(SE_RadioButtonIndicator, option, widget).translated(1,1);
-    return QProxyStyle::subElementRect(element,option,widget);
+    _group = new QParallelAnimationGroup(_target);
+    _group->addAnimation(new SimpleAnimation(0,FillCircleRadius,Time,true,target));
+    ((SimpleAnimation*)_group->animationAt(0))->setUpdate(_target);
+    connect(_target,&QRadioButton::toggled,this,[this](bool checked){_group->setDirection((QAbstractAnimation::Direction)!checked);_group->start();});
 }
 
 void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     if (element == PE_IndicatorRadioButton)
     {
-        QStyle::State op_state = option->state;
-        QRect indicator = subElementRect(SE_RadioButtonIndicator, option, widget);
-        QPoint center(indicator.x()+indicator.width()/2,indicator.y()+indicator.height()/2);
+        CheckableControlState s(option->state);
+        if(s.unenable_select)_UnEnableOn = true;
+        if(s.normal)_UnEnableOn = false;
+        bool unenable_last_select = !s.enable && s.off && _UnEnableOn;
+
         quint8 state = 0;
-
-        bool enable = op_state & State_Enabled;
-        bool on = op_state & State_On;
-        bool off = op_state & State_Off;
-        bool over = op_state & State_MouseOver;
-        bool sunken = op_state & State_Sunken;
-
-        bool normal = enable && off && !over && !sunken;
-        bool normal_over = enable && off && over && !sunken;
-        bool normal_sunke = enable && off && over && sunken;
-
-        bool selected = enable && on && !over && !sunken;
-        bool select_sunken = enable && on && over && sunken;
-        bool select_over = enable && on && over && !sunken;
-
-        bool unenable = !enable && off;
-        bool unenable_select = !enable && on;
-        if(unenable_select)_UnEnableOn = true;
-        if(normal)_UnEnableOn = false;
-        bool unenable_last_select = !enable && off && _UnEnableOn;
-
-        if(normal)state = 0;// 普通状态
-        if(normal_over)state = 5;// 未选中但鼠标悬浮
-        if(normal_sunke)state = 4;// 未选中但鼠标按下
-        if(selected)state = 1;// 选中状态
-        if(select_sunken)state = 2;// 选中且鼠标按下
-        if(select_over)state = 3;// 选中但鼠标悬浮
-        if(unenable)state = 6; // 禁用状态
-        if(unenable_select)state = 7;// 禁用且选中
+        if(s.normal)state = 0;// 普通状态
+        if(s.normal_over)state = 5;// 未选中但鼠标悬浮
+        if(s.normal_sunke)state = 4;// 未选中但鼠标按下
+        if(s.selected)state = 1;// 选中状态
+        if(s.select_sunken)state = 2;// 选中且鼠标按下
+        if(s.select_over)state = 3;// 选中但鼠标悬浮
+        if(s.unenable)state = 6; // 禁用状态
+        if(s.unenable_select)state = 7;// 禁用且选中
         if(unenable_last_select)state = 8;// 禁用未选中，但上一次是禁用且选中
 
-        painter->save(); // ① save
+        painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
+
+        QRect indicator(this->subElementRect(SE_RadioButtonIndicator, option, _target));
+        indicator.translate(1,1);
+        QPointF center(indicator.x()+indicator.width()/2,indicator.y()+indicator.height()/2);
 
         // 设置画笔，绘制外圆
         QPen pen;
-        int adjustedRadius = _radius;
-
         if(state == 0)
             pen = QPen(_controlColors->normalBorder());
         else if(state == 4)
@@ -73,21 +54,31 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
             pen = QPen(_controlColors->disEnabled());
         else
             pen = QPen(_controlColors->prominence());
-        if(state > 6)
-            adjustedRadius = _animation->endValue().toInt();
+
         painter->setPen(pen);
-        painter->drawEllipse(indicator);
+        if(_enableJumpAnimation)
+        {
+            int r = ((SimpleAnimation*)_group->animationAt(1))->_runTimeValue.toInt();
+            painter->drawEllipse(center,r,r);
+        }
+        else
+            painter->drawEllipse(indicator);
 
         // 根据状态绘制内圆
         if(state < 4)
             painter->setBrush(_controlColors->prominence());
         else
             painter->setBrush(_controlColors->disEnabled());
+
         painter->setPen(Qt::NoPen);
+        int r = ((SimpleAnimation*)_group->animationAt(0))->_runTimeValue.toInt();
+        if(state > 6)
+            r = FillCircleRadius;
         if(state == 3)
-            painter->drawEllipse(center, adjustedRadius + 1, adjustedRadius + 1);
+            painter->drawEllipse(center, r + 1, r + 1);
         else
-            painter->drawEllipse(center, adjustedRadius, adjustedRadius);
+            painter->drawEllipse(center, r, r);
+
         painter->restore();
         return;
     }
@@ -96,7 +87,29 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
 
 void RadioButtonStyle::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
+    painter->save();
     if(!enabled)
-        const_cast<QPalette &>(pal).setColor(textRole,_controlColors->disEnabled());
-    return QProxyStyle::drawItemText(painter, rect, flags, pal, enabled,text,textRole);
+        painter->setPen(_controlColors->disEnabled());
+    QProxyStyle::drawItemText(painter, rect, flags, pal, enabled,text,textRole);
+    painter->restore();
+}
+
+void RadioButtonStyle::enableJumpAnimation(bool isEnable)
+{
+    if(isEnable && !_enableJumpAnimation)
+    {
+        auto ani = new SimpleAnimation(HalfIndicator,HalfIndicator,Time+50,true,_target);
+        ani->setKeyValueAt(0.5,0);
+        ani->setUpdate(_target);
+        ani->_runTimeValue = HalfIndicator;
+        _group->addAnimation(ani);
+        _enableJumpAnimation =true;
+    }
+    if(!isEnable && _enableJumpAnimation)
+    {
+        auto ani = _group->animationAt(1);
+        _group->removeAnimation(ani);
+        ani->deleteLater();
+        _enableJumpAnimation = false;
+    }
 }

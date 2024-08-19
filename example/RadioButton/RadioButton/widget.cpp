@@ -1,7 +1,7 @@
 ﻿#include "widget.h"
 #include "ui_widget.h"
 #include <QColorDialog>
-#include "utils/controlcolors.h"
+#include "utils/customcontrol.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -19,6 +19,9 @@ Widget::Widget(QWidget *parent)
         if (color.isValid())
             ControlColors::controlColors()->setProminence(color);
     });
+
+    ui->radioButton->enableJumpAnimation(true);
+    ui->radioButton_2->enableJumpAnimation(true);
 }
 
 Widget::~Widget()

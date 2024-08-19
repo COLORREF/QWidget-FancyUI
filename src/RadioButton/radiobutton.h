@@ -13,6 +13,7 @@ public:
     explicit RadioButton(const QString &text, QWidget *parent = nullptr);
     void setText(const QString &text);
     QString text() const;
+    void enableJumpAnimation(bool isEnable);
 private:
     bool _userSetEmptyText = false;
     bool _userSetNullText = false;
