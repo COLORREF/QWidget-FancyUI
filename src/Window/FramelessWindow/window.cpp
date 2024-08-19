@@ -46,6 +46,19 @@ void FramelessWindowBase::deleteTitleBar()
     }
 }
 
+void FramelessWindowBase::showSystemTitleBarMenu()
+{
+    // 获取鼠标全局位置
+    POINT p;
+    ::GetCursorPos(&p);
+    HWND hWnd = (HWND)this->window()->winId();
+    HMENU hSysMenu = GetSystemMenu(hWnd, FALSE);// 获取系统菜单
+    if (hSysMenu)
+    {
+        TrackPopupMenu(hSysMenu, TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_LEFTALIGN | TPM_VERNEGANIMATION | TPM_HORNEGANIMATION, p.x, p.y, 0, hWnd, NULL);// 启动菜单的循环
+    }
+}
+
 void FramelessWindowBase::onThemeChange(Theme::Type type)
 {
     if (type == Theme::Type::LIGHT)
@@ -227,7 +240,7 @@ F_DEFINITION_PAINTEVENT(FramelessWindowBase)
 
 SimpleFramelessWindow::SimpleFramelessWindow(QWidget *parent)
     : FramelessWindowBase(parent, Type::Simple),
-      maximize_button((MaximizeButton *)((SimpleTitleBar *)this->_titleBar)->maximizeButton())
+    maximize_button((MaximizeButton *)((SimpleTitleBar *)this->_titleBar)->maximizeButton())
 {
 }
 
@@ -388,7 +401,7 @@ void FramelessWindow::setTitleColor(const QColor &lightColor, const QColor &dark
 }
 
 TransparentEffectWindowBase::TransparentEffectWindowBase(QWidget *parent, WindowEffectType effectType) : FramelessWindow{parent},
-                                                                                                         effect_type{effectType}
+    effect_type{effectType}
 {
     bool isWindows11 = WindowManager::isWindows11();
     bool isWindowsVersionBelowWindows10 = WindowManager::isWindowsVersionBelowWindows10();
@@ -519,7 +532,7 @@ void AreoWindow::init(long long abgr)
 
 LightAndDarkWidget::LightAndDarkWidget(QWidget *parent, QColor light, QColor dark)
     : QWidget{parent},
-      _themeColorManagement{new ThemeColorManagement(this, light, dark)}
+    _themeColorManagement{new ThemeColorManagement(this, light, dark)}
 {
     this->_isClearBeforeNewPaint = false;
     this->connect(this->_themeColorManagement, &ThemeColorManagement::valueChanged, this, static_cast<void (QWidget::*)()>(&QWidget::update));
@@ -569,9 +582,9 @@ NTQQWindow::NTQQWindow(QWidget *parent) : SimpleFramelessWindow(parent)
     else
     {
         qWarning()
-            << "The QQNT window with fuzzy sidebar effect is only effective in Windows11 operating system,"
-            << "and the sidebar of Windows10 operating system will not have fuzzy effect."
-            << "The effect of the operating system below Windows10 is unknown, and unknown errors may occur.";
+        << "The QQNT window with fuzzy sidebar effect is only effective in Windows11 operating system,"
+        << "and the sidebar of Windows10 operating system will not have fuzzy effect."
+        << "The effect of the operating system below Windows10 is unknown, and unknown errors may occur.";
     }
 }
 
