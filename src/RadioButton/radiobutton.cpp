@@ -43,3 +43,10 @@ QString RadioButton::text() const
     return QRadioButton::text();
 }
 
+void RadioButton::enableJumpAnimation(bool isEnable)
+{
+    auto style = dynamic_cast<RadioButtonStyle*>(this->style());
+    if(style)
+        style->enableJumpAnimation(isEnable);
+}
+

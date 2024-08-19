@@ -1,22 +1,21 @@
 SOURCES += \
+    $$PWD/animation.cpp \
     $$PWD/compositionwindoweffect.cpp \
     $$PWD/dwmwindoweffect.cpp \
     $$PWD/imageutils.cpp \
     $$PWD/mouseeventcolormanagement.cpp \
     $$PWD/theme.cpp \
-    $$PWD/themecolormanagement.cpp \
     $$PWD/windowmanager.cpp
 
 HEADERS += \
+    $$PWD/animation.h \
     $$PWD/compositionwindoweffect.h \
-    $$PWD/controlcolors.h \
+    $$PWD/customcontrol.h \
     $$PWD/dwmwindoweffect.h \
     $$PWD/imageutils.h \
     $$PWD/mouseeventcolormanagement.h \
     $$PWD/precompile.h \
-    $$PWD/simpleanimation.h \
     $$PWD/theme.h \
-    $$PWD/themecolormanagement.h \
     $$PWD/windowmanager.h
 
 
