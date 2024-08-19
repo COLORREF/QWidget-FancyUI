@@ -1,12 +1,14 @@
 ﻿#include "checkboxstyle.h"
 
+static constexpr int TIME = 250;
+static constexpr int Radius = 12;
+
 CheckBoxStyle::CheckBoxStyle(QCheckBox *target):
-    _animation(new SimpleAnimation(0,12,250,false,target)),
+    _animation(new SimpleAnimation(0,Radius,TIME,false,target)),
     _controlColors(ControlColors::controlColors()),
     _target(target)
 {
     _animation->setUpdate(target);
-    connect(_animation,&QVariantAnimation::valueChanged,this,[r = &_radius](const QVariant &value){*r = value.toInt();});
     connect(_target,&QCheckBox::toggled,_animation,&SimpleAnimation::reverseDirectionAndStart);
 }
 
@@ -21,43 +23,23 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
 {
     if (element == PE_IndicatorCheckBox)
     {
-        QStyle::State op_state = option->state;
         QRect indicator_rect = QProxyStyle::subElementRect(SE_CheckBoxIndicator, option, widget);
         indicator_rect.translate(1,1);
         quint8 state = 0;
-
-        bool enable = op_state & State_Enabled;
-        bool on = op_state & State_On;
-        bool off = op_state & State_Off;
-        bool over = op_state & State_MouseOver;
-        bool sunken = op_state & State_Sunken;
-
-        bool normal = enable && off && !over && !sunken;
-        bool normal_over = enable && off && over && !sunken;
-        bool normal_sunke = enable && off && over && sunken;
-
-        bool selected = enable && on && !over && !sunken;
-        bool select_sunken = enable && on && over && sunken;
-        bool select_over = enable && on && over && !sunken;
-
-        bool unenable = !enable && off;
-        bool unenable_select = !enable && on;
-
-        if(normal)state = 0;// 普通状态
-        if(normal_sunke)state = 1;// 未选中但鼠标按下
-        if(normal_over)state = 2;// 未选中但鼠标悬浮
-        if(selected)state = 3;// 选中状态
-        if(select_over)state = 4;// 选中但鼠标悬浮
-        if(select_sunken)state = 5;// 选中且鼠标按下
-        if(unenable)state = 6; // 禁用状态
-        if(unenable_select)state = 7;// 禁用且选中
-
-        painter->save(); // ① save
+        CheckableControlState s(option->state);
+        if(s.normal)state = 0;// 普通状态
+        if(s.normal_sunke)state = 1;// 未选中但鼠标按下
+        if(s.normal_over)state = 2;// 未选中但鼠标悬浮
+        if(s.selected)state = 3;// 选中状态
+        if(s.select_over)state = 4;// 选中但鼠标悬浮
+        if(s.select_sunken)state = 5;// 选中且鼠标按下
+        if(s.unenable)state = 6; // 禁用状态
+        if(s.unenable_select)state = 7;// 禁用且选中
+        painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
 
         // 设置画笔，绘制外矩形
         QPen pen;
-        // int adjustedSideLength = _sideLength;
         if(state == 0)
             pen = QPen(_controlColors->normalBorder());
         else if(state == 1)
@@ -69,29 +51,27 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
         painter->setPen(pen);
         painter->drawRoundedRect(indicator_rect,3,3);
 
-
         // 设置画刷，根据状态绘制内矩形
         if( state < 6)
             painter->setBrush(_controlColors->prominence());
         else if(state > 5)
             painter->setBrush(_controlColors->disEnabled());
         painter->setPen(Qt::NoPen);
-
-
         QPainterPath clip_path;// 圆角矩形裁剪路径
         QPoint center(indicator_rect.x()+indicator_rect.width()/2,indicator_rect.y()+indicator_rect.height()/2);
         clip_path.addRoundedRect(indicator_rect, 3, 3);
         painter->setClipPath(clip_path);
-        painter->drawEllipse(center,_radius,_radius);
+        int r = _animation->_runTimeValue.toInt();
+        painter->drawEllipse(center,r,r);
 
         // 绘制勾
-        if(on)
+        if(s.on)
         {
             int x = indicator_rect.x();
             int y = indicator_rect.y();
             int l = indicator_rect.width();
             pen = QPen(Qt::white);
-            if(over)
+            if(s.over)
                 pen.setWidth(2);
             if(state == 5)
                 pen.setWidth(1);
@@ -102,7 +82,6 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
             painter->drawLine(p1,p2);
             painter->drawLine(p2,p3);
         }
-
         painter->restore();
         return;
     }
@@ -110,7 +89,9 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
 }
 void CheckBoxStyle::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
+    painter->save();
     if(!enabled)
-        const_cast<QPalette &>(pal).setColor(textRole,ControlColors::controlColors()->disEnabled());
+        painter->setPen(_controlColors->disEnabled());
     QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
+    painter->restore();
 }
