@@ -26,7 +26,7 @@
 
 #include "utils/theme.h"
 #include "utils/precompile.h"
-#include "utils/themecolormanagement.h"
+#include "utils/animation.h"
 #include "utils/dwmwindoweffect.h"
 #include "utils/compositionwindoweffect.h"
 
