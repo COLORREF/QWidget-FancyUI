@@ -1,6 +1,6 @@
 ﻿#include "widget.h"
 #include "ui_widget.h"
-#include "utils/controlcolors.h"
+#include "utils/customcontrol.h"
 #include <QColorDialog>
 
 Widget::Widget(QWidget *parent)
