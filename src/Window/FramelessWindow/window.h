@@ -43,6 +43,7 @@ public:
     QColor darkThemeColor();
     void setThemeColorToggleTime(int msecs = 300); // 设置主题色切换时间
     virtual void deleteTitleBar();                 // 做了安全检查，调用此函数后，标题栏指针无效，通过标题栏指针获取到的按钮指针也无效，使用这些无效指针会使程序崩溃
+    void showSystemTitleBarMenu();                 // 在调用时的鼠标位置弹出系统默认的标题栏菜单，选项无实际作用，需要在 nativeEvent中手动处理消息
 protected slots:
     virtual void onThemeChange(Theme::Type type);
 
