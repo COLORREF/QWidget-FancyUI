@@ -6,8 +6,15 @@
 #include <QStyle>
 #include "utils/precompile.h"
 
-class ControlColors
+class ControlColors : public QObject
 {
+    Q_OBJECT
+signals:
+    void disEnabledColorChange(const QColor&);
+    void normalBorderColorChange(const QColor&);
+    void prominenceColorChange(const QColor&);
+    void backgroundColorChange(const QColor&);
+    void textColorChange(const QColor&);
 public:
     static ControlColors* controlColors()
     {
@@ -18,6 +25,7 @@ public:
 private:
     // 默认颜色
     ControlColors():
+        QObject(nullptr),
         _disEnabled(180,180,180),
         _normalBorder(131,131,131),
         _prominence(212,78,125),
@@ -25,11 +33,11 @@ private:
         _text(Qt::GlobalColor::black)
     {};
     QMap<QString,QColor> _expandColors;
-    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,disEnabled,DisEnabled,)
-    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,normalBorder,NormalBorder,)
-    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,prominence,Prominence,)
-    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,background,Background,)
-    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,text,Text,)
+    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,disEnabled,DisEnabled,emit disEnabledColorChange(_disEnabled);)
+    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,normalBorder,NormalBorder,emit normalBorderColorChange(_normalBorder);)
+    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,prominence,Prominence,emit prominenceColorChange(_prominence);)
+    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,background,Background,emit backgroundColorChange(_background);)
+    F_PRIVATE_PROPERTY_PUBLIC_GETSET(QColor,text,Text,emit textColorChange(_text););
 };
 
 

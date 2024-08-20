@@ -15,11 +15,14 @@ ButtonStyleBase::ButtonStyleBase(QAbstractButton *target)
     _maxRadius = qSqrt(qPow(_target->width()/2,2)+qPow(_target->height()/2,2));
     auto createAnimations = [this](){
         QParallelAnimationGroup* group = new QParallelAnimationGroup(_target);
-        group->addAnimation(new SimpleAnimation(0,_maxRadius,TIME,true,_target));
-        group->addAnimation(new SimpleAnimation(_controlColors->prominence().lighter(LIGHTERRATIO),_controlColors->prominence(),TIME,true,_target));
-        ((SimpleAnimation*)group->animationAt(0))->setUpdate(_target);
-        ((SimpleAnimation*)group->animationAt(1))->setUpdate(_target);
-        connect(group,&QParallelAnimationGroup::finished,this,[this](){_paintPoint.dequeue();});
+        SimpleAnimation* r_ani = new SimpleAnimation(0,_maxRadius,TIME,true,_target);
+        SimpleAnimation* h_ani =  new SimpleAnimation(_controlColors->prominence().lighter(LIGHTERRATIO),_controlColors->prominence(),TIME,true,_target);
+        group->addAnimation(r_ani);
+        group->addAnimation(h_ani);
+        r_ani->setUpdate(_target);
+        h_ani->setUpdate(_target);
+        connect(group,&QParallelAnimationGroup::finished,this,[this](){this->_paintPoint.dequeue();});
+        connect(_controlColors,&ControlColors::prominenceColorChange,h_ani,[h_ani](const QColor& color){h_ani->setValue(color.lighter(LIGHTERRATIO),color);});
         return group;
     };
     _animationGroupPool = new ParallelAnimationGroupPool(createAnimations,_target);
