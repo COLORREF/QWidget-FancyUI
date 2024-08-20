@@ -9,6 +9,7 @@
 #include <QMetaMethod>
 #include <QParallelAnimationGroup>
 #include <QSet>
+#include <QPainter>
 #include "theme.h"
 #include "precompile.h"
 
@@ -175,6 +176,77 @@ private slots:
     }
 };
 
+
+// 点击波纹动画
+class ClickRippleAnimation : public QObject
+{
+    Q_OBJECT
+public:
+    ClickRippleAnimation(int msecs, int maxRadius,const QColor& startColor,const QColor& endColor,quint32 initialQuantity, QObject* parent)
+        :QObject(parent)
+    {
+        auto factory = [=]()->QParallelAnimationGroup*{
+            QParallelAnimationGroup* group = new QParallelAnimationGroup(parent);
+            SimpleAnimation* r_ani = new SimpleAnimation(0,maxRadius,msecs,true,group);
+            SimpleAnimation* h_ani =  new SimpleAnimation(startColor,endColor,msecs,true,group);
+            r_ani->_runTimeValue = 0;
+            h_ani->_runTimeValue = QColor(Qt::transparent);
+            group->addAnimation(r_ani);
+            group->addAnimation(h_ani);
+            connect(group,&QParallelAnimationGroup::finished,this,[this](){this->_paintPoint.dequeue();});
+            return group;
+        };
+
+        _pool = new ParallelAnimationGroupPool(factory,this);
+        for(quint32 i = 0; i < initialQuantity; i++)
+            _pool->addGroup(factory());
+    }
+    void setUpdate(QWidget* device)
+    {
+        for(QParallelAnimationGroup* grop : _pool->idle())
+        {
+            ((SimpleAnimation*)(grop->animationAt(0)))->setUpdate(device);
+            ((SimpleAnimation*)(grop->animationAt(1)))->setUpdate(device);
+        }
+    }
+    void paint(QPainter* painter)
+    {
+        painter->save();
+        const QQueue<QParallelAnimationGroup*>& groups = _pool->running();
+        for(QParallelAnimationGroup* grop : groups)
+        {
+            painter->setBrush(((SimpleAnimation*)(grop->animationAt(1)))->_runTimeValue.value<QColor>());
+            int r = ((SimpleAnimation*)(grop->animationAt(0)))->_runTimeValue.toInt();
+            painter->drawEllipse(_paintPoint.at(groups.indexOf(grop)),r,r);
+        }
+        painter->restore();
+    }
+public slots:
+    void updateMaxRadius(int maxRadius)
+    {
+        for(QParallelAnimationGroup* grop : _pool->idle())
+            ((SimpleAnimation*)(grop->animationAt(0)))->setEndValue(maxRadius);
+    }
+
+    void updateStartColor(const QColor& startColor)
+    {
+        for(QParallelAnimationGroup* grop : _pool->idle())
+            ((SimpleAnimation*)(grop->animationAt(1)))->setStartValue(startColor);
+    }
+    void updateEndColor(const QColor& endColor)
+    {
+        for(QParallelAnimationGroup* grop : _pool->idle())
+            ((SimpleAnimation*)(grop->animationAt(1)))->setEndValue(endColor);
+    }
+    void start(QPointF pt)
+    {
+        _paintPoint.enqueue(pt);
+        _pool->acquireGropAndStart();
+    }
+private:
+    ParallelAnimationGroupPool* _pool;
+    QQueue<QPointF> _paintPoint;// 绘制坐标
+};
 
 
 #endif // ANIMATION_H
