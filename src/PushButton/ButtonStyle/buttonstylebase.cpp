@@ -12,32 +12,13 @@ ButtonStyleBase::ButtonStyleBase(QAbstractButton *target)
 {
     _target->installEventFilter(this);
     _controlColors->ExpandColors().insert("_buttonText_ButtonStyleBase",Qt::white);
-    _maxRadius = qSqrt(qPow(_target->width()/2,2)+qPow(_target->height()/2,2));
-    auto createAnimations = [this](){
-        QParallelAnimationGroup* group = new QParallelAnimationGroup(_target);
-        SimpleAnimation* r_ani = new SimpleAnimation(0,_maxRadius,TIME,true,_target);
-        SimpleAnimation* h_ani =  new SimpleAnimation(_controlColors->prominence().lighter(LIGHTERRATIO),_controlColors->prominence(),TIME,true,_target);
-        group->addAnimation(r_ani);
-        group->addAnimation(h_ani);
-        r_ani->setUpdate(_target);
-        h_ani->setUpdate(_target);
-        connect(group,&QParallelAnimationGroup::finished,this,[this](){this->_paintPoint.dequeue();});
-        connect(_controlColors,&ControlColors::prominenceColorChange,h_ani,[h_ani](const QColor& color){h_ani->setValue(color.lighter(LIGHTERRATIO),color);});
-        return group;
-    };
-    _animationGroupPool = new ParallelAnimationGroupPool(createAnimations,_target);
-    for(int i = 0; i< 5; i++)
-        _animationGroupPool->addGroup(createAnimations());
-}
-
-QRect ButtonStyleBase::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
-{
-    return QProxyStyle::subElementRect(element, option, widget);
-}
-
-void ButtonStyleBase::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
-{
-    QProxyStyle::drawPrimitive(element,option,painter,widget);
+    int maxRadius = qSqrt(qPow(_target->width()/2,2)+qPow(_target->height()/2,2));
+    _ripple = new ClickRippleAnimation(TIME,maxRadius,_controlColors->prominence().lighter(LIGHTERRATIO),_controlColors->prominence(),5,_target);
+    _ripple->setUpdate(_target);
+    connect(_controlColors,&ControlColors::prominenceColorChange,_ripple,[ripple = _ripple](const QColor& color){
+        ripple->updateStartColor(color.lighter(LIGHTERRATIO));
+        ripple->updateEndColor(color);
+    });
 }
 
 void ButtonStyleBase::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
@@ -71,13 +52,9 @@ void ButtonStyleBase::drawControl(ControlElement element, const QStyleOption *op
             painter->setBrush(_controlColors->prominence());
         painter->setPen(QPen(Qt::GlobalColor::transparent,0));
         painter->drawRect(rect);
-        const QQueue<QParallelAnimationGroup*>& groups = _animationGroupPool->running();
-        for(QParallelAnimationGroup* grop : groups)
-        {
-            painter->setBrush(((SimpleAnimation*)(grop->animationAt(1)))->_runTimeValue.value<QColor>());
-            int r = ((SimpleAnimation*)(grop->animationAt(0)))->_runTimeValue.toInt();
-            painter->drawEllipse(_paintPoint.at(groups.indexOf(grop)),r,r);
-        }
+
+        this->_ripple->paint(painter);
+
         painter->restore();
         return;
     }
@@ -90,20 +67,13 @@ bool ButtonStyleBase::eventFilter(QObject *obj, QEvent *event)
         return QProxyStyle::eventFilter(obj, event);
 
     if (event->type() == QEvent::Resize)
-    {
-        _maxRadius = qSqrt(qPow(_target->width() / 2, 2) + qPow(_target->height() / 2, 2));
-        for(QParallelAnimationGroup* grop : _animationGroupPool->idle())
-            ((SimpleAnimation*)(grop->animationAt(0)))->setEndValue(_maxRadius);
-    }
+        _ripple->updateMaxRadius(qSqrt(qPow(_target->width() / 2, 2) + qPow(_target->height() / 2, 2)));
 
     if (_target->isEnabled() && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick))
     {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->button() == Qt::LeftButton)
-        {
-            _paintPoint.enqueue(mouseEvent->position());
-            _animationGroupPool->acquireGropAndStart();
-        }
+            this->_ripple->start(mouseEvent->position());
     }
     return QProxyStyle::eventFilter(obj, event);
 }
