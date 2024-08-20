@@ -59,6 +59,7 @@ If you are using the MinGW compiler, you need to compile the OpenCV source code 
 - Basic Controls
   - Radio buttons
   - Checkboxes
+  - push buttons
   - Fill animation button
   - Circular image label
 - Material Filters
