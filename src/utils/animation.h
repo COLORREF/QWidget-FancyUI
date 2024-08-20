@@ -58,8 +58,8 @@ public:
         Q_UNUSED(painter);
         Q_UNUSED(extra);
     }
+    inline void setValue(const QVariant& start, const QVariant& end){setStartValue(start);setEndValue(end);}
     mutable QVariant _runTimeValue;
-
 public slots:
     inline void setDirection(bool isforward = true) { QVariantAnimation::setDirection((Direction)!isforward); };
     inline void setForward() { setDirection(Direction::Forward); }
