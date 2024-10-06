@@ -19,7 +19,10 @@
  简体中文 | <a href="./README_EN.md">English</a>
 </p>
 
-
+<div align="center">
+  <h1>备战考研中，会暂停更新一段时间😘</h1>
+</div>
+  
 # 重要说明
 
 - 仅支持Windows系统
