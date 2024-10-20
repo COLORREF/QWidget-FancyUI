@@ -132,9 +132,9 @@ void Widget::showExample(int index)
         {
             ui->setupUi(master_scope);
             ui->light->setChecked(true);
-            connect(ui->light, &QRadioButton::clicked, w, &Theme::toggleLight);
-            connect(ui->dark, &QRadioButton::clicked, w, &Theme::toggleDark);
-            connect(ui->system, &QRadioButton::clicked, w, &Theme::followSystem);
+            connect(ui->light, &QRadioButton::toggled, w, &Theme::toggleLight);
+            connect(ui->dark, &QRadioButton::toggled, w, &Theme::toggleDark);
+            connect(ui->system, &QRadioButton::toggled, w, &Theme::followSystem);
         }
 
         w->setAttribute(Qt::WA_DeleteOnClose, true); // 窗口关闭（区别于hide）后，不可以再次show，必须delete，设置此属性自动delete

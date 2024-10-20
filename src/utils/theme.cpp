@@ -26,13 +26,15 @@ void Theme::setTheme(Type themeType)
 void Theme::toggleLight()
 {
     Theme::_is_follow_system = false;
-    Theme::setTheme(Theme::Type::LIGHT);
+    if((bool)Theme::_type)//Theme::_type == Theme::Type::DARK
+        Theme::setTheme(Theme::Type::LIGHT);
 }
 
 void Theme::toggleDark()
 {
     Theme::_is_follow_system = false;
-    Theme::setTheme(Theme::Type::DARK);
+    if(!(bool)Theme::_type)//Theme::_type == Theme::Type::LIGHT
+        Theme::setTheme(Theme::Type::DARK);
 }
 
 void Theme::followSystem()
@@ -42,9 +44,13 @@ void Theme::followSystem()
         Theme::_is_follow_system = true;
         QSettings settings(FULL_THEME_REGEDIT_PATH, QSettings::NativeFormat);
         if (settings.value("AppsUseLightTheme") == 0) // 深色主题
-            Theme::setTheme(Theme::Type::DARK);
+        {
+            if(!(bool)Theme::_type)//Theme::_type == Theme::Type::LIGHT
+                Theme::setTheme(Theme::Type::DARK);
+        }
         else // 浅色主题
-            Theme::setTheme(Theme::Type::LIGHT);
+            if((bool)Theme::_type)//Theme::_type == Theme::Type::DARK
+                Theme::setTheme(Theme::Type::LIGHT);
     }
 }
 
