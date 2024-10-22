@@ -4,10 +4,15 @@
 #include <QObject>
 #include <QWidget>
 #include <QVector>
+#include <QMap>
 #include <QSpacerItem>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QColorDialog>
+
+#if (QT_VERSION <= QT_VERSION_CHECK(6, 3, 0))
+#include <QRegularExpression>
+#endif
 
 namespace Ui
 {
