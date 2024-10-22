@@ -10,19 +10,29 @@ Widget::Widget(QWidget *parent)
 {
     this->setWindowTitle("示例程序");
     ui->setupUi(this);
-    connect(ui->base, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 0));
-    connect(ui->simple, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 1));
-    connect(ui->standard, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 2));
-    connect(ui->areo, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 3));
-    connect(ui->fully_transparent, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 4));
-    connect(ui->system_color, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 5));
-    connect(ui->mica, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 6));
-    connect(ui->mica_alt, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 7));
-    connect(ui->acrylic, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 8));
-    connect(ui->custom_titlebar, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 9));
-    connect(ui->microsoft_store, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 10));
-    connect(ui->ntqq, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 11));
-    connect(ui->adaptive, &QPushButton::clicked, this, std::bind(&Widget::showExample, this, 12));
+
+    QMap<QString,int> btn_indexs;
+    btn_indexs["base"] = 0;
+    btn_indexs["simple"] = 1;
+    btn_indexs["standard"] = 2;
+    btn_indexs["areo"] = 3;
+    btn_indexs["fully_transparent"] = 4;
+    btn_indexs["system_color"] = 5;
+    btn_indexs["mica"] = 6;
+    btn_indexs["mica_alt"] = 7;
+    btn_indexs["acrylic"] = 8;
+    btn_indexs["custom_titlebar"] = 9;
+    btn_indexs["microsoft_store"] = 10;
+    btn_indexs["ntqq"] = 11;
+    btn_indexs["adaptive"] = 12;
+
+#if (QT_VERSION <= QT_VERSION_CHECK(6, 3, 0))
+    for(auto& btn : findChildren<QPushButton *>(QRegularExpression(QString(R"([\s\S]+)")),Qt::FindChildOption::FindDirectChildrenOnly))
+#else
+    for(auto& btn : findChildren<QPushButton*>())
+#endif
+        connect(btn,&QPushButton::clicked,this,std::bind(&Widget::showExample,this,btn_indexs[btn->objectName()]));
+
 }
 
 Widget::~Widget()
@@ -110,7 +120,7 @@ void Widget::showExample(int index)
             break;
         case 10:
             w = new MSWindow;                             // 微软商店风格窗口
-            master_scope = ((MSWindow *)w)->clientArea(); // MSWindow重新实现了qWidgetUseInSetupUi，不能使用父类的此函数
+            master_scope = ((MSWindow *)w)->clientArea();
             ((FramelessWindow *)w)->setWindowTitle("微软商店风格窗口");
             break;
         case 11:
@@ -144,10 +154,10 @@ void Widget::showExample(int index)
         {
             QPushButton *btn = new QPushButton("设置颜色", w);
             ui->expansion->addWidget(btn);
-            connect(btn, &QPushButton::clicked, w, [w]()
-                    {
+            connect(btn, &QPushButton::clicked, w, [w](){
                 QColor color = QColorDialog::getColor(QColor(255,255,255,105),w,"选择颜色",QColorDialog::ShowAlphaChannel);
-                ((AreoWindow*)w)->changeColor(ABGR(color.alpha(),color.blue(),color.green(),color.red())); });
+                ((AreoWindow*)w)->changeColor(ABGR(color.alpha(),color.blue(),color.green(),color.red()));
+            });
         }
         if (index == 11)
         {
