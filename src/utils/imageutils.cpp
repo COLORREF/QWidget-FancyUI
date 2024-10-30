@@ -124,8 +124,8 @@ FImage &FImage::verticalUniforBlur(int radius)
 
 FImage &FImage::impulseNoise(double noiseRatio)
 {
-    QRgb white = qRgba(255, 255, 255, 255);
-    QRgb black = qRgba(0, 0, 0, 255);
+    constexpr QRgb white = qRgba(255, 255, 255, 255);
+    constexpr QRgb black = qRgba(0, 0, 0, 255);
     if (noiseRatio > 0.0 && noiseRatio < 1.0)
     {
         for (int x = 0; x < _qimage.width(); x++)
