@@ -1,3 +1,6 @@
-OpenCV/
+*.dll
+*.lib
+*.a
 *.user  
 build/
+opencv2/
