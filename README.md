@@ -23,9 +23,9 @@
 
 - 仅支持Windows系统，仅支持Qt 6
 - 支持MSVC、MingGW，release和debug编译
-- 第三方库：[OpenCV]([opencv/opencv: Open Source Computer Vision Library](https://github.com/opencv/opencv))、[magic-enum](https://github.com/Neargye/magic_enum)
+- 第三方库：[OpenCV](https://github.com/opencv/opencv)、[magic-enum](https://github.com/Neargye/magic_enum)
 
 # OpenCV环境配置
 
-点击此处下载[QWidget-FancyUI.zip——获取完整项目环境]([Release 完整项目环境 · COLORREF/QWidget-FancyUI](https://github.com/COLORREF/QWidget-FancyUI/releases/tag/example-2.0))，无需手动配置OpenCV
+点击此处下载[QWidget-FancyUI.zip——获取完整项目环境](https://github.com/COLORREF/QWidget-FancyUI/releases/tag/example-2.0)，无需手动配置OpenCV
 
