@@ -22,7 +22,7 @@
 # 重要说明
 
 - 仅支持Windows系统，仅支持Qt 6
-- 支持MSVC、MingGW，release和debug编译
+- 支持MSVC、MinGW，release和debug编译
 - 第三方库：[OpenCV](https://github.com/opencv/opencv)、[magic-enum](https://github.com/Neargye/magic_enum)
 
 # OpenCV环境配置
