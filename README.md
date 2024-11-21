@@ -19,58 +19,13 @@
  简体中文 | <a href="./README_EN.md">English</a>
 </p>
 
-<div align="center">
-  <h1>备战26考研中，不定期更新😘~</h1>
-</div>
-  
 # 重要说明
 
-- 仅支持Windows系统
-- 仅支持MSVC编译器编译
-- 仅支持Qt 6
-- MinGW编译器对Windows API支持非常差，理论上可以使用MinGW编译，但非常不建议
-- 部分代码未使用Windows API，支持跨平台，部分代码支持Qt 5，详细请自行测试
-- 后续将专为Windows系统开发和更新，不再考虑跨平台、Python语言支持以及适配Qt 5
+- 仅支持Windows系统，仅支持Qt 6
+- 支持MSVC、MingGW，release和debug编译
+- 第三方库：[OpenCV]([opencv/opencv: Open Source Computer Vision Library](https://github.com/opencv/opencv))、[magic-enum](https://github.com/Neargye/magic_enum)
 
 # OpenCV环境配置
 
-部分控件使用了`OpenCV`库，需要配置`OpenCV`，详细步骤：
+点击此处下载[QWidget-FancyUI.zip——获取完整项目环境]([Release 完整项目环境 · COLORREF/QWidget-FancyUI](https://github.com/COLORREF/QWidget-FancyUI/releases/tag/example-2.0))，无需手动配置OpenCV
 
-- 下载`OpenCV`安装包，选择以压缩包方式打开（或已安装），此仓库使用的是 Windows 64位 4.10版本，可根据实际环境选择
-- 将`....安装包路径(或安装路径)\opencv\build\`中的`include`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\OpenCV\`文件夹中
-- 将`....安装包路径(或安装路径)\opencv\build\x64\vc16\`中的`lib`和`bin`文件夹拷贝至：`....\QtWidget-FancyUI\src\utils\OpenCV\`文件夹中
-- 将`....\QtWidget-FancyUI\src\utils\OpenCV\bin`添加到系统环境变量，若已经安装并添加过，请忽略这一步
-
-若使用MinGW编译器，需要自行使用MinGW编译OpenCV源码。（不推荐，过于繁琐）
-
-# 已实现（详见example文件夹）
-
-- 主题
-  - 深色/浅色主题切换——跟随系统主题自动切换或手动切换
-  - 自定义主题色——自定义控件主题色
-- 无边框窗口
-  - 基类无边框窗口——仅有关闭按钮
-  - 简单的无边框窗口——仅有最小化、最大化、关闭按钮
-  - 标准无边框窗口——常见窗口样式：图标、窗口标题、最小化、最大化、关闭按钮
-  - 毛玻璃窗口
-  - 全透明窗口
-  - 跟随系统色窗口
-  - 云母窗口——仅支持Windows11系统
-  - 云母Alt窗口——仅支持Windows11系统
-  - 亚克力窗口——仅支持Windows11系统
-  - 微软商店风格窗口
-  - NT-QQ风格窗口
-  - 自适应布局窗口——根据窗口大小动态调整侧边栏宽度
-- 基础控件
-  - 单选框
-  - 复选框
-  - 普通按钮
-  - 填充动画按钮
-  - 圆形图片标签
-- 材质滤镜
-  - 高斯模糊滤镜——默认效果为亚克力材质（需要配置OpenCV）
-- `FImage`图像处理类（需要配置OpenCV）
-  - 高斯模糊
-  - 均匀模糊
-  - 椒盐噪点
-  - 灰度图转换
