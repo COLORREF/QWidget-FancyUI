@@ -188,7 +188,7 @@ ToolButtonBase::ToolButtonBase(QWidget *parent):
 void ToolButtonBase::setCheckable(bool checkable)
 {
     ((ToolButtonStyleBase*)(this->style()))->setCheckable(true);
-    QToolButton::setCheckable(true);
+    QToolButton::setCheckable(checkable);
 }
 
 void ToolButtonBase::setIcon(const Icon &icon)
