@@ -180,7 +180,7 @@ void Widget::showSidebar()
     int number0 = static_cast<int>(FancyIcon::Number0);
     for(int i = number0; i <= number0+20; i++)
     {
-        auto* btn = new AnimationOptionButton(QString("page_%1").arg(i),_aniSidebar);
+        auto* btn = new AnimationOptionButton(QString("page_%1").arg(i-number0),_aniSidebar);
         btn->setIcon(FancyIcon(i));
         this->_aniSidebar->addOption(btn);
     }
@@ -251,7 +251,7 @@ void Widget::showIcons()
     for (int i = 0; i < iconCount; i++)
     {
         ToolButtonBase* toolBtn = new ToolButtonBase(ui->scrollAreaWidgetContents);
-        toolBtn->setFixedSize(100,100);
+        toolBtn->setFixedSize(96,96);
         toolBtn->setCheckable(true);
         toolBtn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         toolBtn->setIcon(FancyIcon(i));
