@@ -291,22 +291,20 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
         // 绘制勾
         if(s.on)
         {
-            // int x = indicatorRect.x();
-            // int y = indicatorRect.y();
-            // int l = indicatorRect.width();
-            // QPointF p1(0.21875*l+x,0.53125*l+y);
-            // QPointF p2(0.40625*l+x,0.75*l+y);
-            // QPointF p3(0.84375*l+x,0.21875*l+y);
-            QLineF line1(4.3,10.5,7.3,14.0);
-            QLineF line2(7.3,14.0,14.3,5.5);
+            int x = indicatorRect.x();
+            int y = indicatorRect.y();
+            int l = indicatorRect.width();
+            QPointF p1(0.21875*l+x,0.53125*l+y);
+            QPointF p2(0.40625*l+x,0.75*l+y);
+            QPointF p3(0.84375*l+x,0.21875*l+y);
             pen.setColor(Qt::GlobalColor::white);
             if(s.over)
                 pen.setWidth(2);
             if(state == 5)
                 pen.setWidth(1);
             painter->setPen(pen);
-            painter->drawLine(line1);
-            painter->drawLine(line2);
+            painter->drawLine(p1,p2);
+            painter->drawLine(p2,p3);
         }
         painter->restore();
         return;

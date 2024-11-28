@@ -691,13 +691,14 @@ AdaptiveLayoutWindow::AdaptiveLayoutWindow(QWidget *parent,int sidebarMinimumWid
 void AdaptiveLayoutWindow::checkWidth()
 {
     int w = this->width();
-    if (w <= 850 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
+    int dw = w - 850;
+    if (dw <= 10 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Forward);
         this->_animation->start();
     }
 
-    else if (w > 850 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
+    else if (dw > 10 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Backward);
         this->_animation->start();
