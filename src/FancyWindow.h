@@ -40,9 +40,7 @@ public:
     void setThemeColorToggleTime(int msecs = 300); // 设置主题色切换时间
     virtual void deleteTitleBar();                 // 做了安全检查，调用此函数后，标题栏指针无效，通过标题栏指针获取到的按钮指针也无效，使用这些无效指针会使程序崩溃
     void showSystemTitleBarMenu();                 // 在调用时的鼠标位置弹出系统默认的标题栏菜单，选项无实际作用，需要在 nativeEvent中手动处理消息
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
-    void show();
-#endif
+    void show(Theme::Type t = Theme::Type::LIGHT);
 public slots:
     void windowTop(bool top);
 
@@ -187,7 +185,14 @@ protected:
         CompositionWindowEffect::setClientAreaFullyTransparent(hwnd);
     }
 
+    inline void setDwmMargins()
+    {
+        MARGINS margins = {(int)(this->width() * this->_dpi) +1, 0, 0, 0};
+        ::DwmExtendFrameIntoClientArea((HWND)(this->winId()), &margins);
+    }
+
     WindowEffectType effect_type;
+    F_RESIZEEVENT;
 
 private:
     inline void setTransparency()
@@ -213,9 +218,8 @@ class AcrylicEffectWindow : public TransparentEffectWindowBase
     Q_OBJECT
 public:
     explicit AcrylicEffectWindow(QWidget *paernt = nullptr)
-        : TransparentEffectWindowBase{paernt, WindowEffectType::ACRYLIC}
-    {
-    }
+        : TransparentEffectWindowBase{paernt, WindowEffectType::ACRYLIC}{}
+    F_RESIZEEVENT{TransparentEffectWindowBase::resizeEvent(event);}
 };
 
 class FullyTransparentWindow : public TransparentEffectWindowBase
@@ -233,9 +237,8 @@ class MicaEffectWindow : public TransparentEffectWindowBase
     Q_OBJECT
 public:
     explicit MicaEffectWindow(QWidget *parent = nullptr)
-        : TransparentEffectWindowBase{parent, WindowEffectType::MICA}
-    {
-    }
+        : TransparentEffectWindowBase{parent, WindowEffectType::MICA}{}
+    F_RESIZEEVENT{TransparentEffectWindowBase::resizeEvent(event);}
 };
 
 class MicaAltEffectWindow : public TransparentEffectWindowBase
@@ -243,19 +246,15 @@ class MicaAltEffectWindow : public TransparentEffectWindowBase
     Q_OBJECT
 public:
     explicit MicaAltEffectWindow(QWidget *parent = nullptr)
-        : TransparentEffectWindowBase{parent, WindowEffectType::MICAALT}
-    {
-    }
+        : TransparentEffectWindowBase{parent, WindowEffectType::MICAALT}{}
+    F_RESIZEEVENT{TransparentEffectWindowBase::resizeEvent(event);}
 };
 
 class SystemColorWindow : public TransparentEffectWindowBase
 {
     Q_OBJECT
 public:
-    explicit SystemColorWindow(QWidget *parent = nullptr)
-        : TransparentEffectWindowBase{parent, WindowEffectType::SYSTEMCOLOR}
-    {
-    }
+    explicit SystemColorWindow(QWidget *parent = nullptr): TransparentEffectWindowBase{parent, WindowEffectType::SYSTEMCOLOR}{}
 };
 
 class AreoWindow : public TransparentEffectWindowBase
@@ -307,10 +306,10 @@ class MSWindow : public TransparentEffectWindowBase
     Q_OBJECT
 public:
     explicit MSWindow(QWidget *parent = nullptr, WindowEffectType effectType = WindowEffectType::MICA);
-
     F_PRIVATE_PROPERTY(QHBoxLayout *, horizontalLayout)
     F_PROTECTED_POINTER_PUBLIC_GET(MSFilletedCornerWidget *, clientArea) // 客户区
     F_PROTECTED_POINTER_PUBLIC_GET(QWidget *, sidebar)                   // 侧边栏
+    F_RESIZEEVENT{TransparentEffectWindowBase::resizeEvent(event);}
 };
 
 // Code in writing
@@ -325,7 +324,7 @@ class AdaptiveLayoutWindow : public MSWindow
 {
     Q_OBJECT
 public:
-    explicit AdaptiveLayoutWindow(QWidget *parent = nullptr, int sidebarMinimumWidth = 50, int sidebarMaximumWidth = 300 ,WindowEffectType effectType = WindowEffectType::MICA);
+    explicit AdaptiveLayoutWindow(QWidget *parent = nullptr, int sidebarMinimumWidth = 50, int sidebarMaximumWidth = 300 , WindowEffectType effectType = WindowEffectType::MICA);
 
     F_RESIZEEVENT;
     F_PRIVATE_PROPERTY(QVariantAnimation *, animation)
