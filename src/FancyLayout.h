@@ -69,7 +69,6 @@ public:
         {
             this->_duration = msecs;
             this->_easing = easing;
-            // if(this->_widgetAnis.isEmpty())return;
             for(QPropertyAnimation* ani : std::as_const(this->_widgetAnis))
             {
                 ani->setDuration(msecs);

@@ -1,11 +1,11 @@
 ﻿#include "FancySidebar.h"
 #include "FancyStyle.h"
 
-static constexpr int LINE_WHID = 3;
-static constexpr int ContentsMargins_Left = 2;
-static constexpr int ContentsMargins_Top = 5;
-static constexpr int ContentsMargins_Right = 2;
-static constexpr int ContentsMargins_Bottom = 5;
+constexpr int LINE_WHID = 3;
+constexpr int ContentsMargins_Left = 2;
+constexpr int ContentsMargins_Top = 5;
+constexpr int ContentsMargins_Right = 2;
+constexpr int ContentsMargins_Bottom = 5;
 
 OptionButtonBase::OptionButtonBase(QWidget *parent, int sidebarWidth):
     TransparentButton(parent),
@@ -40,6 +40,7 @@ OptionButtonBase::OptionButtonBase(QWidget *parent, int sidebarWidth):
     this->_textLabel->setScaledContents(true);
     this->_textLabel->move(tlX, tlY);
     this->_textLabel->setStyle(new FancyStyleBase(nullptr));
+    this->_textLabel->style()->setParent(this->_textLabel);
 
     constexpr int Lx = LINE_WHID + LINE_WHID;
     int Ly1 = this->height() / 4;

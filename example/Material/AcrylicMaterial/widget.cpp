@@ -1,5 +1,5 @@
 ﻿#include "widget.h"
-#include "Material/AcrylicMaterial/acrylicmaterial.h"
+#include "acrylicmaterial.h"
 #include <QPixmap>
 
 Widget::Widget(QWidget *parent)

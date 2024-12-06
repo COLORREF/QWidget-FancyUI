@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>FancyIcon/COLORREF.png</file>
-        <file>FancyIcon/Lena.png</file>
         <file>FancyIcon/LIGHT/Animation.svg</file>
         <file>FancyIcon/LIGHT/Bilibili.svg</file>
         <file>FancyIcon/LIGHT/BlueTooth.svg</file>

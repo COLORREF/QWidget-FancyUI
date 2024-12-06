@@ -6,6 +6,7 @@
 #include <QButtonGroup>
 #include <QDesktopServices>
 #include <QUrl>
+
 #include "FancyImage.h"
 #include "FancySvg.h"
 #include "FancyIcon.h"
@@ -26,7 +27,7 @@ SidebarWidget::SidebarWidget(QWidget *parent)
 
     // 窗口基本设置
     this->setWindowTitle("FancyUI-example");
-    this->setWindowIcon(QPixmap(":/FancyIcon/COLORREF.png"));
+    this->setWindowIcon(QPixmap(":/resources/COLORREF.png"));
     this->resize(850,680);
     this->titleBar()->setFixedHeight(35);//调整标题栏高度，默认32
 
@@ -78,6 +79,9 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this->_clientArea);
 
+    // 主页展示
+    showHomePage();
+
     // 设置主题色功能
     connect(ui->pushButton, &QPushButton::clicked, this, &Widget::setThemeColor);
 
@@ -99,6 +103,19 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::showHomePage()
+{
+    ui->scrollArea_2->setStyle(new ScrollAreaStyle);
+    ui->scrollArea_2->style()->setParent(ui->scrollArea_2);
+    QPalette p(ui->scrollArea_2->palette());
+    p.setColor(QPalette::Base,Qt::transparent);
+    p.setColor(QPalette::Window,Qt::transparent);
+    ui->scrollArea_2->setPalette(p);
+
+    ui->scrollArea_2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->widget_9->setPixmap(QPixmap(":/resources/HomeImg.jpg"));
+}
+
 
 void Widget::showControl()
 {
@@ -112,12 +129,6 @@ void Widget::showControl()
     ui->pushButton_5->setIcon(FancyIcon::Wifi);
     ui->pushButton_6->setIcon(FancyIcon::BookMark);
     ui->pushButton_7->setIcon(FancyIcon::Fx);
-
-    // 主题改变文字颜色自动变色
-    ui->label->setStyle(new FancyStyleBase);
-    ui->label_11->setStyle(new FancyStyleBase);
-    ui->label_12->setStyle(new FancyStyleBase);
-
 
     // 填充动画按钮设置
     ui->pushButton_8->setTextColor(Qt::black,Qt::white);
@@ -162,19 +173,18 @@ void Widget::showControl()
 void Widget::showSidebar()
 {
     //创建三个指示器具有动画的侧边栏选项按钮
-    auto* page_0 = new AnimationOptionButton("基础控件",this->_aniSidebar,FancyIcon::CheckBox);
-    auto* page_1 = new AnimationOptionButton("图片处理",this->_aniSidebar,FancyIcon::Image);
-    auto* page_2 = new AnimationOptionButton("图标",this->_aniSidebar,FancyIcon::Icons);
-    auto* page_3 = new AnimationOptionButton("动画效果控件",this->_aniSidebar,FancyIcon::Animation);
+    auto home = new  AnimationOptionButton("主页",this->_aniSidebar,FancyIcon::Home);
+    auto baseCon = new AnimationOptionButton("基础控件",this->_aniSidebar,FancyIcon::CheckBox);
+    auto iamge = new AnimationOptionButton("图片处理",this->_aniSidebar,FancyIcon::Image);
+    auto iocn = new AnimationOptionButton("图标",this->_aniSidebar,FancyIcon::Icons);
+    auto aniCon = new AnimationOptionButton("动画效果控件",this->_aniSidebar,FancyIcon::Animation);
 
     //添加到侧边栏
-    this->_aniSidebar->addOption(page_0);
-    this->_aniSidebar->addOption(page_1);
-    this->_aniSidebar->addOption(page_2);
-    this->_aniSidebar->addOption(page_3);
-
-    page_0->setChecked(true);
-
+    this->_aniSidebar->addOption(home);
+    this->_aniSidebar->addOption(baseCon);
+    this->_aniSidebar->addOption(iamge);
+    this->_aniSidebar->addOption(iocn);
+    this->_aniSidebar->addOption(aniCon);
 
     // 添加20个动画效果的侧边栏选项按钮，用以展示
     int number0 = static_cast<int>(FancyIcon::Number0);
@@ -210,7 +220,7 @@ void Widget::showImageProcessing()
 {
     QList<FImage> fimages;
     for(int i = 0; i < 9; i++)
-        fimages.append(FImage(":/FancyIcon/Lena.png"));
+        fimages.append(FImage(":/resources/Lena.png"));
 
     // FImage是对QImage的封装，可以无缝转换QImage、QPixmap
     // FImage的成员函数会直接修改原始图片
@@ -223,24 +233,20 @@ void Widget::showImageProcessing()
     ui->label_8->setPixmap(fimages[6].verticalUniforBlur(96).toQPixmap());// 垂直均匀模糊
     ui->label_9->setPixmap(fimages[7].impulseNoise(0.15).toQPixmap()); // 15%椒盐噪声
     ui->label_10->setPixmap(fimages[8].greyScale().toQPixmap());//灰度图
+
 }
 
 void Widget::showIcons()
 {
     //图标展示（此页面功能未完善）
-    ui->scrollArea->setStyle(new ScrollAreaStyle());
+    ui->scrollArea->setStyle(new ScrollAreaStyle);
+    ui->scrollArea->style()->setParent(ui->scrollArea);
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QPalette p(ui->scrollArea->palette());
     p.setColor(QPalette::Base,Qt::transparent);
     p.setColor(QPalette::Window,Qt::transparent);
     ui->scrollArea->setPalette(p);
-    QScroller::grabGesture(ui->scrollArea, QScroller::LeftMouseButtonGesture);
-    QScroller* scroller = QScroller::scroller(ui->scrollArea);
-    QScrollerProperties scrollerProperties;
-    scrollerProperties.setScrollMetric(QScrollerProperties::ScrollMetric::ScrollingCurve, QEasingCurve::OutQuad);
-    scrollerProperties.setScrollMetric(QScrollerProperties::ScrollMetric::DecelerationFactor, 0.9);
-    scroller->setScrollerProperties(scrollerProperties);
 
     FlowLayout* flowLayout =  new FlowLayout(ui->scrollAreaWidgetContents);
     QButtonGroup* btnGroup = new QButtonGroup(ui->scrollAreaWidgetContents);

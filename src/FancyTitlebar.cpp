@@ -182,6 +182,7 @@ MinimizeButton::MinimizeButton(QWidget *parent)
 {
     this->setIcon(FancyIcon::Minimize);
     connect(this, &MinimizeButton::clicked, this->window(), &QWidget::showMinimized);
+    // connect(this, &MinimizeButton::clicked,this,[this](){SendMessage((HWND)(this->window()->winId()), WM_SYSCOMMAND, SC_MINIMIZE, 0);});
 }
 
 void MinimizeButton::onThemeChange(Theme::Type themeType)

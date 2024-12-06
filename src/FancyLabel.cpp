@@ -1,4 +1,19 @@
-#include "FancyLabel.h"
+﻿#include "FancyLabel.h"
+#include "FancyStyle.h"
+
+Label::Label(QWidget *parent, Qt::WindowFlags f):
+    QLabel(parent,f)
+{
+    this->setStyle(new FancyStyleBase);
+    this->style()->setParent(this);
+}
+
+Label::Label(const QString &text, QWidget *parent, Qt::WindowFlags f):
+    QLabel(text,parent,f)
+{
+    this->setStyle(new FancyStyleBase(this->style()));
+    this->style()->setParent(this);
+}
 
 
 RoundLabel::RoundLabel(QWidget *parent):
@@ -36,3 +51,5 @@ void RoundLabel::resizeEvent(QResizeEvent *event)
     int sideLength = qMin(newSize.width(), newSize.height());
     this->resize(sideLength, sideLength);
 }
+
+

@@ -92,15 +92,16 @@ void FancyStyleBase::drawItemText(QPainter *painter, const QRect &rect, int flag
     QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }
 
-static constexpr int RADIO_TIME = 150;
-static constexpr qreal RADIO_FILL_CIRCLE_RADIUS = 5.0;
-static constexpr qreal RADIO_HALF_INDICATOR = 8.0;
+constexpr int RADIO_TIME = 150;
+constexpr qreal RADIO_FILL_CIRCLE_RADIUS = 5.0;
+constexpr qreal RADIO_HALF_INDICATOR = 8.0;
 
-static constexpr int CHECKBOX_TIME = 200;
-static constexpr int CHECKBOX_RADIUS = 12;
+constexpr int CHECKBOX_TIME = 200;
+constexpr int CHECKBOX_RADIUS = 12;
+constexpr qreal CHECKBOX_SIDE = 16;
 
-static constexpr int RIPPLE_BUTTON_LIGHTER_RATIO = 150;
-static constexpr int RIPPLE_BUTTON_TIME = 700;
+constexpr int RIPPLE_BUTTON_LIGHTER_RATIO = 150;
+constexpr int RIPPLE_BUTTON_TIME = 700;
 
 RadioButtonStyle::RadioButtonStyle(QRadioButton *target):
     FancyStyleBase(nullptr),
@@ -147,7 +148,7 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
         QRectF indicator(this->subElementRect(SE_RadioButtonIndicator, option, _target));
         indicator.translate(2.0,0);
         QPointF center = indicator.center();
-        indicator.adjust(0.5, 0.5, -0.5, -0.5);
+        indicator.adjust(0.5, 0.5, -0.5, -0.5);//画笔宽度修正
 
         // 设置画笔，绘制外圆
         QPen pen;
@@ -164,7 +165,7 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
         case 4:
             pen.setColor(this->_colors->theme());
             pen.setWidth(2);
-            indicator.adjust(0.5, 0.5, -0.5, -0.5);
+            indicator.adjust(0.5, 0.5, -0.5, -0.5); //画笔宽度修正
             break;
         case 5:
             pen.setColor(this->_colors->theme());
@@ -232,9 +233,13 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
     if (element == PE_IndicatorCheckBox)
     {
         QRectF indicatorRect(QProxyStyle::subElementRect(SE_CheckBoxIndicator, option, widget));
-        indicatorRect.translate(1,0);
-        QPointF center = indicatorRect.center();
+        indicatorRect.translate(1.5,0);
+        qreal dx = (CHECKBOX_SIDE-indicatorRect.width())/2;
+        qreal dy = (CHECKBOX_SIDE-indicatorRect.height())/2;
+        indicatorRect.adjust(-dx,-dy,dx,dy);
 
+        indicatorRect.adjust(0.5,0.5,-0.5,-0.5);//画笔宽度修正
+        QPointF center = indicatorRect.center();
         quint8 state = 0;
         CheckableControlState s(option->state);
         if(s.normal)state = 0;// 普通状态
@@ -258,6 +263,7 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
         case 1:
             pen.setColor(this->_colors->theme());
             pen.setWidth(2);
+            indicatorRect.adjust(0.5,0.5,-0.5,-0.5);//画笔宽度修正
             break;
         case 2:[[fallthrough]];
         case 3:[[fallthrough]];
@@ -271,6 +277,7 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
             pen.setColor(this->_colors->disEnabled());
             break;
         }
+
         painter->setPen(pen);
         painter->drawRoundedRect(indicatorRect,3,3);
 
@@ -294,10 +301,11 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
             int x = indicatorRect.x();
             int y = indicatorRect.y();
             int l = indicatorRect.width();
-            QPointF p1(0.21875*l+x,0.53125*l+y);
-            QPointF p2(0.40625*l+x,0.75*l+y);
-            QPointF p3(0.84375*l+x,0.21875*l+y);
+            QPointF p1(0.23875*l+x,0.58125*l+y);
+            QPointF p2(0.42625*l+x,0.8*l+y);
+            QPointF p3(0.86375*l+x,0.26875*l+y);
             pen.setColor(Qt::GlobalColor::white);
+            pen.setWidthF(1.5);
             if(s.over)
                 pen.setWidth(2);
             if(state == 5)
@@ -742,3 +750,168 @@ void ScrollAreaStyle::drawControl(ControlElement , const QStyleOption *, QPainte
 }
 
 
+
+SliderStyle::SliderStyle(QWidget *target, QStyle *style):
+    QProxyStyle(style),
+    _target(target)
+{
+    this->_indicator = new Indicator(_target);
+    this->_target->installEventFilter(this);
+}
+
+SliderStyle::SliderStyle(QWidget *target, Qt::Orientation orientation, QStyle *style):
+    QProxyStyle(style),
+    _target(target)
+{
+    this->_indicator = new Indicator(_target);
+    this->setOrientation(orientation);
+    this->_target->installEventFilter(this);
+}
+void SliderStyle::setOrientation(Qt::Orientation orientation)
+{
+    this->_indicator->_orientation = orientation;
+}
+
+bool SliderStyle::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == _target && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease))
+    {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton && event->type() == QEvent::MouseButtonPress)
+            this->_indicator->mousePressEvent(mouseEvent);
+        else if (event->type() == QEvent::MouseButtonRelease && !this->_indicator->geometry().contains(mouseEvent->pos()))
+            this->_indicator->leaveEvent(event);
+    }
+    return QProxyStyle::eventFilter(obj, event);
+}
+
+QWidget *SliderStyle::indicator() const
+{
+    return this->_indicator;
+}
+
+void SliderStyle::drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const
+{
+    if(control == QStyle::CC_Slider)
+    {
+        // 滑槽与指示器区域
+        QRect grooveRect = QProxyStyle::subControlRect(QStyle::CC_Slider, qstyleoption_cast<const QStyleOptionComplex*>(option), QStyle::SC_SliderGroove, widget);
+        QRect handleRect = QProxyStyle::subControlRect(QStyle::CC_Slider, qstyleoption_cast<const QStyleOptionComplex*>(option), QStyle::SC_SliderHandle, widget);
+
+        auto colors = ControlColors::controlColors();
+        painter->save();
+        painter->setRenderHints(QPainter::Antialiasing);
+
+        constexpr qreal penRatio = 0.278;
+        bool isHorizontal = (this->_indicator->_orientation == Qt::Horizontal);
+
+        qreal penWidth = (isHorizontal ? handleRect.height() : handleRect.width()) * penRatio;
+        qreal correctXY = penWidth / 2; // 修正画笔圆角半径误差
+        qreal center = (isHorizontal ? grooveRect.center().y() : grooveRect.center().x());
+
+        QLineF primaryLine = (isHorizontal
+                                  ? QLineF(correctXY, center, handleRect.left(), center)
+                                  : QLineF(center, handleRect.bottom(), center, grooveRect.bottom() - correctXY));
+
+        QLineF secondaryLine = (isHorizontal
+                                    ? QLineF(handleRect.right(), center, grooveRect.right() - correctXY, center)
+                                    : QLineF(center, correctXY, center, handleRect.top()));
+
+        int offset = (isHorizontal
+                          ? handleRect.x() - (grooveRect.height() - handleRect.width()) / 2
+                          : handleRect.y() - (grooveRect.width() - handleRect.height()) / 2);
+
+        // 画线
+        QPen pen(colors->theme(),penWidth,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap);
+        painter->setPen(pen);
+        painter->drawLine(primaryLine);
+        pen.setColor(colors->disEnabled().darker(120));
+        painter->setPen(pen);
+        painter->drawLine(secondaryLine);
+
+
+        // 更新指示器位置
+        QRect indRect = (isHorizontal
+                             ? QRect(QPoint(offset, 0), QSize(grooveRect.height(), grooveRect.height()))
+                             : QRect(QPoint(0, offset), QSize(grooveRect.width(), grooveRect.width())));
+
+        if (this->_indicator->geometry() != indRect)
+            this->_indicator->setGeometry(indRect);
+
+        painter->restore();
+        return;
+    }
+
+    return QProxyStyle::drawComplexControl(control,option,painter,widget);
+}
+
+SliderStyle::Indicator::Indicator(QWidget *parent):
+    QWidget(parent)
+{
+    this->_ani = new SimpleAnimation(0.0,0.0,100,true,this,this);
+}
+
+void SliderStyle::Indicator::enterEvent(QEnterEvent *event)
+{
+    _isContains = true;
+    this->_ani->setStartValue(_r/2);
+    this->_ani->setEndValue(_r/1.3);
+    this->_ani->start();
+    return QWidget::enterEvent(event);
+}
+
+void SliderStyle::Indicator::leaveEvent(QEvent *event)
+{
+    _isContains = false;
+    this->_ani->setStartValue(this->_ani->_runTimeValue);
+    this->_ani->setEndValue(_r/2);
+    this->_ani->start();
+    return QWidget::leaveEvent(event);
+}
+
+void SliderStyle::Indicator::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        this->_ani->setStartValue(this->_ani->_runTimeValue);
+        this->_ani->setEndValue(_r / 2.8);
+        this->_ani->start();
+    }
+    QWidget::mousePressEvent(event);
+}
+
+void SliderStyle::Indicator::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(_isContains && event->button() == Qt::LeftButton)
+    {
+        this->_ani->setStartValue(_r/2.5);
+        this->_ani->setEndValue(_r/1.3);
+        this->_ani->start();
+    }
+    // 不在里面直接触发leaveEvent
+    return QWidget::mouseReleaseEvent(event);
+}
+
+void SliderStyle::Indicator::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    QRectF rect = this->rect();
+    rect.adjust(0.5,0.5,-0.5,-0.5);
+    this->_r = qMin(rect.width(), rect.height())/2;
+    this->_center = rect.center();
+    this->_ani->_runTimeValue.setValue<qreal>(_r / 2);
+}
+
+void SliderStyle::Indicator::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing);
+    auto colors = ControlColors::controlColors();
+    painter.setPen(QPen(colors->normalBorder(),1));
+    painter.setBrush(colors->buttonBackground());
+    painter.drawEllipse(_center,_r,_r);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(colors->theme());
+    qreal r  = this->_ani->_runTimeValue.toReal();
+    painter.drawEllipse(_center,r,r);
+}
