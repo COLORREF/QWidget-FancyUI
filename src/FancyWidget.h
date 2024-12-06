@@ -8,6 +8,9 @@
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QScroller>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPixmap>
 #include "precompile.h"
 
 // 垂直布局惯性滚动区域，默认带有控件区域
@@ -26,5 +29,23 @@ public:
     F_PROTECTED_PROPERTY(QWidget* ,scrollContentWidget)
     F_PROTECTED_PROPERTY(QVBoxLayout*, scrollContentWidgetVerticalLayout)
 };
+
+
+class AspectRatioImageWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit AspectRatioImageWidget(QWidget* parent, bool keepCentered = true, int radius = 10);
+    void setPixmap(const QPixmap& pixmap);
+    void setRadius(int radius);
+    void setKeepCentered(bool keepCentered);
+protected:
+    void paintEvent(QPaintEvent*) override;
+private:
+    QPixmap _pixmap;
+    bool _keepCentered;
+    int _radius;
+};
+
 
 #endif // FANCYWIDGET_H
