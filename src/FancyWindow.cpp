@@ -67,15 +67,11 @@ void FramelessWindowBase::windowTop(bool top)
         WindowManager::cancelWindowTop((HWND)this->winId());
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
-// https://www.qt.io/blog/dark-mode-on-windows-11-with-qt-6.5
-// Qt6.5以上会自动检测系统深浅主题，并自动设置窗口和控件的颜色
-void FramelessWindowBase::show()
+void FramelessWindowBase::show(Theme::Type t)
 {
     QWidget::show();
-    Theme::setTheme(Theme::Type::LIGHT);
+    Theme::setTheme(t);
 }
-#endif
 
 void FramelessWindowBase::onThemeChange(Theme::Type type)
 {
@@ -178,7 +174,8 @@ F_DEFINITION_NATIVEEVENT(FramelessWindowBase)
     switch (msg->message)
     {
     case WM_NCCALCSIZE: // 取消原有的标题栏和边框
-        *result = msg->wParam ? 0 : WVR_REDRAW;
+        // *result = msg->wParam ? 0 : WVR_REDRAW;
+        *result = 0;
         return true;
 
     case WM_NCHITTEST: // 光标位置测试
@@ -476,6 +473,21 @@ TransparentEffectWindowBase::TransparentEffectWindowBase(QWidget *parent, Window
     }
 }
 
+F_DEFINITION_RESIZEEVENT(TransparentEffectWindowBase)
+{
+    FramelessWindow::resizeEvent(event);
+    switch(this->effect_type)
+    {
+    case WindowEffectType::ACRYLIC:          // 亚克力
+    case WindowEffectType::MICA:             // 云母
+    case WindowEffectType::MICAALT:          // 云母ALT
+        this->setDwmMargins();
+        break;
+    default:
+        break;
+    };
+}
+
 F_DEFINITION_PAINTEVENT(TransparentEffectWindowBase)
 {
     if (this->effect_type != WindowEffectType::DEFAULT)
@@ -692,13 +704,13 @@ void AdaptiveLayoutWindow::checkWidth()
 {
     int w = this->width();
     int dw = w - 850;
-    if (dw <= 10 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
+    if (dw <= 20 && this->_animation->state() != QVariantAnimation::State::Running && this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Forward);
         this->_animation->start();
     }
 
-    else if (dw > 10 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
+    else if (dw > 20 && this->_animation->state() != QVariantAnimation::State::Running && !this->_isExpand)
     {
         this->_animation->setDirection(QVariantAnimation::Direction::Backward);
         this->_animation->start();
@@ -707,6 +719,6 @@ void AdaptiveLayoutWindow::checkWidth()
 
 F_DEFINITION_RESIZEEVENT(AdaptiveLayoutWindow)
 {
+    MSWindow::resizeEvent(event);
     this->checkWidth();
-    QWidget::resizeEvent(event);
 }
