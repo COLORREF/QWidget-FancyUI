@@ -3,7 +3,8 @@
 
 RadioButton::RadioButton(QWidget *parent) : QRadioButton(parent)
 {
-    setStyle(new RadioButtonStyle(this));
+    this->setStyle(new RadioButtonStyle(this));
+    this->style()->setParent(this);
 }
 
 RadioButton::RadioButton(const QString &text, QWidget *parent)

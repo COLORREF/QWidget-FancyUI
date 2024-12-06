@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/COLORREF.png</file>
+        <file>resources/Lena.png</file>
+        <file>resources/HomeImg.jpg</file>
+    </qresource>
+</RCC>

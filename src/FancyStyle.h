@@ -16,6 +16,7 @@
 #include <QQueue>
 #include <QColor>
 #include <QMap>
+#include <QStyleOptionFocusRect>
 #include "precompile.h"
 #include "FancyAnimation.h"
 
@@ -184,15 +185,13 @@ struct CheckableWidgetState : ControlState
     bool unenable_select;
 };
 
-
 class FancyStyleBase : public QProxyStyle
 {
     Q_OBJECT
 public:
     FancyStyleBase(QStyle *style = nullptr);
     FancyStyleBase(const QString &key);
-    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled,
-                              const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
+    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
 protected:
     ControlColors * _colors;
 };
@@ -246,8 +245,7 @@ class ThemePushButtonSyle : public PushButtonStyleBase
     Q_OBJECT
 public:
     ThemePushButtonSyle(QAbstractButton* target);
-    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled,
-const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
+    virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
     virtual void unCheckablePaint(QPainter *painter, qint8 state, const QRect& rect, const QPainterPath& clipPath)const override;
 };
 
@@ -298,6 +296,40 @@ public:
 protected:
     virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     virtual void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+};
+
+class SliderStyle : public QProxyStyle
+{
+public:
+    SliderStyle(QWidget* target ,QStyle *style = nullptr);
+    SliderStyle(QWidget* target, Qt::Orientation orientation, QStyle *style = nullptr);
+    void setOrientation(Qt::Orientation orientation);
+    virtual bool eventFilter(QObject *obj, QEvent *event)override;
+    QWidget* indicator()const;
+protected:
+    void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+private:
+    class Indicator : public QWidget
+    {
+        friend class SliderStyle;
+    public:
+        explicit Indicator(QWidget* parent);
+    private:
+        Qt::Orientation _orientation = Qt::Orientation::Horizontal;
+        SimpleAnimation* _ani = nullptr;
+        qreal _r;
+        QPointF _center;
+        bool _isContains = false;
+    protected:
+        void enterEvent(QEnterEvent* event)override;
+        void leaveEvent(QEvent *event) override;
+        void mousePressEvent(QMouseEvent *event) override;
+        void mouseReleaseEvent(QMouseEvent *event) override;
+        void resizeEvent(QResizeEvent* event)override;
+        void paintEvent(QPaintEvent* )override;
+    };
+    Indicator* _indicator = nullptr;
+    QWidget* _target;
 };
 
 #endif // FANCYSTYLE_H

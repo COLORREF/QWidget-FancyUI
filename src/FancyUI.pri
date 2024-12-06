@@ -9,8 +9,10 @@ HEADERS += \
     $$PWD/FancyIcon.h \
     $$PWD/FancyLabel.h \
     $$PWD/FancyLayout.h \
+    $$PWD/FancyProgressBar.h \
     $$PWD/FancyRadiobutton.h \
     $$PWD/FancySidebar.h \
+    $$PWD/FancySlider.h \
     $$PWD/FancySvg.h \
     $$PWD/FancyTitlebar.h \
     $$PWD/FancyWidget.h \
@@ -30,8 +32,10 @@ SOURCES += \
     $$PWD/FancyIcon.cpp \
     $$PWD/FancyLabel.cpp \
     $$PWD/FancyLayout.cpp \
+    $$PWD/FancyProgressBar.cpp \
     $$PWD/FancyRadiobutton.cpp \
     $$PWD/FancySidebar.cpp \
+    $$PWD/FancySlider.cpp \
     $$PWD/FancySvg.cpp \
     $$PWD/FancyTitlebar.cpp \
     $$PWD/FancyWidget.cpp \

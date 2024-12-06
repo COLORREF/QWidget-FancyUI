@@ -1,4 +1,4 @@
-#ifndef FANCYLABEL_H
+﻿#ifndef FANCYLABEL_H
 #define FANCYLABEL_H
 
 #include <QLabel>
@@ -10,6 +10,16 @@
 #include <QPixmap>
 #include <QtMath>
 #include <QGraphicsBlurEffect>
+
+
+class Label : public QLabel
+{
+public:
+    explicit Label(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
+    explicit Label(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
+};
+
+
 
 class RoundLabel : public QLabel
 {

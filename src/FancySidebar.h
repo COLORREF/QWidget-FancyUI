@@ -34,11 +34,12 @@ public:
     inline void setText(const QString& text){this->_textLabel->setText(text);}
     inline void setDrawIndicator(bool drawIndicator){this->_drawIndicator = drawIndicator;}
 
-    F_PROTECTED_PROPERTY(FancyIconWidget*, iconWidget)
-    F_PROTECTED_PROPERTY(QLabel*, textLabel)
-    F_PROTECTED_PROPERTY(QLine, indicator)
-    F_PROTECTED_PROPERTY(bool, drawIndicator)
-    F_PAINTEVENT;    
+protected:
+    FancyIconWidget* _iconWidget;
+    QLabel* _textLabel;
+    QLine _indicator;
+    bool _drawIndicator;
+    virtual void paintEvent(QPaintEvent *event) override;
 };
 
 
@@ -49,11 +50,10 @@ class SidebarBase : public QWidget
 public:
     explicit SidebarBase(QWidget* parent);
     void addOption(QAbstractButton* option);
-
-
-    F_PROTECTED_PROPERTY(QVBoxLayout*, verticalLayout)
-    F_PROTECTED_PROPERTY(QButtonGroup*, btnGroup)
-    F_PROTECTED_PROPERTY(QSpacerItem*, verticalSpacer)
+protected:
+    QVBoxLayout* _verticalLayout;
+    QButtonGroup* _btnGroup;
+    QSpacerItem* _verticalSpacer;
 signals:
     void optionChecked(int id);
 };
@@ -62,7 +62,6 @@ signals:
 //上方和下方有一个固定的垂直布局区域，控件不可重叠。中间有一个垂直布局滚动区域,下方有个弹簧
 class StandardSidebar : public SidebarBase
 {
-
     Q_OBJECT
 public:
     explicit StandardSidebar(QWidget* parent, int upperAreaHeight = 128, int underrAreaHeight = 86);

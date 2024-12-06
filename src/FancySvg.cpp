@@ -116,7 +116,7 @@ QPixmap FancySvg::loadSvgFromU8Bt(const QByteArray &svgContent, const QRect& rec
 {
     QSvgRenderer renderer(svgContent);
     QPixmap pixmap(rect.size());
-    pixmap.fill(Qt::GlobalColor::transparent);  // 背景透明
+    pixmap.fill(Qt::GlobalColor::transparent);
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing, true);
     renderer.render(&painter,rect);

@@ -37,6 +37,7 @@ public:
 private:
     Ui::Widget *ui;
 
+    void showHomePage();
     void showControl();
     void showSidebar();
     void showImageProcessing();

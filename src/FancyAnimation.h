@@ -37,7 +37,7 @@ class SimpleAnimation : public QVariantAnimation
 {
     Q_OBJECT
 public:
-    SimpleAnimation(const QVariant &start, const QVariant &end, int msecs, bool isforward = true, QObject *parent = nullptr)
+    SimpleAnimation(const QVariant &start, const QVariant &end, int msecs, bool isforward = true, QObject *parent = nullptr, QWidget* device = nullptr)
         : QVariantAnimation(parent)
     {
         this->setStartValue(start);
@@ -45,6 +45,9 @@ public:
         this->setDuration(msecs);
         this->setDirection(isforward);
         connect(this,&QVariantAnimation::valueChanged,this,[&](const QVariant &value){_runTimeValue = value;});
+        if(device)
+            this->setUpdate(device);
+        this->_runTimeValue = start;
     }
 
     using QVariantAnimation::setDirection;
