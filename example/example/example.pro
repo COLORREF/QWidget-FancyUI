@@ -27,3 +27,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 include( ../../src/FancyUI.pri)
 INCLUDEPATH += ../../src
+
+RESOURCES += \
+    rcc.qrc
