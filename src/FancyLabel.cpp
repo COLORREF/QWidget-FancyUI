@@ -4,15 +4,13 @@
 Label::Label(QWidget *parent, Qt::WindowFlags f):
     QLabel(parent,f)
 {
-    this->setStyle(new FancyStyleBase);
-    this->style()->setParent(this);
+    this->setStyle(new FancyStyleBase(this));
 }
 
 Label::Label(const QString &text, QWidget *parent, Qt::WindowFlags f):
     QLabel(text,parent,f)
 {
-    this->setStyle(new FancyStyleBase(this->style()));
-    this->style()->setParent(this);
+    this->setStyle(new FancyStyleBase(this));
 }
 
 

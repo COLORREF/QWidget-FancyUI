@@ -5,7 +5,6 @@ CheckBox::CheckBox(QWidget *parent)
     :QCheckBox(parent)
 {
     this->setStyle(new CheckBoxStyle(this));
-    this->style()->setParent(this);
 }
 
 CheckBox::CheckBox(const QString &text, QWidget *parent)

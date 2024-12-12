@@ -75,13 +75,11 @@ QColor ControlColors::transparentClick()
 }
 
 
-FancyStyleBase::FancyStyleBase(QStyle *style):
-    QProxyStyle(style),
-    _colors(ControlColors::controlColors()){}
-
-FancyStyleBase::FancyStyleBase(const QString &key):
-    QProxyStyle(key),
-    _colors(ControlColors::controlColors()){}
+FancyStyleBase::FancyStyleBase(QObject *parent):
+    QProxyStyle(nullptr)
+{
+    this->setParent(parent);
+}
 
 void FancyStyleBase::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
@@ -91,6 +89,8 @@ void FancyStyleBase::drawItemText(QPainter *painter, const QRect &rect, int flag
         const_cast<QPalette &>(pal).setColor(textRole, this->_colors->disEnabled());
     QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }
+
+ControlColors* FancyStyleBase::_colors = ControlColors::controlColors();
 
 constexpr int RADIO_TIME = 150;
 constexpr qreal RADIO_FILL_CIRCLE_RADIUS = 5.0;
@@ -103,23 +103,22 @@ constexpr qreal CHECKBOX_SIDE = 16;
 constexpr int RIPPLE_BUTTON_LIGHTER_RATIO = 150;
 constexpr int RIPPLE_BUTTON_TIME = 700;
 
-RadioButtonStyle::RadioButtonStyle(QRadioButton *target):
-    FancyStyleBase(nullptr),
-    _target(target),
-    _group(new QParallelAnimationGroup(_target)),
-    _jumpAnimation(new SimpleAnimation(RADIO_HALF_INDICATOR,RADIO_HALF_INDICATOR,RADIO_TIME+50,true,_target)),
-    _indicatorAnimation(new SimpleAnimation(0.0,RADIO_FILL_CIRCLE_RADIUS,RADIO_TIME,true,target))
+RadioButtonStyle::RadioButtonStyle(QRadioButton *parent):
+    FancyStyleBase(parent),
+    _group(new QParallelAnimationGroup(parent)),
+    _jumpAnimation(new SimpleAnimation(RADIO_HALF_INDICATOR,RADIO_HALF_INDICATOR,RADIO_TIME+50,true,parent)),
+    _indicatorAnimation(new SimpleAnimation(0.0,RADIO_FILL_CIRCLE_RADIUS,RADIO_TIME,true,parent))
 {
-    this->_indicatorAnimation->setUpdate(_target);
+    this->_indicatorAnimation->setUpdate(parent);
     this->_jumpAnimation->setKeyValueAt(0.5,0.0);
-    this->_jumpAnimation->setUpdate(_target);
+    this->_jumpAnimation->setUpdate(parent);
     this->_jumpAnimation->_runTimeValue = RADIO_HALF_INDICATOR;
     this->_group->addAnimation(this->_indicatorAnimation);
-    connect(this->_target,&QRadioButton::toggled,this,[this](bool checked){
+    connect(parent,&QRadioButton::toggled,this,[this](bool checked){
         this->_group->setDirection((QAbstractAnimation::Direction)!checked);
         this->_group->start();
     });
-    connect(Theme::themeObject(),&Theme::themeChange,this,[this](){this->_target->update();});
+    connect(Theme::themeObject(),&Theme::themeChange,this,[parent](){parent->update();});
 }
 
 void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -131,21 +130,13 @@ void RadioButtonStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
         if(s.normal)_UnEnableOn = false;
         bool unenable_last_select = !s.enable && s.off && _UnEnableOn;
 
-        quint8 state = 0;
-        if(s.normal)state = 0;// 普通状态
-        else if(s.normal_over)state = 5;// 未选中但鼠标悬浮
-        else if(s.normal_sunke)state = 4;// 未选中但鼠标按下
-        else if(s.selected)state = 1;// 选中状态
-        else if(s.select_sunken)state = 2;// 选中且鼠标按下
-        else if(s.select_over)state = 3;// 选中但鼠标悬浮
-        else if(s.unenable)state = 6; // 禁用状态
-        else if(s.unenable_select)state = 7;// 禁用且选中
+        quint8 state = s.flage;
         if(unenable_last_select)state = 8;// 禁用未选中，但上一次是禁用且选中
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
 
-        QRectF indicator(this->subElementRect(SE_RadioButtonIndicator, option, _target));
+        QRectF indicator(this->subElementRect(SE_RadioButtonIndicator, option, widget));
         indicator.translate(2.0,0);
         QPointF center = indicator.center();
         indicator.adjust(0.5, 0.5, -0.5, -0.5);//画笔宽度修正
@@ -217,14 +208,13 @@ void RadioButtonStyle::enableJumpAnimation(bool isEnable)
     }
 }
 
-CheckBoxStyle::CheckBoxStyle(QCheckBox *target):
-    FancyStyleBase(nullptr),
-    _animation(new SimpleAnimation(0,CHECKBOX_RADIUS,CHECKBOX_TIME,false,target)),
-    _target(target)
+CheckBoxStyle::CheckBoxStyle(QCheckBox *parent):
+    FancyStyleBase(parent),
+    _animation(new SimpleAnimation(0,CHECKBOX_RADIUS,CHECKBOX_TIME,false,parent))
 {
-    this->_animation->setUpdate(target);
-    connect(this->_target,&QCheckBox::toggled,this->_animation,&SimpleAnimation::reverseDirectionAndStart);
-    connect(Theme::themeObject(),&Theme::themeChange,this,[this](){this->_target->update();});
+    this->_animation->setUpdate(parent);
+    connect(parent,&QCheckBox::toggled,this->_animation,&SimpleAnimation::reverseDirectionAndStart);
+    connect(Theme::themeObject(),&Theme::themeChange,this,[parent](){parent->update();});
 }
 
 
@@ -237,39 +227,29 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
         qreal dx = (CHECKBOX_SIDE-indicatorRect.width())/2;
         qreal dy = (CHECKBOX_SIDE-indicatorRect.height())/2;
         indicatorRect.adjust(-dx,-dy,dx,dy);
-
         indicatorRect.adjust(0.5,0.5,-0.5,-0.5);//画笔宽度修正
         QPointF center = indicatorRect.center();
-        quint8 state = 0;
         CheckableControlState s(option->state);
-        if(s.normal)state = 0;// 普通状态
-        else if(s.normal_sunke)state = 1;// 未选中但鼠标按下
-        else if(s.normal_over)state = 2;// 未选中但鼠标悬浮
-        else if(s.selected)state = 3;// 选中状态
-        else if(s.select_over)state = 4;// 选中但鼠标悬浮
-        else if(s.select_sunken)state = 5;// 选中且鼠标按下
-        else if(s.unenable)state = 6; // 禁用状态
-        else if(s.unenable_select)state = 7;// 禁用且选中
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
 
         // 设置画笔，绘制外矩形
         QPen pen;
-        switch(state)
+        switch(s.flage)
         {
         case 0:
             pen.setColor(this->_colors->normalBorder());
             break;
-        case 1:
+        case 1:[[fallthrough]];
+        case 3:[[fallthrough]];
+        case 5:[[fallthrough]];
+        case 2:
+            pen.setColor(this->_colors->theme());
+            break;
+        case 4:
             pen.setColor(this->_colors->theme());
             pen.setWidth(2);
             indicatorRect.adjust(0.5,0.5,-0.5,-0.5);//画笔宽度修正
-            break;
-        case 2:[[fallthrough]];
-        case 3:[[fallthrough]];
-        case 4:[[fallthrough]];
-        case 5:
-            pen.setColor(this->_colors->theme());
             break;
         case 6:[[fallthrough]];
         case 7:[[fallthrough]];
@@ -277,15 +257,14 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
             pen.setColor(this->_colors->disEnabled());
             break;
         }
-
         painter->setPen(pen);
         painter->drawRoundedRect(indicatorRect,3,3);
 
 
         // 设置画刷，根据状态绘制内矩形
-        if( state < 6)
+        if( s.flage < 6)
             painter->setBrush(this->_colors->theme());
-        else if(state > 5)
+        else if(s.flage > 5)
             painter->setBrush(this->_colors->disEnabled());
         painter->setPen(Qt::NoPen);
 
@@ -308,7 +287,7 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
             pen.setWidthF(1.5);
             if(s.over)
                 pen.setWidth(2);
-            if(state == 5)
+            if(s.flage == 2)
                 pen.setWidth(1);
             painter->setPen(pen);
             painter->drawLine(p1,p2);
@@ -320,41 +299,42 @@ void CheckBoxStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *
     QProxyStyle::drawPrimitive(element, option, painter,widget);
 }
 
-PushButtonStyleBase::PushButtonStyleBase(QAbstractButton *target, bool checkable):
-    FancyStyleBase(nullptr),
-    _target(target),
+PushButtonStyleBase::PushButtonStyleBase(QAbstractButton *parent, bool checkable):
+    FancyStyleBase(parent),
     _checkable(checkable)
 {
-    connect(Theme::themeObject(),&Theme::themeChange,this,[this](){this->_target->update();});
+    connect(Theme::themeObject(),&Theme::themeChange,this,[parent](){parent->update();});
 }
 
 void PushButtonStyleBase::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
     // Windows10 和 Windows11 相同的代码运行结果不一样
     // 下面的写法可以使得效果一致，但不确定有没有其他问题
-    if(enabled)
+    QAbstractButton* parent = dynamic_cast<QAbstractButton*>(this->parent());
+    if(parent)
     {
-        if(_target->isChecked())
+        if(enabled)
         {
-            QColor textColor = this->_colors->autoTextColor(_colors->theme());
-            painter->setPen(textColor);
-            const_cast<QPalette &>(pal).setColor(textRole, textColor);
-
+            if(parent->isChecked())
+            {
+                QColor textColor = this->_colors->autoTextColor(_colors->theme());
+                painter->setPen(textColor);
+                const_cast<QPalette &>(pal).setColor(textRole, textColor);
+            }
+            else
+            {
+                const QColor& textColor = this->_colors->text();
+                painter->setPen(textColor);
+                const_cast<QPalette &>(pal).setColor(textRole, textColor);
+            }
         }
         else
         {
-            const QColor& textColor = this->_colors->text();
+            QColor textColor = this->_colors->disEnabled().lighter(130);
             painter->setPen(textColor);
             const_cast<QPalette &>(pal).setColor(textRole, textColor);
         }
     }
-    else
-    {
-        QColor textColor = this->_colors->disEnabled().lighter(130);
-        painter->setPen(textColor);
-        const_cast<QPalette &>(pal).setColor(textRole, textColor);
-    }
-
     QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }
 
@@ -367,29 +347,10 @@ void PushButtonStyleBase::drawControl(ControlElement element, const QStyleOption
         painter->setRenderHint(QPainter::Antialiasing, true);
         QPainterPath clip_path;// 圆角矩形裁剪路径
         clip_path.addRoundedRect(rect,_buttonRadius,_buttonRadius);
-        quint8 state = 0;
         if(this->_checkable)
-        {
-            CheckableWidgetState s(option->state);
-            if(s.normal)state = 0;// 普通状态
-            else if(s.normal_over)state = 5;// 未选中但鼠标悬浮
-            else if(s.normal_sunke)state = 4;// 未选中但鼠标按下
-            else if(s.selected)state = 1;// 选中状态
-            else if(s.select_sunken)state = 2;// 选中且鼠标按下
-            else if(s.select_over)state = 3;// 选中但鼠标悬浮
-            else if(s.unenable)state = 6; // 禁用状态
-            else if(s.unenable_select)state = 7;// 禁用且选中
-            this->checkablePaint(painter,state,rect,clip_path);
-        }
+            this->checkablePaint(painter,CheckableWidgetState(option->state).flage,rect,clip_path);
         else
-        {
-            UnCheckableControlState s(option->state);
-            if(s.normal)state = 0;// 普通状态
-            else if(s.normal_sunke)state = 1;// 鼠标按下
-            else if(s.normal_over)state = 2;// 鼠标悬浮
-            else if(s.unenable)state = 3; // 禁用状态
-            this->unCheckablePaint(painter,state,rect,clip_path);
-        }
+            this->unCheckablePaint(painter,UnCheckableControlState(option->state).flage,rect,clip_path);
         painter->restore();
         return;
     }
@@ -460,8 +421,8 @@ void PushButtonStyleBase::checkablePaint(QPainter *painter, qint8 state, const Q
     painter->drawLine(this->bottomLine(rect,_buttonRadius));
 }
 
-ThemePushButtonSyle::ThemePushButtonSyle(QAbstractButton *target):
-    PushButtonStyleBase(target, false)
+ThemePushButtonSyle::ThemePushButtonSyle(QAbstractButton *parent):
+    PushButtonStyleBase(parent, false)
 {
 }
 
@@ -505,21 +466,21 @@ void ThemePushButtonSyle::unCheckablePaint(QPainter *painter, qint8 state, const
     painter->drawLine(this->bottomLine(rect,_buttonRadius));
 }
 
-RipplePushButtonStyle::RipplePushButtonStyle(QAbstractButton *target):
-    ThemePushButtonSyle(target)
+RipplePushButtonStyle::RipplePushButtonStyle(QAbstractButton *parent):
+    ThemePushButtonSyle(parent)
 {
-    this->_target->installEventFilter(this);
-    int maxRadius = qSqrt(qPow(_target->width()/2,2)+qPow(_target->height()/2,2));
+    parent->installEventFilter(this);
+    int maxRadius = qSqrt(qPow(parent->width()/2,2)+qPow(parent->height()/2,2));
     this->_ripple = new ClickRippleAnimation(
         RIPPLE_BUTTON_TIME,
         maxRadius,
         this->_colors->prominence().lighter(RIPPLE_BUTTON_LIGHTER_RATIO),
         this->_colors->prominence(),
         5,
-        this->_target
+        parent
         );
 
-    this->_ripple->setUpdate(_target);
+    this->_ripple->setUpdate(parent);
     connect(this->_colors,&ControlColors::prominenceColorChange,this->_ripple,[this](const QColor& color){
         this->_ripple->updateStartColor(color.lighter(RIPPLE_BUTTON_LIGHTER_RATIO));
         this->_ripple->updateEndColor(color);
@@ -528,17 +489,21 @@ RipplePushButtonStyle::RipplePushButtonStyle(QAbstractButton *target):
 
 bool RipplePushButtonStyle::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj != _target)
-        return QProxyStyle::eventFilter(obj, event);
-
-    if (event->type() == QEvent::Resize)
-        _ripple->updateMaxRadius(qSqrt(qPow(_target->width() / 2, 2) + qPow(_target->height() / 2, 2)));
-
-    if (_target->isEnabled() && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick))
+    QAbstractButton* parent = dynamic_cast<QAbstractButton*> (this->parent());
+    if(parent)
     {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        if (mouseEvent->button() == Qt::LeftButton)
-            this->_ripple->start(mouseEvent->position());
+        if (obj != parent)
+            return QProxyStyle::eventFilter(obj, event);
+
+        if (event->type() == QEvent::Resize)
+            _ripple->updateMaxRadius(qSqrt(qPow(parent->width() / 2, 2) + qPow(parent->height() / 2, 2)));
+
+        if (parent->isEnabled() && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonDblClick))
+        {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            if (mouseEvent->button() == Qt::LeftButton)
+                this->_ripple->start(mouseEvent->position());
+        }
     }
     return QProxyStyle::eventFilter(obj, event);
 }
@@ -559,8 +524,8 @@ void RipplePushButtonStyle::unCheckablePaint(QPainter *painter, qint8 state, con
     this->_ripple->paint(painter);
 }
 
-TransparentPushButtonStyle::TransparentPushButtonStyle(QAbstractButton *target, bool drawBorder, bool checkable, bool preserveTransparency)
-    :PushButtonStyleBase(target, checkable),
+TransparentPushButtonStyle::TransparentPushButtonStyle(QAbstractButton *parent, bool drawBorder, bool checkable, bool preserveTransparency)
+    :PushButtonStyleBase(parent, checkable),
     _drawBorder(drawBorder),
     _preserveTransparency(preserveTransparency)
 {
@@ -573,37 +538,40 @@ void TransparentPushButtonStyle::preserveTransparency(bool preserve)
 
 void TransparentPushButtonStyle::drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const
 {
-    if(enabled)
+    QAbstractButton* parent = dynamic_cast<QAbstractButton*>(this->parent());
+    if(parent)
     {
-        if(_target->isChecked())
+        if(enabled)
         {
-            if(_preserveTransparency)
+            if(parent->isChecked())
             {
-                const QColor& textColor = this->_colors->text();
-                painter->setPen(textColor);
-                const_cast<QPalette &>(pal).setColor(textRole, textColor);
+                if(_preserveTransparency)
+                {
+                    const QColor& textColor = this->_colors->text();
+                    painter->setPen(textColor);
+                    const_cast<QPalette &>(pal).setColor(textRole, textColor);
+                }
+                else
+                {
+                    QColor textColor =this->_colors->autoTextColor(_colors->theme());
+                    painter->setPen(textColor);
+                    const_cast<QPalette &>(pal).setColor(textRole, textColor);
+                }
             }
             else
             {
-                QColor textColor =this->_colors->autoTextColor(_colors->theme());
+                QColor textColor =this->_colors->text();
                 painter->setPen(textColor);
                 const_cast<QPalette &>(pal).setColor(textRole, textColor);
             }
         }
         else
         {
-            QColor textColor =this->_colors->text();
+            QColor textColor = this->_colors->disEnabled().lighter(130);
             painter->setPen(textColor);
             const_cast<QPalette &>(pal).setColor(textRole, textColor);
         }
     }
-    else
-    {
-        QColor textColor = this->_colors->disEnabled().lighter(130);
-        painter->setPen(textColor);
-        const_cast<QPalette &>(pal).setColor(textRole, textColor);
-    }
-
     QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, text, textRole);
 }
 
@@ -687,8 +655,8 @@ void TransparentPushButtonStyle::checkablePaint(QPainter *painter, qint8 state, 
 }
 
 
-ToolButtonStyleBase::ToolButtonStyleBase(QAbstractButton *target, bool checkable):
-    PushButtonStyleBase(target,checkable)
+ToolButtonStyleBase::ToolButtonStyleBase(QAbstractButton *parent, bool checkable):
+    PushButtonStyleBase(parent,checkable)
 {
 
 }
@@ -711,29 +679,10 @@ void ToolButtonStyleBase::drawComplexControl(ComplexControl control, const QStyl
         painter->setRenderHint(QPainter::Antialiasing, true);
         QPainterPath clip_path;
         clip_path.addRoundedRect(rect,_buttonRadius,_buttonRadius);
-        quint8 state = 0;
         if(this->_checkable)
-        {
-            CheckableWidgetState s(option->state);
-            if(s.normal)state = 0;// 普通状态
-            else if(s.normal_over)state = 5;// 未选中但鼠标悬浮
-            else if(s.normal_sunke)state = 4;// 未选中但鼠标按下
-            else if(s.selected)state = 1;// 选中状态
-            else if(s.select_sunken)state = 2;// 选中且鼠标按下
-            else if(s.select_over)state = 3;// 选中但鼠标悬浮
-            else if(s.unenable)state = 6; // 禁用状态
-            else if(s.unenable_select)state = 7;// 禁用且选中
-            this->checkablePaint(painter,state,rect,clip_path);
-        }
+            this->checkablePaint(painter,CheckableWidgetState(option->state).flage,rect,clip_path);
         else
-        {
-            UnCheckableControlState s(option->state);
-            if(s.normal)state = 0;// 普通状态
-            else if(s.normal_sunke)state = 1;// 鼠标按下
-            else if(s.normal_over)state = 2;// 鼠标悬浮
-            else if(s.unenable)state = 3; // 禁用状态
-            this->unCheckablePaint(painter,state,rect,clip_path);
-        }
+            this->unCheckablePaint(painter,UnCheckableControlState(option->state).flage,rect,clip_path);
         painter->restore();
     }
     return QProxyStyle::drawComplexControl(control,option,painter,widget);
@@ -750,22 +699,18 @@ void ScrollAreaStyle::drawControl(ControlElement , const QStyleOption *, QPainte
 }
 
 
-
-SliderStyle::SliderStyle(QWidget *target, QStyle *style):
-    QProxyStyle(style),
-    _target(target)
+SliderStyle::SliderStyle(QWidget *parent):
+    QProxyStyle(nullptr)
 {
-    this->_indicator = new Indicator(_target);
-    this->_target->installEventFilter(this);
+    this->_indicator = new Indicator(parent);
+    parent->installEventFilter(this);
+    this->setParent(parent);
 }
 
-SliderStyle::SliderStyle(QWidget *target, Qt::Orientation orientation, QStyle *style):
-    QProxyStyle(style),
-    _target(target)
+SliderStyle::SliderStyle(QWidget *parent, Qt::Orientation orientation):
+    SliderStyle(parent)
 {
-    this->_indicator = new Indicator(_target);
     this->setOrientation(orientation);
-    this->_target->installEventFilter(this);
 }
 void SliderStyle::setOrientation(Qt::Orientation orientation)
 {
@@ -774,7 +719,7 @@ void SliderStyle::setOrientation(Qt::Orientation orientation)
 
 bool SliderStyle::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == _target && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease))
+    if (obj == this->parent() && (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease))
     {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->button() == Qt::LeftButton && event->type() == QEvent::MouseButtonPress)
@@ -810,16 +755,12 @@ void SliderStyle::drawComplexControl(ComplexControl control, const QStyleOptionC
         qreal center = (isHorizontal ? grooveRect.center().y() : grooveRect.center().x());
 
         QLineF primaryLine = (isHorizontal
-                                  ? QLineF(correctXY, center, handleRect.left(), center)
-                                  : QLineF(center, handleRect.bottom(), center, grooveRect.bottom() - correctXY));
+                                  ? QLineF(correctXY, center, handleRect.left() + correctXY, center)
+                                  : QLineF(center, handleRect.bottom() - correctXY, center, grooveRect.bottom() - correctXY));
 
         QLineF secondaryLine = (isHorizontal
-                                    ? QLineF(handleRect.right(), center, grooveRect.right() - correctXY, center)
-                                    : QLineF(center, correctXY, center, handleRect.top()));
-
-        int offset = (isHorizontal
-                          ? handleRect.x() - (grooveRect.height() - handleRect.width()) / 2
-                          : handleRect.y() - (grooveRect.width() - handleRect.height()) / 2);
+                                    ? QLineF(handleRect.right() - correctXY, center, grooveRect.right() - correctXY, center)
+                                    : QLineF(center, correctXY , center, handleRect.top() + correctXY));
 
         // 画线
         QPen pen(colors->theme(),penWidth,Qt::PenStyle::SolidLine,Qt::PenCapStyle::RoundCap);
@@ -831,6 +772,18 @@ void SliderStyle::drawComplexControl(ComplexControl control, const QStyleOptionC
 
 
         // 更新指示器位置
+        int side = isHorizontal ? grooveRect.height() : grooveRect.width();
+
+        int offset = (isHorizontal
+                          ? handleRect.x() - (side - handleRect.width()) / 2
+                          : handleRect.y() - (side - handleRect.height()) / 2);
+        if(offset < 0)
+            offset = 0;
+        else if(isHorizontal && offset+side > widget->width())
+            offset = widget->width() - grooveRect.height();
+
+        else if(!isHorizontal && offset+side > widget->height())
+                offset = widget->height() - grooveRect.width();
         QRect indRect = (isHorizontal
                              ? QRect(QPoint(offset, 0), QSize(grooveRect.height(), grooveRect.height()))
                              : QRect(QPoint(0, offset), QSize(grooveRect.width(), grooveRect.width())));

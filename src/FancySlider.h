@@ -14,13 +14,11 @@ public:
         QSlider(parent)
     {
         this->setStyle(new SliderStyle(this));
-        this->style()->setParent(this);
     }
     explicit FancySlider(Qt::Orientation orientation, QWidget *parent = nullptr):
         QSlider(orientation,parent)
     {
         this->setStyle(new SliderStyle(this,orientation));
-        this->style()->setParent(this);
     }
 
     void setOrientation(Qt::Orientation orientation)
