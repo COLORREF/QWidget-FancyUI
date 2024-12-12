@@ -17,6 +17,7 @@
 #include <QColor>
 #include <QMap>
 #include <QStyleOptionFocusRect>
+#include <QApplication>
 #include "precompile.h"
 #include "FancyAnimation.h"
 
@@ -58,7 +59,6 @@ private:
 
 public:
     static ControlColors* controlColors();
-
     QColor hover(const QColor& color);// 根据原始颜色自动计算合适的鼠标悬浮时的颜色,透明色不适用
     static QColor autoTextColor(const QColor& backgroundColor);// 根据被背景色自动计算合适的文字颜色并返回
 
@@ -91,6 +91,7 @@ struct ControlState
     bool off;
     bool over;
     bool sunken;
+    qint8 flage = -1;
 };
 
 
@@ -108,17 +109,16 @@ struct CheckableControlState : ControlState
         select_over = enable && on && over && !sunken;
         unenable = !enable && off;
         unenable_select = !enable && on;
-    }
 
-    // state = 0;// 普通状态
-    // state = 5;// 未选中但鼠标悬浮
-    // state = 4;// 未选中但鼠标按下
-    // state = 1;// 选中状态
-    // state = 2;// 选中且鼠标按下
-    // state = 3;// 选中但鼠标悬浮
-    // state = 6; // 禁用状态
-    // state = 7;// 禁用且选中
-    // state = 8;// 禁用未选中，但上一次是禁用且选中
+        if(normal)flage = 0;// 普通状态
+        else if(selected)flage = 1;// 选中状态
+        else if(select_sunken)flage = 2;// 选中且鼠标按下
+        else if(select_over)flage = 3;// 选中但鼠标悬浮
+        else if(normal_sunke)flage = 4;// 未选中但鼠标按下
+        else if(normal_over)flage = 5;// 未选中但鼠标悬浮
+        else if(unenable)flage = 6; // 禁用状态
+        else if(unenable_select)flage = 7;// 禁用且选中
+    }
     bool normal;
     bool normal_over;
     bool normal_sunke;
@@ -139,11 +139,11 @@ struct UnCheckableControlState : ControlState
         normal_over = enable && over && !sunken;
         normal_sunke = enable && over && sunken;
         unenable = !enable;
+        if(normal)flage = 0;// 普通状态
+        else if(normal_sunke)flage = 1;// 鼠标按下
+        else if(normal_over)flage = 2;// 鼠标悬浮
+        else if(unenable)flage = 3; // 禁用状态
     }
-    // state = 0普通状态
-    // state = 1鼠标按下
-    // state = 2鼠标悬浮
-    // state = 3禁用状态
     bool normal;
     bool normal_over;
     bool normal_sunke;
@@ -165,16 +165,16 @@ struct CheckableWidgetState : ControlState
         select_over = enable && on && over && !sunken;
         unenable = !enable && !on;
         unenable_select = !enable && on;
+
+        if(normal)flage = 0;// 普通状态
+        else if(selected)flage = 1;// 选中状态
+        else if(select_sunken)flage = 2;// 选中且鼠标按下
+        else if(select_over)flage = 3;// 选中但鼠标悬浮
+        else if(normal_sunke)flage = 4;// 未选中但鼠标按下
+        else if(normal_over)flage = 5;// 未选中但鼠标悬浮
+        else if(unenable)flage = 6; // 禁用状态
+        else if(unenable_select)flage = 7;// 禁用且选中
     }
-    // state = 0;// 普通状态
-    // state = 5;// 未选中但鼠标悬浮
-    // state = 4;// 未选中但鼠标按下
-    // state = 1;// 选中状态
-    // state = 2;// 选中且鼠标按下
-    // state = 3;// 选中但鼠标悬浮
-    // state = 6; // 禁用状态
-    // state = 7;// 禁用且选中
-    // state = 8;// 禁用未选中，但上一次是禁用且选中
     bool normal;
     bool normal_over;
     bool normal_sunke;
@@ -189,23 +189,21 @@ class FancyStyleBase : public QProxyStyle
 {
     Q_OBJECT
 public:
-    FancyStyleBase(QStyle *style = nullptr);
-    FancyStyleBase(const QString &key);
+    FancyStyleBase(QObject* parent);
     virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
 protected:
-    ControlColors * _colors;
+    static ControlColors * _colors;
 };
 
 class RadioButtonStyle : public FancyStyleBase
 {
     Q_OBJECT
 public:
-    explicit RadioButtonStyle(QRadioButton *target);
+    explicit RadioButtonStyle(QRadioButton *parent);
     virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     void enableJumpAnimation(bool isEnable);
 private:
     mutable bool _UnEnableOn = false;
-    QRadioButton *_target;
     QParallelAnimationGroup* _group;
     SimpleAnimation* _jumpAnimation;
     SimpleAnimation* _indicatorAnimation;
@@ -216,23 +214,21 @@ class CheckBoxStyle : public FancyStyleBase
 {
     Q_OBJECT
 public:
-    explicit CheckBoxStyle(QCheckBox* target);
+    explicit CheckBoxStyle(QCheckBox* parent);
     virtual void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
 private:
     SimpleAnimation* _animation;
-    QCheckBox* _target;
 };
 
 class PushButtonStyleBase: public FancyStyleBase
 {
     Q_OBJECT
 public:
-    PushButtonStyleBase(QAbstractButton* target, bool checkable = false);
+    PushButtonStyleBase(QAbstractButton* parent, bool checkable = false);
     virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
     virtual void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     void setCheckable(bool checkable);
 protected:
-    QAbstractButton* _target;
     QLine bottomLine(const QRect& rect,int filletRadius = 0)const;
     virtual void unCheckablePaint(QPainter *painter, qint8 state, const QRect& rect, const QPainterPath& clipPath)const;
     virtual void checkablePaint(QPainter *painter, qint8 state, const QRect& rect, const QPainterPath& clipPath)const;
@@ -244,7 +240,7 @@ class ThemePushButtonSyle : public PushButtonStyleBase
 {
     Q_OBJECT
 public:
-    ThemePushButtonSyle(QAbstractButton* target);
+    ThemePushButtonSyle(QAbstractButton* parent);
     virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole = QPalette::NoRole) const override;
     virtual void unCheckablePaint(QPainter *painter, qint8 state, const QRect& rect, const QPainterPath& clipPath)const override;
 };
@@ -253,7 +249,7 @@ class RipplePushButtonStyle : public ThemePushButtonSyle
 {
     Q_OBJECT
 public:
-    RipplePushButtonStyle(QAbstractButton* target);
+    RipplePushButtonStyle(QAbstractButton* parent);
     virtual bool eventFilter(QObject *obj, QEvent *event)override;
     virtual void unCheckablePaint(QPainter *painter, qint8 state, const QRect& rect, const QPainterPath& clipPath)const override;
 
@@ -266,7 +262,7 @@ class TransparentPushButtonStyle : public PushButtonStyleBase
 {
     Q_OBJECT
 public:
-    TransparentPushButtonStyle(QAbstractButton* target, bool drawBorder = false, bool checkable = false, bool preserveTransparency = false);
+    TransparentPushButtonStyle(QAbstractButton* parent, bool drawBorder = false, bool checkable = false, bool preserveTransparency = false);
     void preserveTransparency(bool preserve);
 protected:
     virtual void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled,
@@ -283,7 +279,7 @@ class ToolButtonStyleBase : public PushButtonStyleBase
 {
     Q_OBJECT
 public:
-    ToolButtonStyleBase(QAbstractButton* target, bool checkable = false);
+    ToolButtonStyleBase(QAbstractButton* parent, bool checkable = false);
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
     void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget = nullptr) const override;
 };
@@ -301,8 +297,8 @@ protected:
 class SliderStyle : public QProxyStyle
 {
 public:
-    SliderStyle(QWidget* target ,QStyle *style = nullptr);
-    SliderStyle(QWidget* target, Qt::Orientation orientation, QStyle *style = nullptr);
+    SliderStyle(QWidget* parent);
+    SliderStyle(QWidget* parent, Qt::Orientation orientation);
     void setOrientation(Qt::Orientation orientation);
     virtual bool eventFilter(QObject *obj, QEvent *event)override;
     QWidget* indicator()const;
@@ -329,7 +325,7 @@ private:
         void paintEvent(QPaintEvent* )override;
     };
     Indicator* _indicator = nullptr;
-    QWidget* _target;
+    // QWidget* _target;
 };
 
 #endif // FANCYSTYLE_H

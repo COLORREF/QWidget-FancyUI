@@ -5,21 +5,18 @@ PushButton::PushButton(QWidget *parent)
     :QPushButton(parent)
 {
     this->setStyle(new PushButtonStyleBase(this));
-    this->style()->setParent(this);
 }
 
 PushButton::PushButton(const QString &text, QWidget *parent)
     :QPushButton(text,parent)
 {
     this->setStyle(new PushButtonStyleBase(this));
-    this->style()->setParent(this);
 }
 
 PushButton::PushButton(const QIcon &icon, const QString &text, QWidget *parent)
     :QPushButton(icon,text,parent)
 {
     this->setStyle(new PushButtonStyleBase(this));
-    this->style()->setParent(this);
 }
 
 PushButton::PushButton(const Icon &icon, const QString &text, QWidget *parent):
@@ -52,21 +49,18 @@ ThemeButton::ThemeButton(QWidget *parent)
     :QPushButton(parent)
 {
     this->setStyle(new ThemePushButtonSyle(this));
-    this->style()->setParent(this);
 }
 
 ThemeButton::ThemeButton(const QString &text, QWidget *parent)
     :QPushButton(text,parent)
 {
     this->setStyle(new ThemePushButtonSyle(this));
-    this->style()->setParent(this);
 }
 
 ThemeButton::ThemeButton(const QIcon &icon, const QString &text, QWidget *parent)
     :QPushButton(icon,text,parent)
 {
     this->setStyle(new ThemePushButtonSyle(this));
-    this->style()->setParent(this);
 }
 
 ThemeButton::ThemeButton(const Icon &icon, const QString &text, QWidget *parent)
@@ -97,21 +91,18 @@ RippleButton::RippleButton(QWidget *parent)
     :QPushButton(parent)
 {
     this->setStyle(new RipplePushButtonStyle(this));
-    this->style()->setParent(this);
 }
 
 RippleButton::RippleButton(const QString &text, QWidget *parent)
     :QPushButton(text,parent)
 {
     this->setStyle(new RipplePushButtonStyle(this));
-    this->style()->setParent(this);
 }
 
 RippleButton::RippleButton(const QIcon &icon, const QString &text, QWidget *parent)
     :QPushButton(icon,text,parent)
 {
     this->setStyle(new RipplePushButtonStyle(this));
-    this->style()->setParent(this);
 }
 
 RippleButton::RippleButton(const Icon &icon, const QString &text, QWidget *parent):
@@ -141,7 +132,6 @@ TransparentButton::TransparentButton(QWidget *parent)
     :QPushButton(parent)
 {
     this->setStyle(new TransparentPushButtonStyle(this));
-    this->style()->setParent(this);
 }
 
 TransparentButton::TransparentButton(const QString &text, QWidget *parent)
@@ -195,7 +185,6 @@ ToolButtonBase::ToolButtonBase(QWidget *parent):
     QToolButton(parent)
 {
     this->setStyle(new ToolButtonStyleBase(this));
-    this->style()->setParent(this);
 }
 
 void ToolButtonBase::setCheckable(bool checkable)
