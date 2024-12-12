@@ -66,7 +66,7 @@ void AspectRatioImageWidget::paintEvent(QPaintEvent *)
 
         QPixmap draw = _pixmap.scaled(this->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
         if(_keepCentered)
-            painter.drawPixmap(0, 0 - (draw.height() - this->height()) / 2, draw);
+            painter.drawPixmap(0 -(draw.width() - this->width()) / 2, 0 - (draw.height() - this->height()) / 2, draw);
         else
             painter.drawPixmap(0,0,draw);
     }
