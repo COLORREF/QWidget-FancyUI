@@ -325,7 +325,6 @@ private:
         void paintEvent(QPaintEvent* )override;
     };
     Indicator* _indicator = nullptr;
-    // QWidget* _target;
 };
 
 #endif // FANCYSTYLE_H

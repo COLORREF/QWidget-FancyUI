@@ -96,6 +96,22 @@ Widget::Widget(QWidget *parent)
 
     // 图标展示（此页面功能尚未完善）
     showIcons();
+
+
+
+    // 测试功能，未完善
+    //----------------------------------------------------------------------------------------------
+    BlurredNavigationBarScrollArea* test = new BlurredNavigationBarScrollArea(ui->page_6);
+    ui->page_6->layout()->addWidget(test);
+
+    QGridLayout* vbox = new QGridLayout(test->widget());
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    QLabel * label = new QLabel(test->widget());
+    label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    label->setPixmap(QPixmap(":/resources/test.jpg"));
+    vbox->addWidget(label);
+
 }
 
 Widget::~Widget()
@@ -115,7 +131,6 @@ void Widget::showHomePage()
     ui->scrollArea_2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->widget_9->setPixmap(QPixmap(":/resources/HomeImg.jpg"));
 }
-
 
 void Widget::showControl()
 {
@@ -172,12 +187,14 @@ void Widget::showControl()
 
 void Widget::showSidebar()
 {
-    //创建三个指示器具有动画的侧边栏选项按钮
+    //创建指示器具有动画的侧边栏选项按钮
     auto home = new  AnimationOptionButton("主页",this->_aniSidebar,FancyIcon::Home);
     auto baseCon = new AnimationOptionButton("基础控件",this->_aniSidebar,FancyIcon::CheckBox);
     auto iamge = new AnimationOptionButton("图片处理",this->_aniSidebar,FancyIcon::Image);
     auto iocn = new AnimationOptionButton("图标",this->_aniSidebar,FancyIcon::Icons);
     auto aniCon = new AnimationOptionButton("动画效果控件",this->_aniSidebar,FancyIcon::Animation);
+
+    auto test = new AnimationOptionButton("实验性功能-测试中",this->_aniSidebar,FancyIcon::ThreeHorizontalPoints);
 
     //添加到侧边栏
     this->_aniSidebar->addOption(home);
@@ -185,6 +202,8 @@ void Widget::showSidebar()
     this->_aniSidebar->addOption(iamge);
     this->_aniSidebar->addOption(iocn);
     this->_aniSidebar->addOption(aniCon);
+
+    this->_aniSidebar->addOption(test);
 
     // 添加20个动画效果的侧边栏选项按钮，用以展示
     int number0 = static_cast<int>(FancyIcon::Number0);

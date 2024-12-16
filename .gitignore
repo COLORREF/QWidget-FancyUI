@@ -4,3 +4,4 @@
 *.user  
 build/
 opencv2/
+.vscode/

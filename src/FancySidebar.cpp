@@ -195,6 +195,9 @@ AnimationOptionButton::AnimationOptionButton(QWidget *parent, int sidebarWidth):
         else
             this->_iconWidget->move(ilx, ily);
     });
+
+    this->_drawIndicator = true;
+    this->_indicator = _upIndicator;
 }
 
 AnimationOptionButton::AnimationOptionButton(const QString &text, QWidget *parent, int sidebarWidth):
@@ -215,6 +218,7 @@ bool AnimationOptionButton::eventFilter(QObject *obj, QEvent *event)
         return true;
     return TransparentButton::eventFilter(obj,event);
 }
+
 void AnimationOptionButton::paintEvent(QPaintEvent *event)
 {
     if(_drawIndicator)
@@ -236,30 +240,7 @@ AnimationIndicatorSidebar::AnimationIndicatorSidebar(QWidget *parent, int upperA
 
 {
     this->_checked.enqueue(0);
-
-    connect(this->_btnGroup,&QButtonGroup::idToggled,this,[this](int id, bool checked){
-        if(checked)
-        {
-            int leaveId = this->_checked.dequeue();
-            this->_checked.enqueue(id);
-            AnimationOptionButton* enter = (AnimationOptionButton*)(this->_btnGroup->button(id));
-            AnimationOptionButton* leave = (AnimationOptionButton*)(this->_btnGroup->button(leaveId));
-            enter->_drawIndicator = true;
-            leave->_drawIndicator = true;
-            if(id > leaveId)
-            {
-                leave->middleToBottom();
-                enter->_indicator = enter->_upIndicator;
-                enter->topToMiddle();
-            }
-            if(id < leaveId)
-            {
-                leave->middleToTop();
-                enter->_indicator = enter->_unIndicator;
-                enter->bottomToMiddle();
-            }
-        }
-    });
+    connect(this->_btnGroup,&QButtonGroup::idToggled,this,&AnimationIndicatorSidebar::startAnimation);
 }
 
 void AnimationIndicatorSidebar::addOption(AnimationOptionButton *option)
@@ -279,15 +260,13 @@ void AnimationIndicatorSidebar::startAnimation(int id, bool checked)
         this->_checked.enqueue(id);
         AnimationOptionButton* enter = (AnimationOptionButton*)(this->_btnGroup->button(id));
         AnimationOptionButton* leave = (AnimationOptionButton*)(this->_btnGroup->button(leaveId));
-        enter->_drawIndicator = true;
-        leave->_drawIndicator = true;
-        if(id > leaveId)
+        if(id >= leaveId)
         {
             leave->middleToBottom();
             enter->_indicator = enter->_upIndicator;
             enter->topToMiddle();
         }
-        if(id < leaveId)
+        else
         {
             leave->middleToTop();
             enter->_indicator = enter->_unIndicator;
@@ -295,4 +274,3 @@ void AnimationIndicatorSidebar::startAnimation(int id, bool checked)
         }
     }
 }
-

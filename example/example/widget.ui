@@ -31,6 +31,9 @@
    </property>
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -283,51 +286,6 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="PushButton" name="pushButton_7">
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>状态按钮</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="ThemeButton" name="pushButton_4">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>主题色按钮</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" colspan="3">
-           <widget class="UncertainProgressBar" name="progressBar">
-            <property name="value">
-             <number>24</number>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" rowspan="3">
            <widget class="FancySlider" name="verticalSlider">
             <property name="value">
@@ -335,19 +293,6 @@
             </property>
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="RippleButton" name="pushButton">
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>设置主题色</string>
             </property>
            </widget>
           </item>
@@ -391,6 +336,45 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="PushButton" name="pushButton_3">
+            <property name="minimumSize">
+             <size>
+              <width>110</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>基础按钮</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="RippleButton" name="pushButton">
+            <property name="minimumSize">
+             <size>
+              <width>110</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>设置主题色</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="3">
+           <widget class="FancySlider" name="horizontalSlider">
+            <property name="value">
+             <number>50</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="2">
            <widget class="TransparentButton" name="pushButton_5">
             <property name="enabled">
@@ -410,18 +394,8 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="3">
-           <widget class="FancySlider" name="horizontalSlider">
-            <property name="value">
-             <number>50</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="PushButton" name="pushButton_3">
+          <item row="2" column="2">
+           <widget class="PushButton" name="pushButton_7">
             <property name="minimumSize">
              <size>
               <width>110</width>
@@ -432,7 +406,36 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>基础按钮</string>
+             <string>状态按钮</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="3">
+           <widget class="UncertainProgressBar" name="progressBar">
+            <property name="value">
+             <number>24</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="ThemeButton" name="pushButton_4">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>110</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>主题色按钮</string>
             </property>
            </widget>
           </item>
@@ -750,8 +753,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>34</width>
-            <height>16</height>
+            <width>910</width>
+            <height>705</height>
            </rect>
           </property>
          </widget>
@@ -925,6 +928,9 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="page_6">
+      <layout class="QGridLayout" name="gridLayout_3"/>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -1011,6 +1017,54 @@
    </hints>
   </connection>
   <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_3</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_6</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_4</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>radioButton_2</sender>
    <signal>clicked(bool)</signal>
    <receiver>checkBox</receiver>
@@ -1023,6 +1077,86 @@
     <hint type="destinationlabel">
      <x>640</x>
      <y>225</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_4</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>checkBox_2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>559</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_7</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_2</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>445</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButton_5</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>445</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
@@ -1055,134 +1189,6 @@
     <hint type="destinationlabel">
      <x>640</x>
      <y>315</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButton_4</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>checkBox_2</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>559</x>
-     <y>331</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>640</x>
-     <y>315</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_3</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>211</x>
-     <y>198</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_4</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>328</x>
-     <y>198</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_2</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>211</x>
-     <y>240</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_5</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>328</x>
-     <y>240</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>445</x>
-     <y>240</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_6</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>211</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_3</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_7</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>445</x>
-     <y>282</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>211</x>
-     <y>324</y>
     </hint>
    </hints>
   </connection>
