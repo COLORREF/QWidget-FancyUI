@@ -470,20 +470,25 @@ RipplePushButtonStyle::RipplePushButtonStyle(QAbstractButton *parent):
     ThemePushButtonSyle(parent)
 {
     parent->installEventFilter(this);
-    int maxRadius = qSqrt(qPow(parent->width()/2,2)+qPow(parent->height()/2,2));
     this->_ripple = new ClickRippleAnimation(
         RIPPLE_BUTTON_TIME,
-        maxRadius,
-        this->_colors->prominence().lighter(RIPPLE_BUTTON_LIGHTER_RATIO),
-        this->_colors->prominence(),
+        qSqrt(qPow(parent->width()/2,2)+qPow(parent->height()/2,2)), //maxRadius
+        this->_colors->theme().lighter(RIPPLE_BUTTON_LIGHTER_RATIO),
+        this->_colors->theme(),
         5,
         parent
         );
 
     this->_ripple->setUpdate(parent);
-    connect(this->_colors,&ControlColors::prominenceColorChange,this->_ripple,[this](const QColor& color){
-        this->_ripple->updateStartColor(color.lighter(RIPPLE_BUTTON_LIGHTER_RATIO));
-        this->_ripple->updateEndColor(color);
+
+    connect(this->_colors,&ControlColors::prominenceColorChange,this->_ripple,[this](){
+        this->_ripple->updateStartColor(this->_colors->theme().lighter(RIPPLE_BUTTON_LIGHTER_RATIO));
+        this->_ripple->updateEndColor(this->_colors->theme());
+    });
+
+    connect(Theme::themeObject(),&Theme::themeChange,this->_ripple,[this](){
+        this->_ripple->updateStartColor(this->_colors->theme().lighter(RIPPLE_BUTTON_LIGHTER_RATIO));
+        this->_ripple->updateEndColor(this->_colors->theme());
     });
 }
 

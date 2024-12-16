@@ -5,12 +5,13 @@ Label::Label(QWidget *parent, Qt::WindowFlags f):
     QLabel(parent,f)
 {
     this->setStyle(new FancyStyleBase(this));
+    connect(Theme::themeObject(),&Theme::themeChange,this,[this](){this->update();});
 }
 
 Label::Label(const QString &text, QWidget *parent, Qt::WindowFlags f):
-    QLabel(text,parent,f)
+    Label(parent,f)
 {
-    this->setStyle(new FancyStyleBase(this));
+    this->setText(text);
 }
 
 
