@@ -151,6 +151,31 @@ FImage &FImage::greyScale()
     _mat = cv::Mat(_mat.rows, _mat.cols, CV_8UC1, (void *)(_qimage.constBits()), _qimage.bytesPerLine());
     return *this;
 }
+
+FImage &FImage::boxBlur(int radius)
+{
+    if(radius > 0)
+    {
+        int ksize = radius * 2 + 1;
+        cv::boxFilter(_mat,_mat,_mat.depth(),cv::Size(ksize, ksize));
+    }
+    else if (radius < 0)
+        qWarning() << "The blur radius must be greater than or equal to 0";
+    return *this;
+}
+
+FImage &FImage::medianBlur(int radius)
+{
+    if(radius > 0)
+    {
+        int ksize = radius * 2 + 1;
+        cv::medianBlur(_mat,_mat, ksize);
+    }
+    else if (radius < 0)
+        qWarning() << "The blur radius must be greater than or equal to 0";
+    return *this;
+}
+
 QPixmap FImage::toQPixmap() const
 {
     return QPixmap::fromImage(_qimage);

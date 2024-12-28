@@ -77,10 +77,10 @@ BlurredBackgroundWidget::BlurredBackgroundWidget(QWidget *parent)
 {
     this->setMoveBlurre(true);
     this->setResizeBlurre(true);
-    QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect(this);
-    blurEffect->setBlurRadius(30);
-    blurEffect->setBlurHints(QGraphicsBlurEffect::BlurHint::QualityHint);
-    this->setGraphicsEffect(blurEffect);
+    // QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect(this);
+    // blurEffect->setBlurRadius(30);
+    // blurEffect->setBlurHints(QGraphicsBlurEffect::BlurHint::QualityHint);
+    // this->setGraphicsEffect(blurEffect);
     // this->graphicsProxyWidget()
 }
 
@@ -133,9 +133,15 @@ bool BlurredBackgroundWidget::isEnableResizeBlurre()
     return this->_resizeBlurre;
 }
 
+void BlurredBackgroundWidget::setMaskColor(const QColor &color)
+{
+    this->_mask = color;
+    update();
+}
+
 void BlurredBackgroundWidget::clear()
 {
-    this->_pixmap = QPixmap();
+    this->_pixmap.fill(Qt::GlobalColor::transparent);
     update();
 }
 
@@ -172,20 +178,13 @@ void BlurredBackgroundWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void BlurredBackgroundWidget::paintEvent(QPaintEvent *)
 {
-
-    // QPainterPath path;
-    // path.addRoundedRect(this->rect(),18,18);
-    // painter.setClipPath(path);
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     if(!this->_pixmap.isNull())
     {
-        QPainter painter(this);
-        painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
         painter.drawPixmap(0,0,_pixmap);
-
-        painter.fillRect(rect(),ControlColors::controlColors()->transparentHover().darker(100));
     }
-    // painter.setPen(ControlColors::controlColors()->buttonBorder());
-    // painter.drawPath(path);
+    painter.fillRect(rect(),this->_mask);
 }
 
 void BlurredBackgroundWidget::resizeEvent(QResizeEvent *event)
@@ -199,13 +198,20 @@ void BlurredBackgroundWidget::blurre(QWidget *device, QRect rect)
 {
     QTimer::singleShot(0,this,[=](){
         const qreal dpr = devicePixelRatioF(); // 获取设备的像素比
-        QPixmap res((QSizeF(rect.size()) * dpr).toSize());
+        // QPixmap res((QSizeF(rect.size()) * dpr).toSize());
+        // res.setDevicePixelRatio(dpr);// 设置 QPixmap 像素比
+        // res.fill(Qt::transparent);
+        // device->render(&res,QPoint(), QRegion(rect), this->_renderFlags);
+        // this->_pixmap = res;
+
+        QImage res((QSizeF(rect.size()) * dpr).toSize(),QImage::Format_ARGB32);
         res.setDevicePixelRatio(dpr);// 设置 QPixmap 像素比
         res.fill(Qt::transparent);
         device->render(&res,QPoint(), QRegion(rect), this->_renderFlags);
-        this->_pixmap = res;
-        // FImage fim(res.toImage());
-        // this->_pixmap = fim.gaussianBlur(60).toQPixmap();
+
+        FImage fim(res);
+        // this->_pixmap = fim.gaussianBlur(60).toQPixmap(); // 高斯模糊会占用巨量cpu资源
+        this->_pixmap = fim.boxBlur(60).toQPixmap(); // 改用方框模糊，近似高斯模糊，但cpu占用大幅降低
         this->update();
     });
 }

@@ -15,7 +15,6 @@
 #include <QDebug>
 #include <QPainterPath>
 #include <QVariantAnimation>
-#include <QStackedWidget>
 // #include <windows.devices.lights.effects.h>
 #include <Windows.h>
 #include <WinUser.h>
@@ -312,14 +311,6 @@ public:
     F_RESIZEEVENT{TransparentEffectWindowBase::resizeEvent(event);}
 };
 
-// Code in writing
-class AnimationStackedWidget : public QStackedWidget
-{
-public:
-    using QStackedWidget::QStackedWidget;
-};
-//
-
 class AdaptiveLayoutWindow : public MSWindow
 {
     Q_OBJECT
@@ -334,15 +325,5 @@ signals:
 private:
     virtual void checkWidth();
 };
-
-
-
-
-
-
-
-
-
-
 
 #endif // FANCYWINDOW_H
