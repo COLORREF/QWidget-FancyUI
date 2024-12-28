@@ -102,6 +102,7 @@ Widget::Widget(QWidget *parent)
     // 测试功能，未完善
     //----------------------------------------------------------------------------------------------
     BlurredNavigationBarScrollArea* test = new BlurredNavigationBarScrollArea(ui->page_6);
+    test->setMaximumWidth(750);
     ui->page_6->layout()->addWidget(test);
 
     QGridLayout* vbox = new QGridLayout(test->widget());
@@ -232,7 +233,7 @@ void Widget::showSidebar()
     connect(homepage[1],&QPushButton::clicked,this,[](){QDesktopServices::openUrl(QUrl(R"(https://github.com/COLORREF/QWidget-FancyUI)"));});
 
     // 分页窗口切换
-    connect(this->_aniSidebar,&AnimationIndicatorSidebar::optionChecked,ui->stackedWidget,&QStackedWidget::setCurrentIndex);
+    connect(this->_aniSidebar,&AnimationIndicatorSidebar::optionChecked,ui->stackedWidget,&AnimationStackedWidget::setCurrentIndex);
 }
 
 void Widget::showImageProcessing()

@@ -19,6 +19,8 @@
 #include <QWindow>
 #include <QTimer>
 #include <QMouseEvent>
+#include <QStackedWidget>
+#include <QPropertyAnimation>
 #include "precompile.h"
 #include "FancyStyle.h"
 
@@ -68,9 +70,9 @@ public:
     void setBlurRadius(qreal blurRadius);
     void setBlurHints(QGraphicsBlurEffect::BlurHints hints);
     void setRenderFlags(QWidget::RenderFlags renderFlags);
-
     void setResizeBlurre(bool enable);
     bool isEnableResizeBlurre();
+    void setMaskColor(const QColor& color);
 
     void clear();
 protected:
@@ -89,6 +91,7 @@ private:
     QWidget::RenderFlags _renderFlags = /*QWidget::DrawWindowBackground |*/ QWidget::DrawChildren |  QWidget::IgnoreMask;
     bool _isDragging;
     QPoint _dragStartPos; // 鼠标按下时的位置
+    QColor _mask = Qt::GlobalColor::transparent;
 public slots:
     void blurre(QWidget* device, QRect rect);
 
@@ -104,12 +107,16 @@ public:
         QScrollArea(parent),
         _externalContentWidget{new QWidget(this)},
         _externalLayout(new QVBoxLayout(this->_externalContentWidget)),
-        _verticalSpacer(new QSpacerItem(20, 500, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed)),
+        _verticalSpacer(new QSpacerItem(20, 250, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed)),
         _scrollContentWidget(new QWidget(this->_externalContentWidget)),
         _navigationBar(new BlurredBackgroundWidget(this))
     {
         this->setWidgetResizable(true);
         this->setWidget(this->_externalContentWidget);
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏横向滚动条
+        this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏竖向滚动条
+
+
         this->_externalLayout->setSpacing(0);
         this->_externalLayout->setContentsMargins(0, 0, 0, 0);
         this->_externalLayout->addItem(this->_verticalSpacer);
@@ -122,10 +129,18 @@ public:
         p.setColor(QPalette::Window,Qt::transparent);
         this->setPalette(p);
 
+        this->_navigationBar->setMaskColor(QColor(255,255,255,100));
+
         connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this,[this](){
             this->_navigationBar->clear();
             this->_navigationBar->blurre(this,this->_navigationBar->geometry());
         });
+
+        connect(this->horizontalScrollBar(), &QScrollBar::valueChanged, this,[this](){
+            this->_navigationBar->clear();
+            this->_navigationBar->blurre(this,this->_navigationBar->geometry());
+        });
+
         connect(Theme::themeObject(), &Theme::themeChange, this,[this](){
             this->_navigationBar->clear();
             this->_navigationBar->blurre(this,this->_navigationBar->geometry());
@@ -141,7 +156,6 @@ public:
     {
         QScrollArea::resizeEvent(event);
         _navigationBar->resize(this->_externalContentWidget->width(),this->_verticalSpacer->sizeHint().height());
-        // _navigationBar->move(0,0);
     }
 
 private:
@@ -151,5 +165,87 @@ private:
     QWidget* _scrollContentWidget;
     BlurredBackgroundWidget* _navigationBar;
 };
+
+
+class AnimationStackedWidget : public QStackedWidget
+{
+    Q_OBJECT
+public:
+    explicit AnimationStackedWidget(QWidget *parent = nullptr)
+        :QStackedWidget(parent)
+    {
+    }
+
+    int addWidget(QWidget *w)
+    {
+        this->addGeometryAnimation(w);
+        return QStackedWidget::addWidget(w);;
+    }
+    int insertWidget(int index, QWidget *w)
+    {
+        this->addGeometryAnimation(w);
+        return QStackedWidget::insertWidget(index,w);
+    }
+    void removeWidget(QWidget *w)
+    {
+        this->removeGeometryAnimation(w);
+        QStackedWidget::removeWidget(w);
+    }
+
+public slots:
+    void setCurrentIndex(int index)
+    {
+        QStackedWidget::setCurrentIndex(index);
+        this->startAnimation(this->widget(index));
+    }
+    void setCurrentWidget(QWidget *w)
+    {
+        QStackedWidget::setCurrentWidget(w);
+        this->startAnimation(w);
+    }
+private:
+    void addGeometryAnimation(QWidget *w)
+    {
+        QPropertyAnimation* ani = w->property("geometryAnimation").value<QPropertyAnimation*>();
+        if(!ani)
+        {
+            ani = new QPropertyAnimation(w,"geometry");
+            ani->setDuration(200);
+            w->setProperty("geometryAnimation",QVariant::fromValue(ani));
+        }
+    }
+    void removeGeometryAnimation(QWidget *w)
+    {
+        QPropertyAnimation* ani = w->property("geometryAnimation").value<QPropertyAnimation*>();
+        if(ani)
+            ani->deleteLater();
+    }
+
+    void startAnimation(QWidget *w)
+    {
+        if(_first)
+        {
+            _first = false;
+            return;
+        }
+        if(w)
+        {
+            QPropertyAnimation* ani = w->property("geometryAnimation").value<QPropertyAnimation*>();
+            QRect endRect = w->rect();
+            QRect startRect = QRect(QPoint(0,50),w->size());
+            if(ani->startValue().toRect() != startRect || ani->endValue().toRect() != endRect)
+            {
+                ani->setStartValue(startRect);
+                ani->setEndValue(endRect);
+            }
+            ani->start();
+        }
+    }
+
+    bool _first = true;
+};
+
+
+
 
 #endif // FANCYWIDGET_H

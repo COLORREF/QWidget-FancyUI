@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget">
+    <widget class="AnimationStackedWidget" name="stackedWidget">
      <property name="styleSheet">
       <string notr="true"/>
      </property>
@@ -996,6 +996,12 @@
    <class>UncertainProgressBar</class>
    <extends>QProgressBar</extends>
    <header>FancyProgressBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AnimationStackedWidget</class>
+   <extends>QStackedWidget</extends>
+   <header>FancyWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

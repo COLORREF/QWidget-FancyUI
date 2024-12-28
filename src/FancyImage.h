@@ -1,4 +1,4 @@
-#ifndef FANCYIMAGE_H
+﻿#ifndef FANCYIMAGE_H
 #define FANCYIMAGE_H
 #include <QImage>
 #include <QString>
@@ -39,6 +39,8 @@ public:
     FImage &verticalUniforBlur(int radius = 30);     // 垂直均匀模糊
     FImage &impulseNoise(double noiseRatio = 0.3);   // 椒盐噪声
     FImage &greyScale();                             // 8bit 单通道 灰度图
+    FImage &boxBlur(int radius = 30);                // 方框模糊(滤波)
+    FImage &medianBlur(int radius = 30);             // 中值模糊
 
     QPixmap toQPixmap() const;
     inline QImage &qImage() { return _qimage; };
