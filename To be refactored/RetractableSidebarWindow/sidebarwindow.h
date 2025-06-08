@@ -27,7 +27,7 @@ signals:
     void clicked(); // 多页窗口被点击时此信号将发出
 
 private:
-    void setupUi(QWidget *parent);
+    void setupUi();
     Sidebar *sidebar_;               // 侧边栏
     QHBoxLayout *horizontalLayout;   // 水平布局
     QSpacerItem *placeholderSpring_; // 占位弹簧
