@@ -38,7 +38,7 @@ English | <a href="./README.md">简体中文</a>
 
 ![HomePreview_Light](./docs/HomePreview_Light.png)
 
-![HomePreview_Dark](.\docs\HomePreview_Dark.png)
+![HomePreview_Dark](./docs/HomePreview_Dark.png)
 
 # Demo Program Build Guide
 
