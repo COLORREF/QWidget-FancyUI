@@ -37,7 +37,7 @@
 
 ![HomePreview_Light](./docs/HomePreview_Light.png)
 
-![HomePreview_Dark](.\docs\HomePreview_Dark.png)
+![HomePreview_Dark](./docs/HomePreview_Dark.png)
 
 # 示例程序编译指南
 
