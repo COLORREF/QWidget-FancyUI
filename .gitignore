@@ -5,3 +5,13 @@
 build/
 opencv2/
 .vscode/
+OpenCV_static/
+.vs/
+.idea/
+CMakePresets.json
+CMakeUserPresets.json
+OpenCV/
+out/
+*.py
+*.pyc
+*.exe
