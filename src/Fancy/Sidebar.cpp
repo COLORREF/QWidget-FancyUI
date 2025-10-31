@@ -44,7 +44,6 @@ namespace fancy
 
         _scrollContentWidgetVerticalLayout->addItem(_verticalSpacer);
         _scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-        _scrollArea->setVerticalScrollBar(new ScrollBar(Qt::Orientation::Vertical, _scrollArea));
         _verticalLayout->addWidget(_scrollArea);
         _checked.enqueue(0);
 

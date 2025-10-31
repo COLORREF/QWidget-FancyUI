@@ -3,6 +3,9 @@
 //
 
 #include "SystemThemeMonitor.h"
+
+#include <QApplication>
+
 #include "Defs.hpp"
 #include "ThemeModeController.h"
 

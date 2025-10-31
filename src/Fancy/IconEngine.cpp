@@ -3,6 +3,9 @@
 //
 
 #include "IconEngine.h"
+
+#include <QApplication>
+
 #include "Palette.h"
 
 namespace fancy

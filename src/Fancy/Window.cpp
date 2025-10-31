@@ -3,6 +3,7 @@
 //
 
 #include "Window.h"
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QVariantAnimation>

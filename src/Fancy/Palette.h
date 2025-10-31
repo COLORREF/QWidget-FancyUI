@@ -8,6 +8,7 @@
 #include <QColor>
 #include <QHash>
 #include <QList>
+#include <QMap>
 #include <QObject>
 
 

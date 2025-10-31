@@ -4,7 +4,7 @@
 
 #include "Palette.h"
 
-#include <regex>
+#include <QApplication>
 
 #include "BezierEasing.h"
 #include "Defs.hpp"
