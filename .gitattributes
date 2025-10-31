@@ -4,6 +4,7 @@
 *.hpp linguist-language=C++
 
 *.py linguist-detectable=false  
-*.svg  linguist-detectable=true
+*.svg  linguist-detectable=false
 *.ui  linguist-detectable=false
 *.qrc  linguist-detectable=false
+*.md  linguist-detectable=false
