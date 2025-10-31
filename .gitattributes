@@ -1,0 +1,5 @@
+*.svg linguist-documentation
+*.txt linguist-language=cmake
+*.cpp linguist-language=cpp
+*.h linguist-language=cpp
+*.hpp linguist-language=cpp
