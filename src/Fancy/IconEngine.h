@@ -5,7 +5,7 @@
 #ifndef QWIDGET_FANCYUI_ICONENGINE_H
 #define QWIDGET_FANCYUI_ICONENGINE_H
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QColor>
 #include <QFileInfo>
 #include <QIconEngine>

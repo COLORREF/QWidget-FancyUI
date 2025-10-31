@@ -5,6 +5,7 @@
 #include "ScrollArea.h"
 
 #include "ScrollAreaStyle.h"
+#include "ScrollBar.h"
 
 namespace fancy
 {
@@ -16,5 +17,8 @@ namespace fancy
         p.setColor(QPalette::Window, Qt::transparent);
         setPalette(p);
         setStyle(new ScrollAreaStyle(this));
+
+        setVerticalScrollBar(new ScrollBar(Qt::Orientation::Vertical, this));
+        setHorizontalScrollBar(new ScrollBar(Qt::Orientation::Horizontal, this));
     }
 } // fancy

@@ -1,5 +1,9 @@
-*.svg linguist-documentation
-*.txt linguist-language=cmake
-*.cpp linguist-language=cpp
-*.h linguist-language=cpp
-*.hpp linguist-language=cpp
+*.txt linguist-language=CMake
+*.cpp linguist-language=C++
+*.h linguist-language=C++
+*.hpp linguist-language=C++
+
+*.py linguist-detectable=false  
+*.svg  linguist-detectable=true
+*.ui  linguist-detectable=false
+*.qrc  linguist-detectable=false
