@@ -35,8 +35,10 @@ namespace fancy
         _subText->setGeometry(65, 40, 250, 60);
         _subText->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-        _shareIcon->setGeometry(275, 75, 20, 20);
-        _shareIcon->reload(IconPark::Link);
+        // _shareIcon->setGeometry(275, 75, 20, 20);
+        // _shareIcon->reload(IconPark::Link);
+        _shareIcon->deleteLater();
+        _shareIcon = nullptr;
     }
 
     void ExampleNavigationCard::setIcon(const QPixmap &pixmap)
