@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QVariantAnimation>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy

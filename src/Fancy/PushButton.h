@@ -6,7 +6,7 @@
 #define QWIDGET_FANCYUI_PUSHBUTTON_H
 #include <QPushButton>
 
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {
@@ -31,6 +31,10 @@ namespace fancy
 
         PushButton(const IconId &id, const QString &text, QWidget *parent = nullptr);
 
+        void setRadius(int radius);
+
+        [[nodiscard]] qreal radius() const;
+
 #define PUSHBUTTON_ICON_ENUM_CONSTRUCTOR(ENUM_TYPE) PushButton(ENUM_TYPE iconEnum, const QString &text, QWidget *parent = nullptr):\
         PushButton(iconId(iconEnum), text, parent) {}
 
@@ -49,6 +53,8 @@ namespace fancy
         PUSHBUTTON_SET_ICON(AntDesignIcons)
         PUSHBUTTON_SET_ICON(BootstrapIcons)
         PUSHBUTTON_SET_ICON(IconPark)
+
+
     };
 } // fancy
 

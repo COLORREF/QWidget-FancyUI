@@ -7,9 +7,9 @@
 
 #include <QSvgWidget>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "IconEnums.h"
-#include "SvgParsing.hpp"
+#include "SvgParsing.h"
 
 namespace fancy
 {

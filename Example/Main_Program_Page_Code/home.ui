@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ScrollArea" name="global">
+    <widget class="fancy::ScrollArea" name="global">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -57,7 +57,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="CenteredImageWidget" name="homeImage" native="true">
+        <widget class="fancy::CenteredImageWidget" name="homeImage" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -79,7 +79,7 @@
          <property name="styleSheet">
           <string notr="true"/>
          </property>
-         <widget class="TextLabel" name="label">
+         <widget class="fancy::TextLabel" name="label">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -104,7 +104,7 @@
 QWidget FancyUI</string>
           </property>
          </widget>
-         <widget class="TextLabel" name="label_2">
+         <widget class="fancy::TextLabel" name="label_2">
           <property name="geometry">
            <rect>
             <x>60</x>
@@ -167,7 +167,7 @@ QWidget FancyUI</string>
            <number>0</number>
           </property>
           <item>
-           <widget class="TextLabel" name="subtitle">
+           <widget class="fancy::TextLabel" name="subtitle">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -212,18 +212,18 @@ QWidget FancyUI</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CenteredImageWidget</class>
+   <class>fancy::CenteredImageWidget</class>
    <extends>QWidget</extends>
    <header>CenteredImageWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TextLabel</class>
+   <class>fancy::TextLabel</class>
    <extends>QLabel</extends>
    <header>TextLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ScrollArea</class>
+   <class>fancy::ScrollArea</class>
    <extends>QScrollArea</extends>
    <header>ScrollArea.h</header>
    <container>1</container>

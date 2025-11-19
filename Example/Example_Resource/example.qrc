@@ -1,23 +1,29 @@
 <RCC>
     <qresource prefix="/">
-        <file>home.png</file>
+        <file>Accessibility.png</file>
         <file>Acrylic.png</file>
         <file>AnimatedIcon.png</file>
         <file>AnimatedVisualPlayer.png</file>
         <file>AnimationInterop.png</file>
+        <file>AnnotatedScrollBar.png</file>
         <file>AppBarButton.png</file>
         <file>AppBarSeparator.png</file>
         <file>AppBarToggleButton.png</file>
+        <file>AppNotification.png</file>
+        <file>AppWindow.png</file>
         <file>AutomationProperties.png</file>
         <file>AutoSuggestBox.png</file>
+        <file>BadgeNotification.png</file>
         <file>Border.png</file>
         <file>BreadcrumbBar.png</file>
         <file>Button.png</file>
         <file>CalendarDatePicker.png</file>
         <file>CalendarView.png</file>
         <file>Canvas.png</file>
+        <file>CaptureElement.png</file>
         <file>Checkbox.png</file>
         <file>Clipboard.png</file>
+        <file>CodeTagIcon.png</file>
         <file>ColorPaletteResources.png</file>
         <file>ColorPicker.png</file>
         <file>ComboBox.png</file>
@@ -26,18 +32,21 @@
         <file>CompactSizing.png</file>
         <file>ConnectedAnimation.png</file>
         <file>ContentDialog.png</file>
+        <file>ContentIsland.png</file>
         <file>CreateMultipleWindows.png</file>
+        <file>CustomControls.png</file>
         <file>DataGrid.png</file>
         <file>DatePicker.png</file>
         <file>DropDownButton.png</file>
         <file>EasingFunction.png</file>
-        <file>example.qrc</file>
+        <file>ExampleSourceCode.json</file>
         <file>Expander.png</file>
         <file>FilePicker.png</file>
         <file>FlipView.png</file>
         <file>Flyout.png</file>
         <file>Grid.png</file>
         <file>GridView.png</file>
+        <file>home.png</file>
         <file>HyperlinkButton.png</file>
         <file>IconElement.png</file>
         <file>Image.png</file>
@@ -48,9 +57,11 @@
         <file>InkToolbar.png</file>
         <file>InputValidation.png</file>
         <file>ItemsRepeater.png</file>
+        <file>ItemsView.png</file>
         <file>Line.png</file>
         <file>ListBox.png</file>
         <file>ListView.png</file>
+        <file>MapControl.png</file>
         <file>MediaPlayerElement.png</file>
         <file>MenuBar.png</file>
         <file>MenuFlyout.png</file>
@@ -62,6 +73,8 @@
         <file>PersonPicture.png</file>
         <file>PipsPager.png</file>
         <file>Pivot.png</file>
+        <file>Placeholder.png</file>
+        <file>Popup.png</file>
         <file>ProgressBar.png</file>
         <file>ProgressRing.png</file>
         <file>PullToRefresh.png</file>
@@ -74,20 +87,25 @@
         <file>RevealFocus.png</file>
         <file>RichEditBox.png</file>
         <file>RichTextBlock.png</file>
+        <file>ScratchPad.png</file>
+        <file>ScrollView.png</file>
         <file>ScrollViewer.png</file>
         <file>SemanticZoom.png</file>
         <file>Shape.png</file>
+        <file>Slices.png</file>
         <file>Slider.png</file>
         <file>Sound.png</file>
         <file>SplitButton.png</file>
         <file>SplitView.png</file>
         <file>StackPanel.png</file>
         <file>StandardUICommand.png</file>
+        <file>StoragePickers.png</file>
         <file>SwipeControl.png</file>
         <file>TabView.png</file>
         <file>TeachingTip.png</file>
         <file>TextBlock.png</file>
         <file>TextBox.png</file>
+        <file>ThemeShadow.png</file>
         <file>ThemeTransition.png</file>
         <file>TimePicker.png</file>
         <file>TitleBar.png</file>

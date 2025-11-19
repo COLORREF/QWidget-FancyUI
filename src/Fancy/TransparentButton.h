@@ -6,7 +6,7 @@
 #define QWIDGET_FANCYUI_TRANSPARENTBUTTON_H
 #include <QPushButton>
 
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {
@@ -33,7 +33,11 @@ namespace fancy
 
         void setDrawBorder(bool draw);
 
+        void setBorderWidth(qreal w);
+
         void setRadius(int radius);
+
+        [[nodiscard]] qreal radius() const;
 
 #define TRANSPARENTBUTTON_ICON_ENUM_CONSTRUCTOR(ENUM_TYPE) TransparentButton(ENUM_TYPE iconEnum, const QString &text, QWidget *parent = nullptr):\
 TransparentButton(iconId(iconEnum), text, parent) {}

@@ -67,7 +67,7 @@ namespace fancy
          * @param amount 插值参数(0-1)
          * @return 混合后的颜色
          */
-        static QColor mix(const QColor &c1, const QColor &c2, float amount = 0.5);
+        static QColor mix(const QColor &c1, const QColor &c2, double amount = 0.5);
 
         /**
          * @brief 将给定颜色在HSL色彩空间按指定比例变暗
@@ -75,7 +75,7 @@ namespace fancy
          * @param amount 变暗的程度(0-1)
          * @return 变暗后的新颜色
          */
-        static QColor darken(const QColor &c, float amount = 0.1);
+        static QColor darken(const QColor &c, double amount = 0.1);
 
         /**
          * @brief 在HSL色彩空间中旋转颜色色相
@@ -83,7 +83,7 @@ namespace fancy
          * @param amount 色相旋转的角度（单位：度，支持正负值）
          * @return 旋转色相后的新颜色
          */
-        static QColor spin(const QColor &c, float amount);
+        static QColor spin(const QColor &c, double amount);
 
         /**
          * @brief 对srgb颜色空间的单个颜色通道进行伽马解码
@@ -106,9 +106,9 @@ namespace fancy
          * @param c1 第一种颜色
          * @param c2 第二种颜色
          * @param gamma 伽马校正值，用于相对亮度计算
-         * @return float 颜色对比度比值（≥1.0）
+         * @return double 颜色对比度比值（≥1.0）
          */
-        static double wcag2Contrast(const QColor &c1, const QColor &c2, float gamma = 2.4);
+        static double wcag2Contrast(const QColor &c1, const QColor &c2, double gamma = 2.4);
 
         /**
          * @brief 基于 APCA 可访问的感知对比度算法计算背景颜色和文本颜色的人眼的实际感受程度

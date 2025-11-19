@@ -5,7 +5,7 @@
 #include "SystemAccessor.h"
 #include <bcrypt.h>
 #include <QDebug>
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {

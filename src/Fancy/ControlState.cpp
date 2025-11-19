@@ -3,7 +3,7 @@
 //
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {
@@ -15,6 +15,7 @@ namespace fancy
         _off = state & QStyle::StateFlag::State_Off;
         _over = state & QStyle::StateFlag::State_MouseOver;
         _sunken = state & QStyle::StateFlag::State_Sunken;
+        _focus = state & QStyle::StateFlag::State_HasFocus;
         _type = type;
 
         _state = visualState();
@@ -48,6 +49,16 @@ namespace fancy
                 if (_on)
                     return _over ? (_sunken ? VisualState::SelectedPressed : VisualState::SelectedHover) : VisualState::Selected;
                 return _over ? (_sunken ? VisualState::Pressed : VisualState::Hover) : VisualState::Normal;
+            }
+            case ControlType::TextEdit :
+            {
+                if (!_enable)
+                    return VisualState::Disabled;
+                if (_focus)
+                    return _over ? VisualState::FocusHover : VisualState::Focus;
+                if (_over)
+                    return VisualState::Hover;
+                return VisualState::Normal;
             }
             default :
                 return VisualState::UnKnown;

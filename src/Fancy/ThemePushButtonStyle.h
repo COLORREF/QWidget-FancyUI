@@ -21,6 +21,10 @@ namespace fancy
 
         void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
 
+        void setRadius(int radius);
+
+        [[nodiscard]] qreal radius() const;
+
     private:
         int _buttonRadius;
     };

@@ -14,7 +14,7 @@ namespace fancy
     {
         setStyle(new ThemeButtonStyle(this));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(12);
         setFont(font);
     }
 
@@ -38,6 +38,19 @@ namespace fancy
 
     ThemeButton::ThemeButton(const IconId &id, const QString &text, QWidget *parent) :
         ThemeButton(Icon(id), text, parent) {}
+
+    void ThemeButton::setRadius(int radius)
+    {
+        if (auto *style_ = qobject_cast<ThemeButtonStyle *>(style()))
+            style_->setRadius(radius);
+    }
+
+    qreal ThemeButton::radius() const
+    {
+        if (auto *style_ = qobject_cast<ThemeButtonStyle *>(style()))
+            return style_->radius();
+        return 0.0;
+    }
 
     void ThemeButton::setIcon(const IconId &id)
     {

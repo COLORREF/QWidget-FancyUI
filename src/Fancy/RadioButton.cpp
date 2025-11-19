@@ -12,7 +12,7 @@ namespace fancy
     {
         setStyle(new RadioButtonStyle(this));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(12);
         setFont(font);
     }
 

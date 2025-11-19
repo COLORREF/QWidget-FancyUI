@@ -6,14 +6,16 @@
 
 #include <QPainter>
 #include <QPainterPath>
+#include <QStyleOption>
 #include <QVariantAnimation>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "Sidebar.h"
 #include "SvgWidget.h"
 #include "TextLabel.h"
 #include "TextLabelStyle.h"
+#include "TransparentButtonStyle.h"
 
 namespace fancy
 {
@@ -24,6 +26,7 @@ namespace fancy
         _textLabel(new QLabel(this)),
         _topToMiddle(new QVariantAnimation(this)),
         _middleToBottom(new QVariantAnimation(this)),
+        _leftOffset(0),
         _drawIndicator(true),
         _adjustIconCoordinates(true)
     {
@@ -36,7 +39,7 @@ namespace fancy
         setSizePolicy(sizePolicy);
         setSidebarWidth(sidebarWidth);
         QFont font = _textLabel->font();
-        font.setPixelSize(13);
+        font.setPointSizeF(10.5);
         setFont(font);
         connect(_topToMiddle, &QVariantAnimation::valueChanged, this, &SidebarButton::setIndicator);
         connect(_middleToBottom, &QVariantAnimation::valueChanged, this, &SidebarButton::setIndicator);
@@ -93,24 +96,24 @@ namespace fancy
         const int ilx = (width() - ilWH) / 2;
 
         _imageWidget->resize({ilWH, ilWH});
-        _imageWidget->move(ilx, ily);
+        _imageWidget->move(_leftOffset + ilx, ily);
         _svgWidget->resize({ilWH, ilWH});
-        _svgWidget->move(ilx, ily);
+        _svgWidget->move(_leftOffset + ilx, ily);
 
         const int tlH = ilWH;
-        const int tlX = sidebarWidth + ContentsMargins_Right + ContentsMargins_Left;
+        const int tlX = sidebarWidth + Sidebar_ContentsMargins_Right + Sidebar_ContentsMargins_Left;
         const int tlY = (height() - tlH) / 2;
         _textLabel->setStyle(new TextLabelStyle(_textLabel));
         _textLabel->setFixedHeight(tlH);
         _textLabel->setScaledContents(true);
-        _textLabel->move(tlX, tlY);
+        _textLabel->move(_leftOffset + tlX, tlY);
 
-        constexpr int Lx = LINE_WIDTH + LINE_WIDTH;
+        constexpr int Lx = Sidebar_LINE_WIDTH + Sidebar_LINE_WIDTH;
         const int Ly1 = height() / 4;
         const int Ly2 = Ly1 * 2 + Ly1;
         _indicator = QLine(Lx, Ly1, Lx, Ly2);
 
-        constexpr int x = LINE_WIDTH * 2;
+        constexpr int x = Sidebar_LINE_WIDTH * 2;
         _upIndicator = QLine(x, 0, x, 0);
         _unIndicator = QLine(x, height(), x, height());
 
@@ -124,6 +127,11 @@ namespace fancy
         _indicator = _upIndicator;
     }
 
+    int SidebarButton::sidebarWidth() const
+    {
+        return height();
+    }
+
     void SidebarButton::paintEvent(QPaintEvent *event)
     {
         TransparentButton::paintEvent(event);
@@ -132,13 +140,20 @@ namespace fancy
             auto &pal = Palette::palette();
             QPainter painter(this);
             painter.setRenderHints(QPainter::RenderHint::Antialiasing);
+            painter.translate(_leftOffset, 0);
             QPen pen(pal[ColorRole::AppAccent]);
             pen.setCapStyle(Qt::PenCapStyle::RoundCap);
-            pen.setWidth(LINE_WIDTH);
+            pen.setWidth(Sidebar_LINE_WIDTH);
             painter.setPen(pen);
             painter.setBrush(Qt::BrushStyle::NoBrush);
             painter.drawLine(_indicator);
         }
+    }
+
+    void SidebarButton::setLeftOffset(int offset)
+    {
+        _leftOffset = offset;
+        setSidebarWidth(sidebarWidth());
     }
 
     void SidebarButton::setIndicator(const QVariant &value)
@@ -152,9 +167,9 @@ namespace fancy
         if (_adjustIconCoordinates)
         {
             const int ily = minimumWidth() / 4;
-            const int ilx = checked ? ily + LINE_WIDTH : ily;
-            _svgWidget->move(ilx, ily);
-            _imageWidget->move(ilx, ily);
+            const int ilx = checked ? ily + Sidebar_LINE_WIDTH : ily;
+            _svgWidget->move(_leftOffset + ilx, ily);
+            _imageWidget->move(_leftOffset + ilx, ily);
         }
     }
 }

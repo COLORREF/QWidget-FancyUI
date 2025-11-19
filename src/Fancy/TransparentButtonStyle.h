@@ -21,13 +21,18 @@ namespace fancy
 
         void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
 
-        void setDrawBorder(bool draw) { _drawBorder = draw; };
+        void setDrawBorder(bool draw);
 
-        void setRadius(int radius) { _buttonRadius = radius; }
+        void setBorderWidth(qreal w);
+
+        void setRadius(qreal radius);
+
+        [[nodiscard]] qreal radius() const;
 
     private:
         bool _drawBorder;
-        int _buttonRadius;
+        qreal _buttonRadius;
+        qreal _borderWidth;
         QPushButton *_parent;
     };
 } // fancy

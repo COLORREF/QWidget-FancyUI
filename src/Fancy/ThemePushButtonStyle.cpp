@@ -8,7 +8,7 @@
 #include <QStyleOption>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy
@@ -75,5 +75,17 @@ namespace fancy
             return;
         }
         QProxyStyle::drawControl(element, option, painter, widget);
+    }
+
+    void ThemeButtonStyle::setRadius(int radius)
+    {
+        _buttonRadius = radius;
+        if (auto *par = qobject_cast<QPushButton *>(parent()))
+            par->update();
+    }
+
+    qreal ThemeButtonStyle::radius() const
+    {
+        return _buttonRadius;
     }
 } // fancy

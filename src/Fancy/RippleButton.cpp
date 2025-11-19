@@ -10,7 +10,7 @@
 #include <QtMath>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Icon.h"
 #include "Palette.h"
 #include "RippleAnimation.h"
@@ -23,7 +23,7 @@ namespace fancy
     {
         setStyle(new RippleButtonStyle(this, RippleDuration));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(12);
         setFont(font);
     }
 

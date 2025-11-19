@@ -4,6 +4,8 @@
 
 #ifndef QWIDGET_FANCYUI_SIDEBARBUTTON_H
 #define QWIDGET_FANCYUI_SIDEBARBUTTON_H
+#include <QLabel>
+
 #include "TransparentButton.h"
 
 
@@ -18,6 +20,7 @@ namespace fancy
     {
         Q_OBJECT
         friend class Sidebar;
+        friend class SidebarNode;
 
     public:
         explicit SidebarButton(QWidget *parent, int sidebarWidth = 40);
@@ -26,8 +29,8 @@ namespace fancy
 
         explicit SidebarButton(IconId id, const QString &text, QWidget *parent, int sidebarWidth = 40);
 
-#define SIDEBARBUTTON_ICON_ENUM_CONSTRUCTOR(ENUM_TYPE) SidebarButton(ENUM_TYPE iconEnum, const QString &text, QWidget *parent = nullptr):\
-SidebarButton(iconId(iconEnum), text, parent) {}
+#define SIDEBARBUTTON_ICON_ENUM_CONSTRUCTOR(ENUM_TYPE) SidebarButton(ENUM_TYPE iconEnum, const QString &text, QWidget *parent = nullptr, int sidebarWidth = 40):\
+SidebarButton(iconId(iconEnum), text, parent, sidebarWidth) {}
 
         SIDEBARBUTTON_ICON_ENUM_CONSTRUCTOR(AntDesignIcons)
         SIDEBARBUTTON_ICON_ENUM_CONSTRUCTOR(BootstrapIcons)
@@ -51,6 +54,8 @@ SidebarButton(iconId(iconEnum), text, parent) {}
 
         void setSidebarWidth(int sidebarWidth);
 
+        [[nodiscard]] int sidebarWidth() const;
+
         void setDrawIndicator(bool drawIndicator) { _drawIndicator = drawIndicator; }
 
         void setAdjustIconCoordinates(bool adjust) { _adjustIconCoordinates = adjust; }
@@ -58,9 +63,12 @@ SidebarButton(iconId(iconEnum), text, parent) {}
         [[nodiscard]] bool drawIndicator() const { return _drawIndicator; }
         [[nodiscard]] bool adjustIconCoordinates() const { return _adjustIconCoordinates; }
 
+        [[nodiscard]] QString text() const { return _textLabel->text(); };
 
     protected:
         void paintEvent(QPaintEvent *event) override;
+
+        void setLeftOffset(int offset);
 
     private:
         SvgWidget *_svgWidget;
@@ -71,7 +79,7 @@ SidebarButton(iconId(iconEnum), text, parent) {}
         QLine _unIndicator;
         QVariantAnimation *_topToMiddle;
         QVariantAnimation *_middleToBottom;
-
+        int _leftOffset;
         bool _drawIndicator;
         bool _adjustIconCoordinates;
 

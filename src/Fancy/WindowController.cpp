@@ -3,7 +3,7 @@
 //
 
 #include "WindowController.h"
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {

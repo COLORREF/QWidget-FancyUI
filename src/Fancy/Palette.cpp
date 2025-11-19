@@ -7,7 +7,7 @@
 #include <QApplication>
 
 #include "BezierEasing.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "SystemAccessor.h"
 #include "SystemThemeMonitor.h"
 #include "ThemeModeController.h"
@@ -22,7 +22,7 @@ namespace fancy
 
         // 默认颜色组
         _group_theme = {ColorGroups::System, ThemeModeController::controller().appTheme()};
-        loadSchemes(QColor());
+        loadSchemes(QColor(212, 78, 125));
 
         connect(&ThemeModeController::controller(), &ThemeModeController::appThemeChange, this, &Palette::onAppThemeChanged);
         connect(&SystemThemeMonitor::monitor(), &SystemThemeMonitor::systemAccentColorsChanged, this, &Palette::onSystemAccentColorsChanged);
@@ -79,8 +79,13 @@ namespace fancy
         }
     }
 
-    QColor Palette::mix(const QColor &c1, const QColor &c2, float amount)
+    QColor Palette::mix(const QColor &c1, const QColor &c2, double amount)
     {
+        amount = qBound(0.0, amount, 1.0);
+        if (amount == 0.0)
+            return c1;
+        if (amount == 1.0)
+            return c2;
         return QColor::fromRgbF(
             c1.redF() + (c2.redF() - c1.redF()) * amount,
             c1.greenF() + (c2.greenF() - c1.greenF()) * amount,
@@ -89,29 +94,30 @@ namespace fancy
         );
     }
 
-    QColor Palette::darken(const QColor &c, float amount)
+    QColor Palette::darken(const QColor &c, double amount)
     {
-        float h, s, l, alpha;
-        c.getHslF(&h, &s, &l, &alpha);
-        return QColor::fromHslF(h, s, qMin(1.0f, qMax(0.0f, l - amount)), alpha);
+        QColor hsl = c.toHsl();
+        const double l = qBound(0.0, hsl.lightnessF() - amount, 1.0);
+        hsl.setHslF(hsl.hueF(), hsl.saturationF(), l, hsl.alphaF());
+        return hsl;
     }
 
-    QColor Palette::spin(const QColor &c, float amount)
+    QColor Palette::spin(const QColor &c, double amount)
     {
         float h, s, l, alpha;
         c.getHslF(&h, &s, &l, &alpha);
-        h = std::fmod(h * 360.0f + amount, 360.0f);
-        return QColor::fromHslF((h < 0 ? h + 360.0f : h) / 360.0f, s, l, alpha);
+        h = std::fmod(h * 360.0 + amount, 360.0);
+        return QColor::fromHslF((h < 0 ? h + 360.0 : h) / 360.0, s, l, alpha);
     }
 
     double Palette::relativeLuminance(const QColor &c, double gamma)
     {
-        return 0.2126729f * gammaDecode(c.redF(), gamma) +
-               0.7151522f * gammaDecode(c.greenF(), gamma) +
-               0.0721750f * gammaDecode(c.blueF(), gamma);
+        return 0.2126729 * gammaDecode(c.redF(), gamma) +
+               0.7151522 * gammaDecode(c.greenF(), gamma) +
+               0.0721750 * gammaDecode(c.blueF(), gamma);
     }
 
-    double Palette::wcag2Contrast(const QColor &c1, const QColor &c2, float gamma)
+    double Palette::wcag2Contrast(const QColor &c1, const QColor &c2, double gamma)
     {
         double l1 = relativeLuminance(c1, gamma);
         double l2 = relativeLuminance(c2, gamma);
@@ -171,41 +177,38 @@ namespace fancy
 
     QColor Palette::colorPalette(const QColor &c, int index, int max)
     {
-        constexpr float warmDark = 0.5f; // 暖色变暗系数
-        constexpr float warmRotate = -26.0f; // 暖色旋转角度
-        constexpr float coldDark = 0.55f; // 冷色变暗系数
-        constexpr float coldRotate = 10.0f; // 冷色旋转角度
+        constexpr double warmDark = 0.5; // 暖色变暗系数
+        constexpr double warmRotate = -26.0; // 暖色旋转角度
+        constexpr double coldDark = 0.55; // 冷色变暗系数
+        constexpr double coldRotate = 10.0; // 冷色旋转角度
 
         // 贝塞尔曲线控制点坐标
-        constexpr float x1 = 0.26f;
-        constexpr float x2 = 0.09f;
-        constexpr float y1 = 0.37f;
-        constexpr float y2 = 0.18f;
+        constexpr double x1 = 0.26;
+        constexpr double x2 = 0.09;
+        constexpr double y1 = 0.37;
+        constexpr double y2 = 0.18;
 
         static BezierEasing colorEasing(x1, y1, x2, y2);
-        static double primaryEasing = colorEasing((max / 2.0 + 1.0) / max); // 分界点
-        static int last_max = max;
-        if (last_max != max)
-        {
-            last_max = max;
-            primaryEasing = colorEasing((max / 2.0 + 1.0) / max);
-        }
+        const int midIndex = max / 2 + 1;
 
         // 根据颜色特性生成的阴影颜色
         auto getShadeColor = [](const QColor &ori)-> QColor {
+            // 暖色
             if (ori.redF() > ori.blueF())
                 return spin(darken(ori, ori.lightnessF() * warmDark), warmRotate);
+            // 冷色
             return spin(darken(ori, ori.lightnessF() * coldDark), coldRotate);
         };
 
-        double currentEasing = colorEasing((index - 1.0) / (max - 1.0));
+        const double currentEasing = colorEasing(static_cast<double>(index) * (1.0 / static_cast<double>(max)));
+        const double primaryEasing = colorEasing(static_cast<double>(midIndex) / static_cast<double>(max)); // 分界点
 
         // 较浅的色调（与白色混合）
-        if (index <= max / 2 + 1)
-            return mix(Qt::GlobalColor::white, c, static_cast<float>(currentEasing / primaryEasing));
+        if (index <= midIndex)
+            return mix(Qt::GlobalColor::white, c, currentEasing / primaryEasing);
 
         // 较深的色调（与阴影色混合)
-        return mix(getShadeColor(c), c, static_cast<float>(1 - (currentEasing - primaryEasing) / (1 - primaryEasing)));
+        return mix(getShadeColor(c), c, 1 - (currentEasing - primaryEasing) / (1 - primaryEasing));
     }
 
     QList<QColor> Palette::antDesign2ColorPalettes(const QColor &base)
@@ -230,8 +233,8 @@ namespace fancy
         {
             case ColorGroups::System :
             {
-                ColorsHash &sys_light_scheme = _schemes[{ColorGroups::System, Theme::LIGHT}];
-                ColorsHash &sys_dark_scheme = _schemes[{ColorGroups::System, Theme::DARK}];
+                ColorsHash &sys_light_scheme = _schemes[{ColorGroups::System, Theme::Light}];
+                ColorsHash &sys_dark_scheme = _schemes[{ColorGroups::System, Theme::Dark}];
 
                 sys_light_scheme[ColorRole::Window] = QColor(243, 243, 243);
                 sys_light_scheme[ColorRole::WindowText] = Qt::GlobalColor::black;
@@ -263,6 +266,12 @@ namespace fancy
                 sys_light_scheme[ColorRole::ScrollBarFocus] = QColor(249, 249, 249);
                 sys_light_scheme[ColorRole::ScrollBarEndArrow] = QColor(138, 138, 138);
                 sys_light_scheme[ColorRole::ScrollBarSlider] = QColor(138, 138, 138);
+                sys_light_scheme[ColorRole::TextEditPanelNormal] = QColor(251, 251, 251);
+                sys_light_scheme[ColorRole::TextEditPanelFocus] = QColor(255, 255, 255);
+                sys_light_scheme[ColorRole::TextEditPanelHover] = QColor(246, 246, 246);
+                sys_light_scheme[ColorRole::TextEditBorder] = QColor(229, 229, 229);
+                sys_light_scheme[ColorRole::TextEditIndicatorLine] = QColor(134, 134, 134);
+                sys_light_scheme[ColorRole::PlaceholderText] = QColor(95, 95, 95);
 
                 sys_dark_scheme[ColorRole::Window] = QColor(32, 32, 32);
                 sys_dark_scheme[ColorRole::WindowText] = Qt::GlobalColor::white;
@@ -294,6 +303,12 @@ namespace fancy
                 sys_dark_scheme[ColorRole::ScrollBarFocus] = QColor(44, 44, 44);
                 sys_dark_scheme[ColorRole::ScrollBarEndArrow] = QColor(159, 159, 159);
                 sys_dark_scheme[ColorRole::ScrollBarSlider] = QColor(159, 159, 159);
+                sys_dark_scheme[ColorRole::TextEditPanelNormal] = QColor(45, 45, 45);
+                sys_dark_scheme[ColorRole::TextEditPanelFocus] = QColor(31, 31, 31);
+                sys_dark_scheme[ColorRole::TextEditPanelHover] = QColor(50, 50, 50);
+                sys_dark_scheme[ColorRole::TextEditBorder] = QColor(48, 48, 48);
+                sys_dark_scheme[ColorRole::TextEditIndicatorLine] = QColor(154, 154, 154);
+                sys_dark_scheme[ColorRole::PlaceholderText] = QColor(207, 207, 207);
             }
             break;
             case ColorGroups::Default :
@@ -302,8 +317,8 @@ namespace fancy
                 for (int i = 0; i < 7; i++)
                     cus_colors[static_cast<SysAccentPalette>(i)] = custom_colors[i + 2];
 
-                ColorsHash &def_light_scheme = _schemes[{ColorGroups::Default, Theme::LIGHT}];
-                ColorsHash &def_dark_scheme = _schemes[{ColorGroups::Default, Theme::DARK}];
+                ColorsHash &def_light_scheme = _schemes[{ColorGroups::Default, Theme::Light}];
+                ColorsHash &def_dark_scheme = _schemes[{ColorGroups::Default, Theme::Dark}];
 
                 def_light_scheme[ColorRole::Window] = QColor(240, 243, 249);
                 def_light_scheme[ColorRole::WindowText] = Qt::GlobalColor::black;
@@ -335,6 +350,12 @@ namespace fancy
                 def_light_scheme[ColorRole::ScrollBarFocus] = QColor(249, 249, 249);
                 def_light_scheme[ColorRole::ScrollBarEndArrow] = QColor(138, 138, 138);
                 def_light_scheme[ColorRole::ScrollBarSlider] = QColor(138, 138, 138);
+                def_light_scheme[ColorRole::TextEditPanelNormal] = QColor(251, 251, 251);
+                def_light_scheme[ColorRole::TextEditPanelFocus] = QColor(255, 255, 255);
+                def_light_scheme[ColorRole::TextEditPanelHover] = QColor(246, 246, 246);
+                def_light_scheme[ColorRole::TextEditBorder] = QColor(229, 229, 229);
+                def_light_scheme[ColorRole::TextEditIndicatorLine] = QColor(134, 134, 134);
+                def_light_scheme[ColorRole::PlaceholderText] = QColor(95, 95, 95);
 
                 def_dark_scheme[ColorRole::Window] = QColor(26, 32, 52);
                 def_dark_scheme[ColorRole::WindowText] = Qt::GlobalColor::white;
@@ -366,12 +387,18 @@ namespace fancy
                 def_dark_scheme[ColorRole::ScrollBarFocus] = QColor(44, 44, 44);
                 def_dark_scheme[ColorRole::ScrollBarEndArrow] = QColor(159, 159, 159);
                 def_dark_scheme[ColorRole::ScrollBarSlider] = QColor(159, 159, 159);
+                def_dark_scheme[ColorRole::TextEditPanelNormal] = QColor(45, 45, 45);
+                def_dark_scheme[ColorRole::TextEditPanelFocus] = QColor(31, 31, 31);
+                def_dark_scheme[ColorRole::TextEditPanelHover] = QColor(50, 50, 50);
+                def_dark_scheme[ColorRole::TextEditBorder] = QColor(48, 48, 48);
+                def_dark_scheme[ColorRole::TextEditIndicatorLine] = QColor(154, 154, 154);
+                def_dark_scheme[ColorRole::PlaceholderText] = QColor(207, 207, 207);
             }
             break;
             case ColorGroups::Custom :
             {
-                ColorsHash &cus_light_scheme = _schemes[{ColorGroups::Custom, Theme::LIGHT}];
-                ColorsHash &cus_dark_scheme = _schemes[{ColorGroups::Custom, Theme::DARK}];
+                ColorsHash &cus_light_scheme = _schemes[{ColorGroups::Custom, Theme::Light}];
+                ColorsHash &cus_dark_scheme = _schemes[{ColorGroups::Custom, Theme::Dark}];
 
                 cus_light_scheme[ColorRole::Window] = QColor(243, 243, 243);
                 cus_light_scheme[ColorRole::WindowText] = Qt::GlobalColor::black;
@@ -403,6 +430,12 @@ namespace fancy
                 cus_light_scheme[ColorRole::ScrollBarFocus] = QColor(249, 249, 249);
                 cus_light_scheme[ColorRole::ScrollBarEndArrow] = QColor(138, 138, 138);
                 cus_light_scheme[ColorRole::ScrollBarSlider] = QColor(138, 138, 138);
+                cus_light_scheme[ColorRole::TextEditPanelNormal] = QColor(251, 251, 251);
+                cus_light_scheme[ColorRole::TextEditPanelFocus] = QColor(255, 255, 255);
+                cus_light_scheme[ColorRole::TextEditPanelHover] = QColor(246, 246, 246);
+                cus_light_scheme[ColorRole::TextEditBorder] = QColor(229, 229, 229);
+                cus_light_scheme[ColorRole::TextEditIndicatorLine] = QColor(134, 134, 134);
+                cus_light_scheme[ColorRole::PlaceholderText] = QColor(95, 95, 95);
 
                 cus_dark_scheme[ColorRole::Window] = QColor(32, 32, 32);
                 cus_dark_scheme[ColorRole::WindowText] = Qt::GlobalColor::white;
@@ -434,6 +467,12 @@ namespace fancy
                 cus_dark_scheme[ColorRole::ScrollBarFocus] = QColor(44, 44, 44);
                 cus_dark_scheme[ColorRole::ScrollBarEndArrow] = QColor(159, 159, 159);
                 cus_dark_scheme[ColorRole::ScrollBarSlider] = QColor(159, 159, 159);
+                cus_dark_scheme[ColorRole::TextEditPanelNormal] = QColor(45, 45, 45);
+                cus_dark_scheme[ColorRole::TextEditPanelFocus] = QColor(31, 31, 31);
+                cus_dark_scheme[ColorRole::TextEditPanelHover] = QColor(50, 50, 50);
+                cus_dark_scheme[ColorRole::TextEditBorder] = QColor(48, 48, 48);
+                cus_dark_scheme[ColorRole::TextEditIndicatorLine] = QColor(154, 154, 154);
+                cus_dark_scheme[ColorRole::PlaceholderText] = QColor(207, 207, 207);
             }
             break;
         }
@@ -450,8 +489,8 @@ namespace fancy
         const auto froup = _group_theme.first;
         if (froup == ColorGroups::System)
         {
-            ColorsHash &sys_light_scheme = _schemes[{ColorGroups::System, Theme::LIGHT}];
-            ColorsHash &sys_dark_scheme = _schemes[{ColorGroups::System, Theme::DARK}];
+            ColorsHash &sys_light_scheme = _schemes[{ColorGroups::System, Theme::Light}];
+            ColorsHash &sys_dark_scheme = _schemes[{ColorGroups::System, Theme::Dark}];
 
             sys_light_scheme[ColorRole::Link] = colors[SysAccentPalette::AccentLight2];
             sys_light_scheme[ColorRole::ImportantLink] = colors[SysAccentPalette::AccentDark2];
@@ -467,8 +506,8 @@ namespace fancy
         }
         else if (froup == ColorGroups::Default)
         {
-            ColorsHash &def_light_scheme = _schemes[{ColorGroups::Default, Theme::LIGHT}];
-            ColorsHash &def_dark_scheme = _schemes[{ColorGroups::Default, Theme::DARK}];
+            ColorsHash &def_light_scheme = _schemes[{ColorGroups::Default, Theme::Light}];
+            ColorsHash &def_dark_scheme = _schemes[{ColorGroups::Default, Theme::Dark}];
 
             def_light_scheme[ColorRole::SysAccent] = colors[SysAccentPalette::Accent];
             def_dark_scheme[ColorRole::SysAccent] = colors[SysAccentPalette::Accent];

@@ -4,7 +4,7 @@
 
 #include "MinimizeButton.h"
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "IconEngine.h"
 #include "Palette.h"
 #include "SvgWidget.h"

@@ -6,7 +6,7 @@
 
 #include <QApplication>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "ThemeModeController.h"
 
 namespace fancy
@@ -47,7 +47,7 @@ namespace fancy
                           &dw_size
         );
         RegCloseKey(reg);
-        return theme ? Theme::LIGHT : Theme::DARK;
+        return theme ? Theme::Light : Theme::Dark;
     }
 
     void SystemThemeMonitor::start()
@@ -134,9 +134,9 @@ namespace fancy
                 if (last_theme != current_theme)
                 {
                     if (current_theme)
-                        emit this->systemThemeChanged(Theme::LIGHT);
+                        emit this->systemThemeChanged(Theme::Light);
                     else
-                        emit this->systemThemeChanged(Theme::DARK);
+                        emit this->systemThemeChanged(Theme::Dark);
                     last_theme = current_theme; // 0为深色，1为浅色
                 }
                 ::ResetEvent(this->_hEvent_array[0]); // 重置事件对象无事件
