@@ -13,7 +13,7 @@ namespace fancy
     {
         setStyle(new TransparentButtonStyle(this));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(12);
         setFont(font);
     }
 
@@ -40,14 +40,27 @@ namespace fancy
 
     void TransparentButton::setDrawBorder(bool draw)
     {
-        if (auto *style_ = dynamic_cast<TransparentButtonStyle *>(style()))
+        if (auto *style_ = qobject_cast<TransparentButtonStyle *>(style()))
             style_->setDrawBorder(draw);
+    }
+
+    void TransparentButton::setBorderWidth(qreal w)
+    {
+        if (auto *style_ = qobject_cast<TransparentButtonStyle *>(style()))
+            style_->setBorderWidth(w);
     }
 
     void TransparentButton::setRadius(int radius)
     {
-        if (auto *style_ = dynamic_cast<TransparentButtonStyle *>(style()))
+        if (auto *style_ = qobject_cast<TransparentButtonStyle *>(style()))
             style_->setRadius(radius);
+    }
+
+    qreal TransparentButton::radius() const
+    {
+        if (auto *style_ = qobject_cast<TransparentButtonStyle *>(style()))
+            return style_->radius();
+        return 0.0;
     }
 
     void TransparentButton::setIcon(const IconId &id)

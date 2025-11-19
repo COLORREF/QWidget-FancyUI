@@ -6,7 +6,7 @@
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "palette.h"
 
 

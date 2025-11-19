@@ -10,7 +10,7 @@
 #include <QWindow>
 #include <QWindowStateChangeEvent>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "MaximizeButton.h"
 #include "MinimizeButton.h"
 #include "Palette.h"
@@ -34,8 +34,8 @@ namespace fancy
         _verticalLayout(new QVBoxLayout(this)),
         _animation(new QVariantAnimation(this))
     {
-        _animation->setStartValue(Palette::palette().color(ColorRole::Window, Theme::LIGHT));
-        _animation->setEndValue(Palette::palette().color(ColorRole::Window, Theme::DARK));
+        _animation->setStartValue(Palette::palette().color(ColorRole::Window, Theme::Light));
+        _animation->setEndValue(Palette::palette().color(ColorRole::Window, Theme::Dark));
         _animation->setDuration(300);
 
         _verticalLayout->setSpacing(0);
@@ -387,7 +387,7 @@ namespace fancy
 
         if (!_useWindowEffects)
         {
-            if (theme == Theme::LIGHT)
+            if (theme == Theme::Light)
                 _animation->setDirection(QAbstractAnimation::Direction::Backward);
             else
                 _animation->setDirection(QAbstractAnimation::Direction::Forward);

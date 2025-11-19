@@ -3,7 +3,7 @@
 //
 
 #include "ThemeModeController.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "SystemThemeMonitor.h"
 
 namespace fancy
@@ -33,14 +33,14 @@ namespace fancy
 
     void ThemeModeController::toggleAppLight()
     {
-        if (_app_theme == Theme::DARK)
-            setAppTheme(Theme::LIGHT);
+        if (_app_theme == Theme::Dark)
+            setAppTheme(Theme::Light);
     }
 
     void ThemeModeController::toggleAppDark()
     {
-        if (_app_theme == Theme::LIGHT)
-            setAppTheme(Theme::DARK);
+        if (_app_theme == Theme::Light)
+            setAppTheme(Theme::Dark);
     }
 
     void ThemeModeController::followSystem()
@@ -71,20 +71,20 @@ namespace fancy
 
     bool ThemeModeController::isAppLight() const
     {
-        return _app_theme == Theme::LIGHT;
+        return _app_theme == Theme::Light;
     }
 
     bool ThemeModeController::isAppDark() const
     {
-        return _app_theme == Theme::DARK;
+        return _app_theme == Theme::Dark;
     }
 
     void ThemeModeController::toggleAppTheme()
     {
-        if (_app_theme == Theme::LIGHT)
-            setAppTheme(Theme::DARK);
+        if (_app_theme == Theme::Light)
+            setAppTheme(Theme::Dark);
         else
-            setAppTheme(Theme::LIGHT);
+            setAppTheme(Theme::Light);
     }
 
     void ThemeModeController::onSystemThemeChanged(const Theme theme)

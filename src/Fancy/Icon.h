@@ -4,11 +4,11 @@
 
 #ifndef QWIDGET_FANCYUI_ICON_H
 #define QWIDGET_FANCYUI_ICON_H
-#include <QIcon>
 #include <memory>
+#include <QIcon>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "IconEngine.h"
 
 namespace fancy

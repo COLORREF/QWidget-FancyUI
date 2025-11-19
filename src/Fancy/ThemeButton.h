@@ -5,7 +5,7 @@
 #ifndef QWIDGET_FANCYUI_THEMEBUTTON_H
 #define QWIDGET_FANCYUI_THEMEBUTTON_H
 #include <QPushButton>
-#include "Defs.hpp"
+#include "Defs.h"
 
 namespace fancy
 {
@@ -29,6 +29,10 @@ namespace fancy
         ThemeButton(const Icon &icon, const QString &text, QWidget *parent = nullptr);
 
         ThemeButton(const IconId &id, const QString &text, QWidget *parent = nullptr);
+
+        void setRadius(int radius);
+
+        [[nodiscard]] qreal radius() const;
 
 #define THEMEBUTTON_ICON_ENUM_CONSTRUCTOR(ENUM_TYPE) ThemeButton(ENUM_TYPE iconEnum, const QString &text, QWidget *parent = nullptr):\
 ThemeButton(iconId(iconEnum), text, parent) {}

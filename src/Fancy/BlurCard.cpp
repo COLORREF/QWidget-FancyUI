@@ -6,8 +6,7 @@
 
 #include <QPainterPath>
 
-#include "Defs.hpp"
-#include "Palette.h"
+#include "Defs.h"
 
 namespace fancy
 {

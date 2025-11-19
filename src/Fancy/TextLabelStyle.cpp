@@ -5,7 +5,7 @@
 #include "TextLabelStyle.h"
 #include <QLabel>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy

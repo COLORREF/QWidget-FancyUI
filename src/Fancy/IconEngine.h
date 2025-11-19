@@ -10,13 +10,11 @@
 #include <QFileInfo>
 #include <QIconEngine>
 #include <QMap>
-#include <QPainter>
 #include <QPixmap>
 #include <QSvgRenderer>
-#include <QSvgWidget>
-#include "Defs.hpp"
+#include "Defs.h"
 #include "IconEnums.h"
-#include "SvgParsing.hpp"
+#include "SvgParsing.h"
 #define MAGIC_ENUM_RANGE_MIN 0
 #define MAGIC_ENUM_RANGE_MAX 3000
 #include <magic_enum.hpp>

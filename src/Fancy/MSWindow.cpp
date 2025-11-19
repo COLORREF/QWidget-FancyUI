@@ -9,7 +9,7 @@
 #include <QStackedWidget>
 #include <QVariantAnimation>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "MSWidget.h"
 #include "Sidebar.h"
 #include "SidebarButton.h"
@@ -54,6 +54,8 @@ namespace fancy
 
     void MSWindow::setCurrentIndex(int index)
     {
+        if (index == _stackWidget->currentIndex() || index > _stackWidget->count() - 1)
+            return;
         _stackWidget->setCurrentIndex(index);
 
         if (const QWidget *w = _stackWidget->currentWidget())

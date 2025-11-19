@@ -8,41 +8,24 @@
 #include "StackWindow.h"
 
 
-using namespace fancy;
-
-QT_BEGIN_NAMESPACE
-
-namespace Ui
-{
-    class Home;
-    class BasicInput;
-}
-
-QT_END_NAMESPACE
-
-class Widget : public StackWindow
+class Widget : public fancy::StackWindow
 {
     Q_OBJECT
 
 public:
     explicit Widget(QWidget *parent = nullptr);
 
-    ~Widget() override;
+    ~Widget() override = default;
 
 private:
-    void setUpHome();
-
-    void setUpBasicInput();
-
     void setUpSidebar();
 
     void setUpTitleBar();
 
-    QWidget *_home;
-    QWidget *_basicInput;
-
-    Ui::Home *_uiHome;;
-    Ui::BasicInput *_uiBasicInput;
+    QWidget *_homePage;
+    QWidget *_basicInputPage;
+    QWidget *_iconPage;
+    QWidget *_palettePage;
 };
 
 

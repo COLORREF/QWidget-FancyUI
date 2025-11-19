@@ -4,7 +4,7 @@
 
 #include "MaximizeButton.h"
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "SvgWidget.h"
 

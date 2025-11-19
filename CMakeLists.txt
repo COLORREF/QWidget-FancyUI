@@ -20,17 +20,19 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Svg SvgWidgets REQUIRE
 file(GLOB_RECURSE FANCYUI_SOURCES
         "${PROJECT_SOURCE_DIR}/src/Fancy/*.h"
         "${PROJECT_SOURCE_DIR}/src/Fancy/*.cpp"
-        "${PROJECT_SOURCE_DIR}/src/Fancy/*.hpp"
         "${PROJECT_SOURCE_DIR}/src/resource/*.qrc"
 )
 
 file(GLOB_RECURSE EXAMPLE_SOURCES
-        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.h"
-        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.cpp"
-        "${PROJECT_SOURCE_DIR}/Example/Example_Resource/*.qrc"
         "${PROJECT_SOURCE_DIR}/Example/*.h"
         "${PROJECT_SOURCE_DIR}/Example/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/*.ui"
+        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.h"
+        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.cpp"
+        "${PROJECT_SOURCE_DIR}/Example/Example_Resource/*.qrc"
+        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.h"
+        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code*.cpp"
+        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.ui"
 )
 
 add_executable(${PROJECT_NAME}
@@ -54,6 +56,7 @@ set(FANCY_SRC_INCLUDE_DIRS
 set(EXAMPLE_INCLUDE_DIRS
         ${PROJECT_SOURCE_DIR}/Example
         ${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code
+        ${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code
 )
 
 include_directories(${FANCY_SRC_INCLUDE_DIRS})

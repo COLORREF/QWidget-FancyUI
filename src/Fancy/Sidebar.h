@@ -6,7 +6,7 @@
 #define QWIDGET_FANCYUI_SIDEBAR_H
 
 #include <QQueue>
-#include  <QWidget>
+#include <QWidget>
 
 class QVariantAnimation;
 class QAbstractButton;
@@ -19,11 +19,12 @@ namespace fancy
     class SidebarButton;
     class ScrollArea;
 
-    constexpr int LINE_WIDTH = 3;
-    constexpr int ContentsMargins_Left = 2;
-    constexpr int ContentsMargins_Top = 5;
-    constexpr int ContentsMargins_Right = 2;
-    constexpr int ContentsMargins_Bottom = 5;
+    constexpr int Sidebar_LINE_WIDTH = 3;
+    constexpr int Sidebar_Spacing = 2;
+    constexpr int Sidebar_ContentsMargins_Left = 2;
+    constexpr int Sidebar_ContentsMargins_Top = 5;
+    constexpr int Sidebar_ContentsMargins_Right = 2;
+    constexpr int Sidebar_ContentsMargins_Bottom = 5;
 
     class Sidebar : public QWidget
     {
@@ -55,9 +56,17 @@ namespace fancy
 
         void addOptionToGroup(SidebarButton *option);
 
+        void removeOptionFromGroup(SidebarButton *option);
+
         void addOptionToLayout(SidebarButton *option);
 
         void setExpandRetractDuration(int msecs);
+
+        void hideScrollbar();
+
+        void restoreScrollBarPolicy();
+
+        [[nodiscard]] int buttonCount();
 
     private:
         QVBoxLayout *_verticalLayout;
@@ -70,13 +79,25 @@ namespace fancy
         QQueue<int> _unChecked;
         QVariantAnimation *_expandAndRetractAni;
         bool _isExpanded;
+        int _level;
     signals:
         void optionChecked(int id);
+
+        /**
+         * 展开或者收缩结束后发送此信号
+         */
+        void expandStateChange(bool isExpanded);
+
+        void startExpand();
+
+        void startRetract();
 
     private slots:
         void startIndicatorAnimation(int id, bool checked);
 
         void expandOrRetract(const QVariant &value);
+
+        void expandOrRetractFinished();
     };
 } // fancy
 

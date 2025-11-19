@@ -7,7 +7,7 @@
 #include <QPainterPath>
 #include <QVariantAnimation>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "ThemeModeController.h"
 
@@ -18,8 +18,8 @@ namespace fancy
         _animation(new QVariantAnimation(this)),
         _color(Palette::palette()[ColorRole::MSWindow])
     {
-        _animation->setStartValue(Palette::palette().color(ColorRole::MSWindow, Theme::LIGHT));
-        _animation->setEndValue(Palette::palette().color(ColorRole::MSWindow, Theme::DARK));
+        _animation->setStartValue(Palette::palette().color(ColorRole::MSWindow, Theme::Light));
+        _animation->setEndValue(Palette::palette().color(ColorRole::MSWindow, Theme::Dark));
         _animation->setDuration(300);
         connect(_animation, &QVariantAnimation::valueChanged, this, &MSWidget::updateBkgColor);
         connect(&Palette::palette(), &Palette::appThemeChange, this, &MSWidget::onThemeChanged);
@@ -39,7 +39,7 @@ namespace fancy
 
     void MSWidget::onThemeChanged()
     {
-        if (const auto theme = ThemeModeController::controller().appTheme(); theme == Theme::LIGHT)
+        if (const auto theme = ThemeModeController::controller().appTheme(); theme == Theme::Light)
             _animation->setDirection(QAbstractAnimation::Direction::Backward);
         else
             _animation->setDirection(QAbstractAnimation::Direction::Forward);

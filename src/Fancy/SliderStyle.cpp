@@ -6,7 +6,7 @@
 #include <QMouseEvent>
 #include <QStyleOption>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "SliderIndicator.h"
 

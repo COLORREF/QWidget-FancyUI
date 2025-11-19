@@ -9,7 +9,7 @@
 #include <QStyleOption>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "RippleAnimation.h"
 

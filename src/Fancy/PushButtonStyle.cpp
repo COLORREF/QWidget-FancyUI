@@ -9,14 +9,14 @@
 #include <QStyleOption>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy
 {
     PushButtonStyle::PushButtonStyle(QPushButton *parent) :
         QProxyStyle(nullptr),
-        _buttonRadius(3),
+        _buttonRadius(3.0),
         _parent(parent)
 
     {
@@ -33,7 +33,7 @@ namespace fancy
         painter->save();
         painter->setRenderHint(QPainter::RenderHint::Antialiasing, true);
         Palette &palette = Palette::palette();
-        painter->setPen(enabled ? (_parent->isChecked() ? palette[ColorRole::AppAccentText] : palette[ColorRole::Text]) : palette[ColorRole::DisEnabled]);
+        painter->setPen(enabled ? (_parent->isChecked() ? palette[ColorRole::AppAccentText] : palette[ColorRole::Text]) : palette[ColorRole::DisEnabledText]);
         painter->drawText(rect, Qt::AlignmentFlag::AlignCenter | Qt::AlignmentFlag::AlignVCenter, text);
         painter->restore();
     }
@@ -83,5 +83,16 @@ namespace fancy
             return;
         }
         QProxyStyle::drawControl(element, option, painter, widget);
+    }
+
+    void PushButtonStyle::setRadius(int radius)
+    {
+        _buttonRadius = radius;
+        _parent->update();
+    }
+
+    qreal PushButtonStyle::radius() const
+    {
+        return _buttonRadius;
     }
 } // fancy

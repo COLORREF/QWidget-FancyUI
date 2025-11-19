@@ -4,10 +4,9 @@
 
 #include "Sidebar.h"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
-#include <QEasingCurve>
 #include <QVariantAnimation>
+#include <QVBoxLayout>
 
 #include "ScrollArea.h"
 #include "ScrollBar.h"
@@ -24,14 +23,15 @@ namespace fancy
         _scrollContentWidget(new QWidget(_scrollArea)),
         _scrollContentWidgetVerticalLayout(new QVBoxLayout(_scrollContentWidget)),
         _expandAndRetractAni(new QVariantAnimation(this)),
-        _isExpanded(false)
+        _isExpanded(false),
+        _level(1)
     {
-        _verticalLayout->setSpacing(2);
-        _verticalLayout->setContentsMargins(ContentsMargins_Left, ContentsMargins_Top, ContentsMargins_Right, ContentsMargins_Bottom);
+        _verticalLayout->setSpacing(Sidebar_Spacing);
+        _verticalLayout->setContentsMargins(Sidebar_ContentsMargins_Left, Sidebar_ContentsMargins_Top, Sidebar_ContentsMargins_Right, Sidebar_ContentsMargins_Bottom);
         _btnGroup->setExclusive(true); //启用互斥
         _scrollArea->setWidgetResizable(true);
         _scrollArea->setWidget(_scrollContentWidget);
-        _scrollContentWidgetVerticalLayout->setSpacing(2);
+        _scrollContentWidgetVerticalLayout->setSpacing(Sidebar_Spacing);
         _scrollContentWidgetVerticalLayout->setContentsMargins(0, 0, 0, 0);
 
         // 惯性平滑滚动
@@ -53,7 +53,7 @@ namespace fancy
         _expandAndRetractAni->setEndValue(300);
 
         connect(_expandAndRetractAni, &QVariantAnimation::valueChanged, this, &Sidebar::expandOrRetract);
-        connect(_expandAndRetractAni, &QVariantAnimation::finished, this, [this] { _isExpanded = !_isExpanded; });
+        connect(_expandAndRetractAni, &QVariantAnimation::finished, this, &Sidebar::expandOrRetractFinished);
         connect(_btnGroup, &QButtonGroup::idClicked, this, [this](int id) { emit optionChecked(id); });
         connect(_btnGroup, &QButtonGroup::idToggled, this, &Sidebar::startIndicatorAnimation);
     }
@@ -62,7 +62,8 @@ namespace fancy
     {
         int id = static_cast<int>(_btnGroup->buttons().size());
         _btnGroup->addButton(option, id);
-        _scrollContentWidgetVerticalLayout->insertWidget(id, option, 0, Qt::Alignment());
+        int index = _scrollContentWidgetVerticalLayout->count() - 1;
+        _scrollContentWidgetVerticalLayout->insertWidget(index, option, 0, Qt::Alignment());
         if (id == 0)
             option->setChecked(true);
     }
@@ -73,6 +74,7 @@ namespace fancy
         {
             _expandAndRetractAni->setDirection(QVariantAnimation::Direction::Forward);
             _expandAndRetractAni->start();
+            emit startExpand();
         }
     }
 
@@ -82,6 +84,7 @@ namespace fancy
         {
             _expandAndRetractAni->setDirection(QVariantAnimation::Direction::Backward);
             _expandAndRetractAni->start();
+            emit startRetract();
         }
     }
 
@@ -121,15 +124,34 @@ namespace fancy
         _btnGroup->addButton(option, static_cast<int>(_btnGroup->buttons().size()));
     }
 
+    void Sidebar::removeOptionFromGroup(SidebarButton *option)
+    {
+        _btnGroup->removeButton(option);
+    }
+
     void Sidebar::addOptionToLayout(SidebarButton *option)
     {
-        int id = static_cast<int>(_btnGroup->buttons().size());
-        _scrollContentWidgetVerticalLayout->insertWidget(id, option, 0, Qt::Alignment());
+        _scrollContentWidgetVerticalLayout->insertWidget(_scrollContentWidgetVerticalLayout->count() - 1, option, 0, Qt::Alignment());
     }
 
     void Sidebar::setExpandRetractDuration(int msecs)
     {
         _expandAndRetractAni->setDuration(msecs);
+    }
+
+    void Sidebar::hideScrollbar()
+    {
+        _scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    }
+
+    void Sidebar::restoreScrollBarPolicy()
+    {
+        _scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAsNeeded);
+    }
+
+    int Sidebar::buttonCount()
+    {
+        return static_cast<int>(_btnGroup->buttons().size());
     }
 
     void Sidebar::startIndicatorAnimation(int id, bool checked)
@@ -138,8 +160,8 @@ namespace fancy
         {
             int leaveId = this->_checked.dequeue();
             _checked.enqueue(id);
-            auto enter = static_cast<SidebarButton *>(_btnGroup->button(id));
-            auto leave = static_cast<SidebarButton *>(_btnGroup->button(leaveId));
+            auto *enter = qobject_cast<SidebarButton *>(_btnGroup->button(id));
+            auto *leave = qobject_cast<SidebarButton *>(_btnGroup->button(leaveId));
             if (id >= leaveId)
             {
                 leave->_middleToBottom->setEasingCurve(QEasingCurve::InQuart);
@@ -166,5 +188,11 @@ namespace fancy
     void Sidebar::expandOrRetract(const QVariant &value)
     {
         QWidget::setFixedWidth(value.value<int>());
+    }
+
+    void Sidebar::expandOrRetractFinished()
+    {
+        _isExpanded = !_isExpanded;
+        emit expandStateChange(_isExpanded);
     }
 } // fancy

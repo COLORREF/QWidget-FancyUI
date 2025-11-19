@@ -13,7 +13,7 @@ namespace fancy
     {
         setStyle(new PushButtonStyle(this));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(12);
         setFont(font);
     }
 
@@ -37,6 +37,19 @@ namespace fancy
 
     PushButton::PushButton(const IconId &id, const QString &text, QWidget *parent) :
         PushButton(Icon(id), text, parent) {}
+
+    void PushButton::setRadius(int radius)
+    {
+        if (auto *style_ = qobject_cast<PushButtonStyle *>(style()))
+            style_->setRadius(radius);
+    }
+
+    qreal PushButton::radius() const
+    {
+        if (auto *style_ = qobject_cast<PushButtonStyle *>(style()))
+            return style_->radius();
+        return 0.0;
+    }
 
     void PushButton::setIcon(const IconId &id)
     {

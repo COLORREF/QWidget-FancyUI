@@ -7,7 +7,7 @@
 #include <QVariantAnimation>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "palette.h"
 
 

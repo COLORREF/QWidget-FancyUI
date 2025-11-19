@@ -5,7 +5,7 @@
 #include "ExampleNavigationCard.h"
 
 #include "CenteredImageWidget.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 #include "SvgWidget.h"
 #include "TextLabel.h"

@@ -12,7 +12,7 @@ namespace fancy
     {
         smallIndicatorSize ? setStyle(new CheckBoxStyle_SM(this)) : setStyle(new CheckBoxStyle(this));
         QFont font = this->font();
-        font.setPixelSize(15);
+        font.setPointSize(smallIndicatorSize ? 10 : 12);
         setFont(font);
     }
 

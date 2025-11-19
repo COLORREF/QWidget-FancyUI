@@ -62,8 +62,8 @@ namespace fancy
 
     enum class Theme
     {
-        LIGHT,
-        DARK
+        Light,
+        Dark
     };
 
     enum class ColorGroups
@@ -103,7 +103,7 @@ namespace fancy
         Link, // 超链接色
         ImportantLink, // 重要的超链接色
         LinkVisited, // 已访问超链接色
-        DisEnabled, // 禁用色
+        DisEnabled, // 通用禁用色
         DisEnabledText, //禁用文本色
         AppAccent, // 当前应用使用的强调色
         SysAccent, // 系统个性化设置中的强调色
@@ -121,6 +121,12 @@ namespace fancy
         ScrollBarFocus, // 滚动条焦点背景色
         ScrollBarEndArrow, // 滚动条末端箭头颜色
         ScrollBarSlider, // 滚动条滑块颜色
+        TextEditPanelNormal, // 文本编辑框面板普通色
+        TextEditPanelFocus, // 文本编辑框面板焦点色
+        TextEditPanelHover, //  文本编辑框面板悬浮色
+        TextEditBorder, // 文本编辑框边框色
+        TextEditIndicatorLine, // 文本编辑框指示线通用色
+        PlaceholderText, // 占位符文本通用色
         Last
     };
 
@@ -151,6 +157,8 @@ namespace fancy
         SelectedPressed, // 选中 + 按下 （控件启用、选中，鼠标在其上方，鼠标按下）
         Disabled, // 禁用
         SelectedDisabled, // 已选中 + 禁用 （控件禁用、选中）
+        Focus, // 获取到焦点（适用于文本框等控件）
+        FocusHover, // 获取到焦点 + 鼠标悬浮 （适用于文本框等控件）
         Last,
         UnKnown
     };
@@ -161,6 +169,7 @@ namespace fancy
         IndicatorCheckable, // 可选中具有指示器的控件
         Widget, // 不可选中的控件
         WidgetCheckable, // 可选中但无指示器的控件
+        TextEdit, // 文本编辑类控件
         Last
     };
 
@@ -197,6 +206,7 @@ namespace fancy
     Q_ENUM_NS(IconStyle)
     Q_ENUM_NS(AntDesignIcons)
     Q_ENUM_NS(BootstrapIcons)
+    Q_ENUM_NS(IconPark)
     Q_ENUM_NS(Direction)
 #ifdef Q_OS_WIN
     enum class WINDOWCOMPOSITIONATTRIB
@@ -357,6 +367,8 @@ namespace fancy
 
     inline QLine bottomLine(const QRect &rect, int filletRadius)
     {
+        if (int x = rect.center().x(); rect.width() - 2 * filletRadius <= 0)
+            return {x, rect.y() + rect.height(), x, rect.y() + rect.height()};
         return {rect.x() + filletRadius, rect.y() + rect.height(), rect.x() + rect.width() - filletRadius, rect.y() + rect.height()};
     }
 

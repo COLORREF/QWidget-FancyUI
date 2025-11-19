@@ -8,7 +8,7 @@
 #include <QPainterPath>
 #include <QResizeEvent>
 
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy

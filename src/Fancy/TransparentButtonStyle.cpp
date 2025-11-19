@@ -8,7 +8,7 @@
 #include <QStyleOption>
 
 #include "ControlState.h"
-#include "Defs.hpp"
+#include "Defs.h"
 #include "Palette.h"
 
 namespace fancy
@@ -16,7 +16,8 @@ namespace fancy
     TransparentButtonStyle::TransparentButtonStyle(QPushButton *parent) :
         QProxyStyle(nullptr),
         _drawBorder(false),
-        _buttonRadius(3),
+        _buttonRadius(3.0),
+        _borderWidth(1.0),
         _parent(parent)
     {
         setParent(parent);
@@ -74,16 +75,33 @@ namespace fancy
                 default :
                     break;
             }
-            painter->setPen(pal[_drawBorder ? ColorRole::ButtonBorder : ColorRole::MaskNormal]);
+            painter->setPen(QPen(pal[_drawBorder ? ColorRole::ButtonBorder : ColorRole::MaskNormal], _borderWidth));
             painter->drawPath(clipPath);
-            if (_drawBorder)
-            {
-                painter->setPen(pal[ColorRole::ButtonBottomLine]);
-                painter->drawLine(bottomLine(rect, _buttonRadius));
-            }
             painter->restore();
             return;
         }
         QProxyStyle::drawControl(element, option, painter, widget);
+    }
+
+    void TransparentButtonStyle::setDrawBorder(bool draw)
+    {
+        _drawBorder = draw;
+        _parent->update();
+    }
+
+    void TransparentButtonStyle::setBorderWidth(qreal w)
+    {
+        _borderWidth = w;
+        _parent->update();
+    }
+
+    void TransparentButtonStyle::setRadius(qreal radius)
+    {
+        _buttonRadius = radius;
+    }
+
+    qreal TransparentButtonStyle::radius() const
+    {
+        return _buttonRadius;
     }
 } // fancy
