@@ -40,6 +40,8 @@ English | <a href="./README.md">简体中文</a>
 
 ![HomePreview_Dark](./docs/HomePreview_Dark.png)
 
+![HomePreview_Dark](./docs/PalettePerview.png)
+
 # Demo Program Build Guide
 
 Modify the `Qt` path in `CMakeLists.txt`, then you can directly start building in your IDE (Visual Studio, QtCreator, Clion, etc.)!
@@ -48,4 +50,4 @@ Modify the `Qt` path in `CMakeLists.txt`, then you can directly start building i
 
 ---
 
-Last edited: 2025-10-30 by @COLORREF
+Last edited: 2025-11-19 by @COLORREF
