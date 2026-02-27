@@ -16,7 +16,7 @@ namespace fancy
         Q_OBJECT
 
     public:
-        explicit MSWidget(QWidget *parent);
+        explicit MSWidget(QWidget *parent = nullptr);
 
     protected:
         void paintEvent(QPaintEvent *event) override;

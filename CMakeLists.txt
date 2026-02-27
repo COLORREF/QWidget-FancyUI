@@ -17,13 +17,73 @@ endif ()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Svg SvgWidgets REQUIRED)
 
+# 定义库的导出宏
+set(LIBRARY_NAME "QFancyUI")
+if (WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
+# 定义安装路径
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation prefix")
+
+# ============================================
+# 1. 创建动态库
+# ============================================
+
+# 收集库的源文件（不包括示例）
 file(GLOB_RECURSE FANCYUI_SOURCES
-        "${PROJECT_SOURCE_DIR}/src/Fancy/*.h"
-        "${PROJECT_SOURCE_DIR}/src/Fancy/*.cpp"
-        "${PROJECT_SOURCE_DIR}/src/resource/*.qrc"
+    "${PROJECT_SOURCE_DIR}/src/Fancy/*.h"
+    "${PROJECT_SOURCE_DIR}/src/Fancy/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/resource/*.qrc"
 )
 
-file(GLOB_RECURSE EXAMPLE_SOURCES
+# 创建动态库
+qt_add_library(${LIBRARY_NAME} SHARED
+    ${FANCYUI_SOURCES}
+)
+
+# 设置库版本
+set_target_properties(${LIBRARY_NAME} PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION 3
+    OUTPUT_NAME "QFancyUI"
+    DEBUG_POSTFIX "d"
+)
+
+# 库的头文件包含路径
+target_include_directories(${LIBRARY_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/Fancy>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/include/magic_enum>
+    $<INSTALL_INTERFACE:include>
+)
+
+# 链接 Qt 库
+target_link_libraries(${LIBRARY_NAME} PUBLIC
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Xml
+    Qt6::Svg
+    Qt6::SvgWidgets
+)
+
+# Windows 特定链接
+if (WIN32)
+    target_link_libraries(${LIBRARY_NAME} PRIVATE
+        user32.lib
+        dwmapi.lib
+        advapi32.lib
+    )
+endif()
+
+# ============================================
+# 2. 创建示例程序（可选）
+# ============================================
+option(BUILD_EXAMPLES "Build example programs" ON)
+
+if (BUILD_EXAMPLES)
+    # 收集示例源文件
+    file(GLOB_RECURSE EXAMPLE_SOURCES
         "${PROJECT_SOURCE_DIR}/Example/*.h"
         "${PROJECT_SOURCE_DIR}/Example/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/*.ui"
@@ -31,63 +91,82 @@ file(GLOB_RECURSE EXAMPLE_SOURCES
         "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/Example_Resource/*.qrc"
         "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.h"
-        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code*.cpp"
+        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.ui"
-)
+    )
 
-add_executable(${PROJECT_NAME}
-        ${FANCYUI_SOURCES}
+    # 创建示例程序
+    add_executable(${PROJECT_NAME}_Example
         ${EXAMPLE_SOURCES}
-)
-target_link_libraries(${PROJECT_NAME} PRIVATE
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Gui
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Xml
-        Qt${QT_VERSION_MAJOR}::Svg
-        Qt${QT_VERSION_MAJOR}::SvgWidgets
-)
+    )
 
-set(FANCY_SRC_INCLUDE_DIRS
-        ${PROJECT_SOURCE_DIR}/src/Fancy
-        ${PROJECT_SOURCE_DIR}/src/include/magic_enum
-)
+    # 链接到我们创建的库
+    target_link_libraries(${PROJECT_NAME}_Example PRIVATE
+        ${LIBRARY_NAME}
+    )
 
-set(EXAMPLE_INCLUDE_DIRS
+    # 示例程序的头文件路径
+    target_include_directories(${PROJECT_NAME}_Example PRIVATE
         ${PROJECT_SOURCE_DIR}/Example
         ${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code
         ${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code
+    )
+
+    # 设置可执行文件输出目录
+    set_target_properties(${PROJECT_NAME}_Example PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    )
+endif()
+
+# ============================================
+# 3. 安装配置
+# ============================================
+
+# 安装库文件
+install(TARGETS ${LIBRARY_NAME}
+    EXPORT ${LIBRARY_NAME}Targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
-include_directories(${FANCY_SRC_INCLUDE_DIRS})
-include_directories(${EXAMPLE_INCLUDE_DIRS})
+# 安装头文件
+install(DIRECTORY src/Fancy/
+    DESTINATION include/${LIBRARY_NAME}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "*.cpp" EXCLUDE
+)
 
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-            user32.lib
-            dwmapi.lib
-            advapi32.lib
-    )
-endif ()
+install(DIRECTORY src/include/
+    DESTINATION include/${LIBRARY_NAME}
+    FILES_MATCHING PATTERN "*.h"
+)
 
-#message(STATUS "CMake version: ${CMAKE_VERSION}")                   # CMake版本
-#message(STATUS "CMake generator: ${CMAKE_GENERATOR}")               # 使用的生成器
-#message(STATUS "Qt version: ${Qt6_VERSION}")                        # Qt版本
-#message(STATUS "Qt Core module version: ${Qt6Core_VERSION}")        # QtCore模块版本
-#message(STATUS "Qt Core include dirs: ${Qt6Core_INCLUDE_DIRS}")     # QtCore头文件路径
-#message(STATUS "Qt AutoMOC enabled: ${CMAKE_AUTOMOC}")              # 元对象编译器状态
-#message(STATUS "Qt AutoRCC enabled: ${CMAKE_AUTORCC}")              # 资源编译器状态
-#message(STATUS "Qt AutoUIC enabled: ${CMAKE_AUTOUIC}")              # UIC编译器状态
-#message(STATUS "compiler: ${CMAKE_CXX_COMPILER}")                   # 编译器路径
-#message(STATUS "compiler ID: ${CMAKE_CXX_COMPILER_ID}")             # 编译器厂商(MSVC/GNU/Clang等)
-#message(STATUS "compiler version: ${CMAKE_CXX_COMPILER_VERSION}")   # 编译器版本号
-#message(STATUS "compiler flags: ${CMAKE_CXX_FLAGS}")                # 全局编译选项
-#message(STATUS "C++ standard: ${CMAKE_CXX_STANDARD}")               # C++标准
-#message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")                   # 编译类型(Release/Debug等)
-#message(STATUS "Project name: ${PROJECT_NAME}")                     # 项目名称
-#message(STATUS "Project version: ${PROJECT_VERSION}")               # 项目版本号
-#message(STATUS "Source directory: ${CMAKE_SOURCE_DIR}")             # 源代码根目录
-#message(STATUS "Build directory: ${CMAKE_BINARY_DIR}")              # 构建目录
-#message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")           # 安装时的基础路径
+# 安装 CMake 配置文件
+install(EXPORT ${LIBRARY_NAME}Targets
+    FILE ${LIBRARY_NAME}Targets.cmake
+    NAMESPACE ${LIBRARY_NAME}::
+    DESTINATION lib/cmake/${LIBRARY_NAME}
+)
 
+# 创建配置文件
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${LIBRARY_NAME}Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}Config.cmake
+    @ONLY
+)
 
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}Config.cmake
+    DESTINATION lib/cmake/${LIBRARY_NAME}
+)
+
+# ============================================
+# 4. 调试信息输出（可选）
+# ============================================
+# if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+#     message(STATUS "Building ${LIBRARY_NAME} as shared library")
+#     message(STATUS "Qt version: ${Qt6_VERSION}")
+#     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+#     message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+# endif()

@@ -1,0 +1,18 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# 查找 Qt6 依赖
+find_dependency(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Xml Svg SvgWidgets)
+
+# 包含目标文件
+include("${CMAKE_CURRENT_LIST_DIR}/QFancyUITargets.cmake")
+
+# 添加版本检查
+set(QFANCYUI_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(QFANCYUI_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(QFANCYUI_VERSION_PATCH @PROJECT_VERSION_PATCH@)
+set(QFANCYUI_VERSION @PROJECT_VERSION@)
+
+# 检查版本兼容性
+check_required_components(QFancyUI)
