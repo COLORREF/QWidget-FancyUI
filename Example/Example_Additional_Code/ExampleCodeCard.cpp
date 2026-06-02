@@ -12,10 +12,10 @@
 #include <QVariantAnimation>
 #include <QVBoxLayout>
 
-#include "IconEngine.h"
-#include "palette.h"
-#include "ThemeModeController.h"
-#include "TransparentButton.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Icon/IconEngine.h"
+#include "Widgets/PushButton/TransparentButton.h"
 
 
 RotaryArrow::RotaryArrow(QWidget *parent) :

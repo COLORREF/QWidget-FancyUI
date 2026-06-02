@@ -8,11 +8,11 @@
 #include <QMouseEvent>
 #include <QStyleOption>
 
-#include "ControlState.h"
-#include "Palette.h"
-#include "SvgWidget.h"
-#include "TextLabel.h"
-#include "ThemeModeController.h"
+#include "Core/ControlState/ControlState.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Widgets/SvgWidget/SvgWidget.h"
+#include "Widgets/TextLabel/TextLabel.h"
 
 
 namespace fancy

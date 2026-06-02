@@ -4,18 +4,15 @@
 
 #include "ExampleControlCard.h"
 
-#include <ostream>
-#include <QPainter>
-#include <QPainterPath>
 #include <QVariantAnimation>
 #include <QVBoxLayout>
 
-#include "Defs.h"
 #include "ExampleCodeCard.h"
-#include "palette.h"
-#include "ParallelAnimationGroupPool.h"
-#include "TextLabel.h"
-#include "ThemeModeController.h"
+#include "Animation/ParallelAnimationGroupPool.h"
+#include "Core/Defs.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Widgets/TextLabel/TextLabel.h"
 
 ExampleControlWidget::ExampleControlWidget(QWidget *parent) :
     QWidget(parent)

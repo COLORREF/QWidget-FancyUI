@@ -4,9 +4,9 @@
 
 #ifndef QWIDGET_FANCYUI_INTRODUCTIONCARD_H
 #define QWIDGET_FANCYUI_INTRODUCTIONCARD_H
-#include <qurl.h>
+#include <QUrl>
 
-#include "BlurCard.h"
+#include "Widgets/BlurCard/BlurCard.h"
 
 
 namespace fancy

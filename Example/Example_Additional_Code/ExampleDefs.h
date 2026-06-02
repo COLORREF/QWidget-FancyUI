@@ -10,7 +10,7 @@
 #include <QMetaEnum>
 #include <QString>
 
-#include "Defs.h"
+#include "Core/Defs.h"
 
 
 inline QString loadExampleCode(const QString &widgetName, fancy::Theme theme)

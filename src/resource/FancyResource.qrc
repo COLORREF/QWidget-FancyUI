@@ -5418,4 +5418,7 @@
         <file>icons/IconPark/ZoomInternal.svg</file>
         <file>icons/IconPark/ZoomOut.svg</file>
     </qresource>
+    <qresource prefix="/Profiles/Palette">
+        <file>ColorProfile.json</file>
+    </qresource>
 </RCC>

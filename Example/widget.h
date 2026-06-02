@@ -5,7 +5,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "StackWindow.h"
+#include "Widgets/Window/StackWindow.h"
 
 
 class Widget : public fancy::StackWindow

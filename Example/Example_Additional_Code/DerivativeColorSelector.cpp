@@ -9,9 +9,9 @@
 #include <QHBoxLayout>
 #include <QVariantAnimation>
 
-#include "Defs.h"
-#include "Palette.h"
-#include "TextLabel.h"
+#include "Core/Defs.h"
+#include "Core/Palette/Palette.h"
+#include "Widgets/TextLabel/TextLabel.h"
 
 DerivativeColorButton::DerivativeColorButton(QWidget *parent) :
     QPushButton(parent),

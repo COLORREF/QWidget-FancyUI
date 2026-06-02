@@ -4,12 +4,12 @@
 
 #include "ExampleNavigationCard.h"
 
-#include "CenteredImageWidget.h"
-#include "Defs.h"
-#include "Palette.h"
-#include "SvgWidget.h"
-#include "TextLabel.h"
-#include "ThemeModeController.h"
+#include "Core/Defs.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Widgets/CenteredImage/CenteredImageWidget.h"
+#include "Widgets/SvgWidget/SvgWidget.h"
+#include "Widgets/TextLabel/TextLabel.h"
 
 namespace fancy
 {
