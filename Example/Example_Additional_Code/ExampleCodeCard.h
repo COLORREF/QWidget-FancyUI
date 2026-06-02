@@ -7,11 +7,10 @@
 
 #include <QPainterPath>
 #include <QProxyStyle>
-#include <QPushButton>
 #include <QTextEdit>
 #include <QWidget>
 
-#include "TransparentButton.h"
+#include "Widgets/PushButton/TransparentButton.h"
 
 class QPropertyAnimation;
 class QSvgRenderer;

@@ -27,12 +27,7 @@ file(GLOB_RECURSE EXAMPLE_SOURCES
         "${PROJECT_SOURCE_DIR}/Example/*.h"
         "${PROJECT_SOURCE_DIR}/Example/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/*.ui"
-        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.h"
-        "${PROJECT_SOURCE_DIR}/Example/Example_Additional_Code/*.cpp"
         "${PROJECT_SOURCE_DIR}/Example/Example_Resource/*.qrc"
-        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.h"
-        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code*.cpp"
-        "${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code/*.ui"
 )
 
 add_executable(${PROJECT_NAME}
@@ -59,8 +54,7 @@ set(EXAMPLE_INCLUDE_DIRS
         ${PROJECT_SOURCE_DIR}/Example/Main_Program_Page_Code
 )
 
-include_directories(${FANCY_SRC_INCLUDE_DIRS})
-include_directories(${EXAMPLE_INCLUDE_DIRS})
+include_directories(${FANCY_SRC_INCLUDE_DIRS} ${EXAMPLE_INCLUDE_DIRS})
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE

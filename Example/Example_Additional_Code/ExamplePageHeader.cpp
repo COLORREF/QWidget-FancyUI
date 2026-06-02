@@ -7,10 +7,10 @@
 #include <QDesktopServices>
 #include <QVBoxLayout>
 
-#include "Palette.h"
-#include "PushButton.h"
-#include "TextLabel.h"
-#include "ThemeModeController.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Widgets/PushButton/PushButton.h"
+#include "Widgets/TextLabel/TextLabel.h"
 
 ExamplePageHeader::ExamplePageHeader(QWidget *parent) :
     QWidget(parent),

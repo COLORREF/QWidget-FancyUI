@@ -5,8 +5,6 @@
 #ifndef QWIDGET_FANCYUI_EXAMPLECONTROLCARD_H
 #define QWIDGET_FANCYUI_EXAMPLECONTROLCARD_H
 
-#include <QWidget>
-
 #include "ExampleNavigationCard.h"
 
 class RotaryArrow;

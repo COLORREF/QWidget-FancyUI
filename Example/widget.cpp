@@ -10,31 +10,28 @@
 #include <QButtonGroup>
 #include <QDesktopServices>
 #include <QFile>
-#include <QJsonObject>
 #include <QJsonParseError>
 #include <QMetaEnum>
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QToolButton>
 
-#include "Defs.h"
-#include "FlowLayout.h"
-#include "Icon.h"
-#include "IconEngine.h"
-#include "IconEnums.h"
-#include "IconPage.h"
-#include "MaximizeButton.h"
-#include "Palette.h"
-#include "PalettePage.h"
-#include "Sidebar.h"
-#include "SidebarButton.h"
-#include "SvgParsing.h"
-#include "SvgWidget.h"
-#include "SystemAccessor.h"
-#include "ThemeModeController.h"
-#include "TitleBar.h"
-#include "Main_Program_Page_Code/BasicInput.h"
-#include "Main_Program_Page_Code/Home.h"
+#include "Main_Program_Page_Code/Icon/IconPage.h"
+#include "Main_Program_Page_Code/Palette/PalettePage.h"
+#include "Core/Defs.h"
+#include "Core/SvgParsing.h"
+#include "Core/SystemAccessor.h"
+#include "Core/Palette/Palette.h"
+#include "Core/Theme/ThemeModeController.h"
+#include "Icon/IconEngine.h"
+#include "Icon/IconEnums.h"
+#include "Layout/FlowLayout.h"
+#include "Main_Program_Page_Code/BasicInput/BasicInput.h"
+#include "Main_Program_Page_Code/Home/Home.h"
+#include "Widgets/Sidebar/Sidebar.h"
+#include "Widgets/Sidebar/SidebarButton.h"
+#include "Widgets/TitleBar/TitleBar.h"
+#include "Widgets/TitleBar/Button/MaximizeButton.h"
 
 
 Widget::Widget(QWidget *parent) :

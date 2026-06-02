@@ -1,7 +1,8 @@
 *.dll
 *.lib
 *.a
-*.user  
+*.user
+*.idea/  
 build/
 opencv2/
 .vscode/

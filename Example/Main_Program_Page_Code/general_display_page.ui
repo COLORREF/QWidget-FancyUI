@@ -61,7 +61,7 @@
   <customwidget>
    <class>fancy::ScrollArea</class>
    <extends>QScrollArea</extends>
-   <header>ScrollArea.h</header>
+   <header>Widgets/ScrollArea/ScrollArea.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
