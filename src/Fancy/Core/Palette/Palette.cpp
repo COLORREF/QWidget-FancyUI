@@ -24,7 +24,7 @@ namespace fancy
         SystemThemeMonitor::monitor().start();
 
         // 默认颜色组
-        _group_theme = {ColorGroups::Default, ThemeModeController::controller().appTheme()};
+        _group_theme = {ColorGroups::System, ThemeModeController::controller().appTheme()};
         loadSchemes(QColor::fromString("#D44E7D"));
 
         connect(&ThemeModeController::controller(), &ThemeModeController::appThemeChange, this, &Palette::onAppThemeChanged);

@@ -6,7 +6,7 @@
 
 #include <QApplication>
 
-#include "../Core/Palette/Palette.h"
+#include "Core/Palette/Palette.h"
 
 namespace fancy
 {
@@ -55,26 +55,20 @@ namespace fancy
         if (const QString style_name(magic_enum::enum_name<IconStyle>(style).data()); style_name == "AntDesignIcons")
         {
             for (const auto em: magic_enum::enum_values<AntDesignIcons>())
-            {
                 cache[{IconStyle::AntDesignIcons, static_cast<quint64>(em)}] = new QSvgRenderer(singleRender<AntDesignIcons>(em, color), qApp);
-                return cache;
-            }
+            return cache;
         }
         else if (style_name == "BootstrapIcons")
         {
             for (const auto em: magic_enum::enum_values<BootstrapIcons>())
-            {
                 cache[{IconStyle::BootstrapIcons, static_cast<quint64>(em)}] = new QSvgRenderer(singleRender<BootstrapIcons>(em, color), qApp);
-                return cache;
-            }
+            return cache;
         }
         else if (style_name == "IconPark")
         {
-            for (const auto em: magic_enum::enum_values<BootstrapIcons>())
-            {
-                cache[{IconStyle::IconPark, static_cast<quint64>(em)}] = new QSvgRenderer(singleRender<BootstrapIcons>(em, color), qApp);
-                return cache;
-            }
+            for (const auto em: magic_enum::enum_values<IconPark>())
+                cache[{IconStyle::IconPark, static_cast<quint64>(em)}] = new QSvgRenderer(singleRender<IconPark>(em, color), qApp);
+            return cache;
         }
         return cache;
     }

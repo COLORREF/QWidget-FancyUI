@@ -22,7 +22,13 @@ namespace fancy
     void BlurCard::blur()
     {
         if (_blurredObj)
-            setPixmap(QPixmap::fromImage(gaussianBlur(renderWidgetRegion(_blurredObj, getWidgetRectInAncestor(this, _blurredObj)), _blurRadius)));
+            setPixmap(QPixmap::fromImage(
+                    approxGaussianBlur(
+                        renderWidgetRegion(_blurredObj, getWidgetRectInAncestor(this, _blurredObj)),
+                        _blurRadius
+                    )
+                )
+            );
     }
 
     void BlurCard::paintEvent(QPaintEvent *event)
