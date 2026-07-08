@@ -21,10 +21,10 @@ namespace fancy
          */
         explicit BlurCard(QWidget *parent, QWidget *blurredObj);
 
-        void setBlurRadius(int radius) { _blurRadius = radius; }
+        void setBlurRadius(const int radius) { _blurRadius = radius; }
         [[nodiscard]] int blurRadius() const { return _blurRadius; }
         void setBlurredObj(QWidget *obj) { _blurredObj = obj; }
-        void setRadius(int radius) { _radius = radius; }
+        void setRadius(const int radius) { _radius = radius; }
         [[nodiscard]] int radius() const { return _radius; }
         [[nodiscard]] QPixmap pixmap() const { return _pixmap; }
         void setPixmap(const QPixmap &pixmap) { _pixmap = pixmap; }

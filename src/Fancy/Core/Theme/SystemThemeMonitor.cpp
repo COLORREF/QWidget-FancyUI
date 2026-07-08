@@ -18,8 +18,7 @@ namespace fancy
     {
         ::SetEvent(this->_hEvent_array[2]);
     }
-
-
+    
     SystemThemeMonitor &SystemThemeMonitor::monitor()
     {
         static auto *monitor = new SystemThemeMonitor(qApp);

@@ -12,14 +12,10 @@
 #include <QMap>
 #include <QPixmap>
 #include <QSvgRenderer>
-#include "../Core/Defs.h"
+
 #include "IconEnums.h"
-#include "../Core/SvgParsing.h"
-#define MAGIC_ENUM_RANGE_MIN 0
-#define MAGIC_ENUM_RANGE_MAX 3000
-#include <magic_enum.hpp>
-
-
+#include "Core/Defs.h"
+#include "Core/SvgParsing.h"
 
 
 namespace fancy
