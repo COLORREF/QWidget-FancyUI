@@ -3,6 +3,8 @@
 //
 
 #include "TransparentButtonStyle.h"
+
+#include <QPainter>
 #include <QPainterPath>
 #include <QPushButton>
 #include <QStyleOption>

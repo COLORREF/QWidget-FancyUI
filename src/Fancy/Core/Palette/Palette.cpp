@@ -8,8 +8,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QtMath>
 
-#include "Core/BezierEasing.h"
+#include "utils/BezierEasing.h"
 #include "Core/Defs.h"
 #include "Core/SystemAccessor.h"
 #include "Core/Theme/SystemThemeMonitor.h"
@@ -25,8 +26,7 @@ namespace fancy
 
         // 默认颜色组
         _group_theme = {ColorGroups::System, ThemeModeController::controller().appTheme()};
-        loadSchemes(QColor::fromString("#D44E7D"));
-
+        loadSchemes(QColor(212,78,125));
         connect(&ThemeModeController::controller(), &ThemeModeController::appThemeChange, this, &Palette::onAppThemeChanged);
         connect(&SystemThemeMonitor::monitor(), &SystemThemeMonitor::systemAccentColorsChanged, this, &Palette::onSystemAccentColorsChanged);
     }
@@ -107,7 +107,11 @@ namespace fancy
 
     QColor Palette::spin(const QColor &c, double amount)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         float h, s, l, alpha;
+#else
+        qreal h, s, l, alpha;
+#endif
         c.getHslF(&h, &s, &l, &alpha);
         h = std::fmod(h * 360.0 + amount, 360.0);
         return QColor::fromHslF((h < 0 ? h + 360.0 : h) / 360.0, s, l, alpha);
@@ -142,20 +146,20 @@ namespace fancy
         constexpr double Wclamp = 0.1;
         constexpr double Woffset = 0.027; // 反转极性：偏置
 
-        auto calcAPCAcontrast = [](const QColor &textColor, const QColor &bgColor)-> int {
-            auto softclp = [](double Yc)-> double {
+        auto calcAPCAcontrast = [&](const QColor &textColor, const QColor &bgColor)-> int {
+            auto softclp = [&](double Yc)-> double {
                 if (Yc < 0)
                     return 0;
                 return Yc <= blkThrs ? Yc + std::pow((blkThrs - Yc), blkClmp) : Yc;
             };
 
-            auto SAPC = [](double Ybg, double Ytxt)-> double {
+            auto SAPC = [&](double Ybg, double Ytxt)-> double {
                 if (Ybg > Ytxt)
                     return (std::pow(Ybg, normBG) - std::pow(Ytxt, normTXT)) * scaleBoW;
                 return (std::pow(Ybg, revBG) - std::pow(Ytxt, revTXT)) * scaleWoB;
             };
 
-            auto Lc = [](double sapc)-> int {
+            auto Lc = [&](double sapc)-> int {
                 if (qFabs(sapc) < Wclamp)
                     return 0.0;
                 return static_cast<int>(std::lround(sapc > 0.0 ? (sapc - Woffset) * 100.0 : (sapc + Woffset) * 100.0));
@@ -195,7 +199,7 @@ namespace fancy
         const int midIndex = max / 2 + 1;
 
         // 根据颜色特性生成的阴影颜色
-        auto getShadeColor = [](const QColor &ori)-> QColor {
+        auto getShadeColor = [&](const QColor &ori)-> QColor {
             // 暖色
             if (ori.redF() > ori.blueF())
                 return spin(darken(ori, ori.lightnessF() * warmDark), warmRotate);

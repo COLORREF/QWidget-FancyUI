@@ -5,6 +5,7 @@
 #include "SliderIndicator.h"
 
 #include <QMouseEvent>
+#include <QPainter>
 #include <QVariantAnimation>
 #include "Core/Defs.h"
 #include "Core/Palette/Palette.h"
@@ -34,7 +35,11 @@ namespace fancy
         );
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     void SliderIndicator::enterEvent(QEnterEvent *event)
+#else
+    void SliderIndicator::enterEvent(QEvent *event)
+#endif
     {
         _isContains = true;
         _ani->setStartValue(_r / 2);

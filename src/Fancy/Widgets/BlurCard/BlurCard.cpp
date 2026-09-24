@@ -5,8 +5,11 @@
 #include "BlurCard.h"
 
 #include <QPainterPath>
+#include <QPainter>
 
 #include "Core/Defs.h"
+#include "utils/General.h"
+#include "utils/Blur.h"
 
 namespace fancy
 {

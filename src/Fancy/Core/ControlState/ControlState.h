@@ -35,7 +35,7 @@ namespace fancy
         bool _on; // 选中
         bool _off; // 未选中
         bool _over; // 悬浮
-        bool _sunken; // 按下或具有凹陷外观s
+        bool _sunken; // 按下或具有凹陷外观
         bool _focus; // 焦点
     };
 } // fancy

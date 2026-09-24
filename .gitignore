@@ -4,6 +4,7 @@
 *.user
 *.idea/  
 build/
+*build/
 opencv2/
 .vscode/
 OpenCV_static/

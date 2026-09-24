@@ -5,6 +5,7 @@
 #include "ExampleCodeCard.h"
 
 #include <QClipboard>
+#include <QPainter>
 #include <QPainterPath>
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
@@ -170,7 +171,7 @@ void ExampleCodeCardTextEdit::resizeEvent(QResizeEvent *event)
     _copy->move(width() - 42, height() / 2 - 16);
 }
 
-void ExampleCodeCardTextEdit::copyCode()
+void ExampleCodeCardTextEdit::copyCode() const
 {
     QApplication::clipboard()->setText(toPlainText());
 }
@@ -204,7 +205,7 @@ ExampleCodeCard::ExampleCodeCard(QWidget *parent) :
     connect(_aniGroup, &QParallelAnimationGroup::finished, this, &ExampleCodeCard::onAniFinished);
 }
 
-void ExampleCodeCard::setHtmlCode(const QString &html)
+void ExampleCodeCard::setHtmlCode(const QString &html) const
 {
     _code->setHtml(html);
 }
@@ -223,7 +224,7 @@ void ExampleCodeCard::onAnimationChanged(const QVariant &val)
     setFixedHeight(h);
 }
 
-void ExampleCodeCard::onAniFinished()
+void ExampleCodeCard::onAniFinished() const
 {
     _title->_show = !_title->_show;
     if (!_title->_show)
@@ -235,7 +236,7 @@ void ExampleCodeCard::onAniFinished()
     _title->update();
 }
 
-void ExampleCodeCard::clickedToShowCode()
+void ExampleCodeCard::clickedToShowCode() const
 {
     if (!_title->_show)
         _code->document()->setTextWidth(-1);
@@ -269,7 +270,7 @@ void ExampleCodeCard::clickedToShowCode()
     }
 }
 
-void ExampleCodeCard::updateHeight()
+void ExampleCodeCard::updateHeight() const
 {
     _code->document()->adjustSize();
     const int h = qRound(_code->document()->size().height())

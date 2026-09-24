@@ -46,7 +46,7 @@ private slots:
 
 private:
     QVariantAnimation *_ani;
-    QList<QLineF> _lines;
+    QVector<QLineF> _lines;
     int _angle;
 };
 
@@ -90,7 +90,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private slots:
-    void copyCode();
+    void copyCode() const;
 
 private:
     fancy::TransparentButton *_copy;
@@ -104,7 +104,7 @@ class ExampleCodeCard : public QWidget
 public:
     explicit ExampleCodeCard(QWidget *parent);
 
-    void setHtmlCode(const QString &html);
+    void setHtmlCode(const QString &html) const;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -112,12 +112,12 @@ protected:
 private slots:
     void onAnimationChanged(const QVariant &val);
 
-    void onAniFinished();
+    void onAniFinished() const;
 
-    void clickedToShowCode();
+    void clickedToShowCode() const;
 
 private:
-    void updateHeight();
+    void updateHeight() const;
 
     ExampleCodeCardTextEdit *_code;
     ExampleCodeCardButton *_title;

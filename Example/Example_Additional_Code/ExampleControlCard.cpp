@@ -4,6 +4,7 @@
 
 #include "ExampleControlCard.h"
 
+#include <QPainter>
 #include <QVariantAnimation>
 #include <QVBoxLayout>
 
@@ -57,7 +58,9 @@ ExampleControlCard::ExampleControlCard(QWidget *parent) :
     _layout->addStretch(1);
 
     _arrow->setFixedSize(30, 30);
-    _title->setFont(QFont(font().family(), 10));
+    QFont titleFont = _title->font();
+    titleFont.setPointSize(10);
+    _title->setFont(titleFont);
     _title->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     _code->_aniGroup->addAnimation(_arrow->_ani);

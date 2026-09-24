@@ -4,6 +4,7 @@
 
 #include "MSWidget.h"
 
+#include <QPainter>
 #include <QPainterPath>
 #include <QVariantAnimation>
 

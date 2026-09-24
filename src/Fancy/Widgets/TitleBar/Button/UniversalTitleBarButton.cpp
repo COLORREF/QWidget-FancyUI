@@ -4,6 +4,7 @@
 
 #include "UniversalTitleBarButton.h"
 #include <QMouseEvent>
+#include <QPainter>
 
 #include "Core/Defs.h"
 #include "Core/Palette/Palette.h"
@@ -49,7 +50,11 @@ namespace fancy
         }
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     void UniversalTitleBarButton::enterEvent(QEnterEvent *event)
+#else
+    void UniversalTitleBarButton::enterEvent(QEvent *event)
+#endif
     {
         _state = TitleBtnState::Hover;
         update();

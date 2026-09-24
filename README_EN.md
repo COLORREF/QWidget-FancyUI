@@ -22,15 +22,13 @@ English | <a href="./README.md">简体中文</a>
 ---
 
 # Update Notes
-- A full-scale refactor and update is currently in progress. You can first try out the compilable demo program.
-- Complete code refactoring — cleaner, more readable… saying goodbye to spaghetti code 🤔?
-- More icons: integrated `IconPark`, `Ant Design`, and `Bootstrap` icon sets, with support for over 5400+ icons.
-- Currently supports **Qt 6** and **Windows** only. Planned future updates will include support for **Qt 5**, **Linux**, **Android**, and **WebAssembly**.
-- Compared to the previous version, **OpenCV** support and some incomplete classes/features have been temporarily removed.
-- Third-party libraries used: ~~[OpenCV](https://github.com/opencv/opencv)~~, [magic-enum](https://github.com/Neargye/magic_enum), [IconPark](https://github.com/bytedance/iconpark), [Bootstrap Icons](https://github.com/twbs/icons), [Ant Design](https://github.com/ant-design/ant-design)
-- References and acknowledgements: [SAPC-APCA](https://github.com/Myndex/SAPC-APCA), [apca-w3](https://github.com/Myndex/apca-w3), [WinUI 3](https://github.com/microsoft/microsoft-ui-xaml)
-- Replaced `QMake` with `CMake`
-- Removed legacy and external Python files from the project
+
+- A comprehensive refactor is currently in progress; the demo application is available for an early look.
+- The codebase has been extensively refactored to make it cleaner and easier to read... goodbye, spaghetti code 🤔?
+- Windows is currently the only supported platform; Linux, Android, and WebAssembly support is planned.
+- Initial Qt 5 support has been added. Qt 5.15 or later is recommended; earlier versions have not been tested.
+- Includes more than 5,400 icons from IconPark, Ant Design Icons, and Bootstrap Icons.
+- Removed legacy files and Python files unrelated to the project.
 
 ---
 
@@ -40,14 +38,20 @@ English | <a href="./README.md">简体中文</a>
 
 ![HomePreview_Dark](./docs/HomePreview_Dark.png)
 
-![HomePreview_Dark](./docs/PalettePerview.png)
+![PalettePreview](./docs/PalettePerview.png)
 
 # Demo Program Build Guide
 
-Modify the `Qt` path in `CMakeLists.txt`, then you can directly start building in your IDE (Visual Studio, QtCreator, Clion, etc.)!
+In the root `CMakeLists.txt`, follow the comments to set the Qt path, then build directly with Visual Studio, Qt Creator, CLion, or another supported IDE.
 
 ![SetQtPath](./docs/SetQtPath.png)
 
+# Third-Party Projects, References, and Acknowledgements
+
+- Used: [magic_enum](https://github.com/Neargye/magic_enum), [IconPark](https://github.com/bytedance/iconpark), [Bootstrap Icons](https://github.com/twbs/icons), [Ant Design Icons](https://github.com/ant-design/ant-design-icons)
+- Referenced: [SAPC-APCA](https://github.com/Myndex/SAPC-APCA), [apca-w3](https://github.com/Myndex/apca-w3), [Ant Design Color System](https://2x.ant.design/docs/spec/colors), [WinUI 3](https://github.com/microsoft/microsoft-ui-xaml)
+- Third-party projects and assets remain subject to their respective licenses.
+
 ---
 
-Last edited: 2025-11-19 by @COLORREF
+Last edited: 2026-09-24　by @COLORREF

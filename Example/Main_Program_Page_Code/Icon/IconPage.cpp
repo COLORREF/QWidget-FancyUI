@@ -22,7 +22,9 @@ IconPage::IconPage(QWidget *parent) :
 
     contents_layout->setContentsMargins(36, 28, 36, 28);
     auto *tip = new fancy::TransparentButton(fancy::IconPark::Code, "编写中......", _ui->contents);
-    tip->setFont(QFont(tip->font().family(), 70));
+    QFont tipFont = tip->font();
+    tipFont.setPointSize(70);
+    tip->setFont(tipFont);
     tip->setIconSize(QSize(265, 265));
     tip->setMinimumSize(1000, 365);
     contents_layout->addWidget(tip);

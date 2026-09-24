@@ -5,6 +5,7 @@
 #include "IconEngine.h"
 
 #include <QApplication>
+#include <QPainter>
 
 #include "Core/Palette/Palette.h"
 

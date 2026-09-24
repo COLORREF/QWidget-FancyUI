@@ -6,6 +6,7 @@
 
 #include <QDesktopServices>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QStyleOption>
 
 #include "Core/ControlState/ControlState.h"
@@ -83,7 +84,11 @@ namespace fancy
         update();
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     void IntroductionCard::enterEvent(QEnterEvent *event)
+#else
+    void IntroductionCard::enterEvent(QEvent *event)
+#endif
     {
         BlurCard::enterEvent(event);
         _state = VisualState::Hover;
