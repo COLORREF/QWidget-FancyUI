@@ -3,6 +3,8 @@
 //
 
 #include "RadioButtonStyle.h"
+
+#include <QPainter>
 #include <QStyleOption>
 #include <QVariantAnimation>
 

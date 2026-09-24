@@ -5,6 +5,7 @@
 #include "CloseButton.h"
 
 #include <QMouseEvent>
+#include <QPainter>
 
 #include "Core/Defs.h"
 #include "Core/Palette/Palette.h"
@@ -39,7 +40,11 @@ namespace fancy
     }
 
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     void CloseButton::enterEvent(QEnterEvent *event)
+#else
+    void CloseButton::enterEvent(QEvent *event)
+#endif
     {
         svgWidget()->cache().first = IconEngine::singleRender(AntDesignIcons::Close, Qt::GlobalColor::white);
         svgWidget()->load();

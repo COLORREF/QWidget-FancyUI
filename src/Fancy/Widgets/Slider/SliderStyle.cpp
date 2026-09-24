@@ -4,6 +4,7 @@
 
 #include "SliderStyle.h"
 #include <QMouseEvent>
+#include <QPainter>
 #include <QStyleOption>
 #include "SliderIndicator.h"
 #include "Core/Defs.h"

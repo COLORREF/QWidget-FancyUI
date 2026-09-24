@@ -4,6 +4,7 @@
 
 #include "ScrollBarStyle.h"
 
+#include <QPainter>
 #include <QPainterPath>
 #include <QScrollBar>
 #include <QStyleOption>

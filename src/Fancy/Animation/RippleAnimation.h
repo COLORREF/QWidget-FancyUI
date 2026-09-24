@@ -5,6 +5,7 @@
 #ifndef QWIDGET_FANCYUI_RIPPLEANIMATION_H
 #define QWIDGET_FANCYUI_RIPPLEANIMATION_H
 
+#include <QPointF>
 #include <QVariantAnimation>
 #include "ParallelAnimationGroupPool.h"
 

@@ -84,7 +84,13 @@ namespace fancy
 
     QPixmap Icon::pixmap(const QSize &size, qreal devicePixelRatio, QIcon::Mode mode, QIcon::State state) const
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return _icon->pixmap(size, devicePixelRatio, mode, state);
+#else
+        QPixmap pix = _icon->pixmap(size, mode, state);
+        pix.setDevicePixelRatio(devicePixelRatio);
+        return pix;
+#endif
     }
 
     QSize Icon::actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) const

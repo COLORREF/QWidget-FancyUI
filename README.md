@@ -18,17 +18,16 @@
 <p align="center">
  简体中文 | <a href="./README_EN.md">English</a>
 </p>
+
 ---
 
 # 更新说明
+
 - 目前正在进行全面重构更新，可编译示例程序先行体验
 - 代码全面重构，更清晰、更易读…告别屎山🤔？
-- 更多的图标：引入`IconPark`、`Ant Design` 和` Bootstrap` 图标，多达5400+图标支持
-- 目前仅支持 Qt 6 和 Windows 系统，后续计划更新支持 Qt 5 、Linux、Android 和 WebAssembly支持
-- 暂时移除了 OpenCV 支持、部分尚不完善的类/功能等
-- 第三方库使用：~~[OpenCV](https://github.com/opencv/opencv)~~、[magic-enum](https://github.com/Neargye/magic_enum)、[IconPark](https://github.com/bytedance/iconpark)、[Bootstrap Icons](https://github.com/twbs/icons)、[Ant Design](https://github.com/ant-design/ant-design)
-- 参考和致谢：[SAPC-APCA](https://github.com/Myndex/SAPC-APCA)、[apca-w3](https://github.com/Myndex/apca-w3)、[WinUI 3](https://github.com/microsoft/microsoft-ui-xaml)
-- 不再使用 `QMake`，改为 `CMake`
+- 目前仅支持 Windows 系统，后续计划更新支持 Linux、Android 和 WebAssembly支持
+- 已初步适配 Qt5 ，推荐 Qt 5.15 版本及以上，更低版本未经测试
+- 更多的图标：引入IconPark、Ant Design 和 Bootstrap 图标，多达5400+图标支持
 - 移除了项目之外的旧文件和Python文件
 
 ---
@@ -39,15 +38,21 @@
 
 ![HomePreview_Dark](./docs/HomePreview_Dark.png)
 
-![HomePreview_Dark](./docs/PalettePerview.png)
+![PalettePreview](./docs/PalettePerview.png)
 
 # 示例程序编译指南
 
-在 `CMakeLists.txt` 中修改`Qt`路径，即可在 IDE（Visual Studio、QtCreator、Clion等）中直接开始编译！
+在根目录的 `CMakeLists.txt` 中，按注释修改 Qt 路径，即可在 Visual Studio、QtCreator、Clion 等中直接开始编译！
 
 ![SetQtPath](./docs/SetQtPath.png)
 
+# 第三方项目参考与致谢
+
+- 使用：[magic_enum](https://github.com/Neargye/magic_enum)、[IconPark](https://github.com/bytedance/iconpark)、[Bootstrap Icons](https://github.com/twbs/icons)、[Ant Design Icons](https://github.com/ant-design/ant-design-icons)
+- 参考：[SAPC-APCA](https://github.com/Myndex/SAPC-APCA)、[apca-w3](https://github.com/Myndex/apca-w3)、[Ant Design 色彩体系](https://2x.ant.design/docs/spec/colors-cn)、[WinUI 3](https://github.com/microsoft/microsoft-ui-xaml)
+- 第三方项目及资源遵循其各自的许可证
+
 ---
 
-最后编辑日期：2025-11-19	by @COLORREF
+最后编辑日期：2026-09-24　by @COLORREF
 

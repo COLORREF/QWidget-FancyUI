@@ -4,14 +4,17 @@
 
 #include "RippleButtonStyle.h"
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPainterPath>
 #include <QPushButton>
 #include <QStyleOption>
+#include <QtMath>
 
 #include "Animation/RippleAnimation.h"
 #include "Core/Defs.h"
 #include "Core/ControlState/ControlState.h"
 #include "Core/Palette/Palette.h"
+#include "utils/General.h"
 
 namespace fancy
 {
@@ -114,7 +117,11 @@ namespace fancy
 
         if (_parent->isEnabled() && (event->type() == QEvent::Type::MouseButtonPress || event->type() == QEvent::Type::MouseButtonDblClick))
             if (const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); mouseEvent->button() == Qt::MouseButton::LeftButton)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 _ripple->start(mouseEvent->position());
+#else
+                _ripple->start(mouseEvent->localPos());
+#endif
 
         return QProxyStyle::eventFilter(obj, event);
     }

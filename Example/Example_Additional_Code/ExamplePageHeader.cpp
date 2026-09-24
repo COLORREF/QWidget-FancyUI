@@ -6,6 +6,7 @@
 
 #include <QDesktopServices>
 #include <QVBoxLayout>
+#include <QUrl>
 
 #include "Core/Palette/Palette.h"
 #include "Core/Theme/ThemeModeController.h"

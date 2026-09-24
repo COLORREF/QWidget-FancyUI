@@ -100,7 +100,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Fluent for Qt6
+           <string>Fluent for Qt
 QWidget FancyUI</string>
           </property>
          </widget>
@@ -177,6 +177,7 @@ QWidget FancyUI</string>
             <property name="font">
              <font>
               <pointsize>11</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -187,9 +188,6 @@ QWidget FancyUI</string>
           </item>
           <item>
            <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>

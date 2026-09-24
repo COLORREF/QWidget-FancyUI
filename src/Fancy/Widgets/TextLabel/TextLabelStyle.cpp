@@ -4,6 +4,7 @@
 
 #include "TextLabelStyle.h"
 #include <QLabel>
+#include <QPainter>
 
 #include "Core/Defs.h"
 #include "Core/Palette/Palette.h"

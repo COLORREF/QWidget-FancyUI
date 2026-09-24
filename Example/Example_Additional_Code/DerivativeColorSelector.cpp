@@ -7,6 +7,7 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QHBoxLayout>
+#include <QPainter>
 #include <QVariantAnimation>
 
 #include "Core/Defs.h"
@@ -61,7 +62,11 @@ void DerivativeColorButton::paintEvent(QPaintEvent *event)
     painter.drawText(r, Qt::AlignCenter, text());
 }
 
-void DerivativeColorButton::enterEvent(QEnterEvent *event)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    void DerivativeColorButton::enterEvent(QEnterEvent *event)
+#else
+    void DerivativeColorButton::enterEvent(QEvent *event)
+#endif
 {
     _ani->setDirection(QAbstractAnimation::Direction::Forward);
     _ani->start();
@@ -99,7 +104,9 @@ DerivativeColorSelector::DerivativeColorSelector(QWidget *parent, const QColor &
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    _title->setFont(QFont(_title->font().family(), 12));
+    QFont titleFont = _title->font();
+    titleFont.setPointSize(12);
+    _title->setFont(titleFont);
     layout->addWidget(_title, 0, Qt::AlignHCenter);
     layout->addWidget(wrap_widget, 0, Qt::AlignHCenter);
 }

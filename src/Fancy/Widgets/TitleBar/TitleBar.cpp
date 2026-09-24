@@ -37,7 +37,10 @@ namespace fancy
         size_policy.setHeightForWidth(sizePolicy().hasHeightForWidth());
         setSizePolicy(size_policy);
 
-        _textLabel->setFont(QFont(_textLabel->font().family(), 9));
+        QFont titleFont = _textLabel->font();
+        titleFont.setPointSize(9);
+        _textLabel->setFont(titleFont);
+
         _iconLabel->setFixedSize(25, 20);
         _iconLabel->setScaledContents(true);
         _iconLabel->setContentsMargins(0, 0, 5, 0);

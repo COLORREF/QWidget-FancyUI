@@ -5,7 +5,7 @@
 #ifndef QWIDGET_FANCYUI_BEZIEREASING_H
 #define QWIDGET_FANCYUI_BEZIEREASING_H
 #include <QDebug>
-#include <QList>
+#include <QVector>
 
 namespace fancy
 {
@@ -36,7 +36,7 @@ namespace fancy
         static constexpr double kSampleStepSize = 1.0 / (kSplineTableSize - 1.0);
 
         double _mX1, _mY1, _mX2, _mY2;
-        QList<double> _sampleValues;
+        QVector<double> _sampleValues;
 
         constexpr static double A(double a1, double a2) { return 1.0 - 3.0 * a2 + 3.0 * a1; }
         constexpr static double B(double a1, double a2) { return 3.0 * a2 - 6.0 * a1; }

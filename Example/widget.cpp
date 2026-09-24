@@ -19,7 +19,7 @@
 #include "Main_Program_Page_Code/Icon/IconPage.h"
 #include "Main_Program_Page_Code/Palette/PalettePage.h"
 #include "Core/Defs.h"
-#include "Core/SvgParsing.h"
+#include "utils/SvgParsing.h"
 #include "Core/SystemAccessor.h"
 #include "Core/Palette/Palette.h"
 #include "Core/Theme/ThemeModeController.h"

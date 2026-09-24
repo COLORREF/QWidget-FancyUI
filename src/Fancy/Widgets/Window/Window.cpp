@@ -8,6 +8,10 @@
 #include <QVariantAnimation>
 #include <QWindow>
 #include <QWindowStateChangeEvent>
+#include <QScreen>
+#include <QDebug>
+#include <QPainter>
+
 #include "Core/Defs.h"
 #include "Core/SystemAccessor.h"
 #include "Core/WindowController.h"
@@ -199,7 +203,11 @@ namespace fancy
         painter.drawRect(rect());
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     bool Window::nativeEvent(const QByteArray &eventType, void *message, qintptr *result)
+#else
+    bool Window::nativeEvent(const QByteArray &eventType, void *message, long *result)
+#endif
     {
         switch (const MSG *msg = static_cast<MSG *>(message); msg->message)
         {
@@ -452,7 +460,7 @@ namespace fancy
         _dwmWindowEffect = effect;
         _titleBar->setTransparency();
         auto hWnd = reinterpret_cast<HWND>(winId());
-#if (QT_VERSION <= QT_VERSION_CHECK(6, 0, 0))
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         setWindowFlags((this->windowFlags()) & (~Qt::WindowType::FramelessWindowHint));
 #endif
         setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground);

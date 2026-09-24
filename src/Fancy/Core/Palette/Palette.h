@@ -9,6 +9,7 @@
 #include <QHash>
 #include <QList>
 #include <QObject>
+#include "utils/hash.h"
 
 
 namespace fancy

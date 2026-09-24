@@ -5,6 +5,7 @@
 #include "TextEditStyle.h"
 
 #include <QEvent>
+#include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
 #include <QTextEdit>
@@ -12,6 +13,7 @@
 #include "Core/Defs.h"
 #include "Core/ControlState/ControlState.h"
 #include "Core/Palette/Palette.h"
+#include "utils/General.h"
 
 namespace fancy
 {

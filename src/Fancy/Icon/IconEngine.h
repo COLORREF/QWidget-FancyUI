@@ -15,7 +15,8 @@
 
 #include "IconEnums.h"
 #include "Core/Defs.h"
-#include "Core/SvgParsing.h"
+#include "utils/SvgParsing.h"
+#include "utils/hash.h"
 
 
 namespace fancy
@@ -109,7 +110,11 @@ namespace fancy
 
         void stateOnUseAccentTextColor(bool use);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         bool isNull() override;
+#else
+        bool isNull();
+#endif
 
         IconEngine();
 
