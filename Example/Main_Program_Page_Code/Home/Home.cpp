@@ -14,42 +14,45 @@
 
 HomePage::HomePage(QWidget *parent) :
     QWidget(parent),
-    _uiHome(new Ui::Home)
+    _uiHome(new Ui::Home),
+    _githubCard(nullptr),
+    _bilibiliCard(nullptr),
+    _fastBlurSignalCount(-1)
+{
+    initializeUi();
+    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::FastTPixmapUpdate, this, &HomePage::onFastPixmapUpdate);
+    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::SmoothPixmapUpdate, this, &HomePage::updateSmoothBlur);
+    connect(&fancy::Palette::palette(), &fancy::Palette::appThemeChange, this, &HomePage::onThemeChanged);
+}
+
+void HomePage::initializeUi()
 {
     _uiHome->setupUi(this);
 
     _uiHome->homeImage->setRadius(5);
     _uiHome->homeImage->setFillBackground(true);
-    _uiHome->homeImage->setFillColor(fancy::ThemeModeController::controller().isAppLight() ? QColor(208, 217, 228) : QColor(2, 11, 32));
+    _uiHome->homeImage->setFillColor(
+        fancy::ThemeModeController::controller().isAppLight()
+            ? QColor(208, 217, 228)
+            : QColor(2, 11, 32)
+    );
     _uiHome->homeImage->setPixmap(QPixmap(":/home.png"));
 
-    auto github = new fancy::IntroductionCard(_uiHome->homeImage, _uiHome->homeImage);
-    github->setBlurRadius(30);
-    github->setIcon(fancy::iconId(fancy::BootstrapIcons::Github));
-    github->setMainText("FancyUI On Github");
-    github->setSubText("Explore the FancyUI source code\nand repository.");
-    github->setUrl(QUrl(R"(https://github.com/COLORREF/QWidget-FancyUI)"));
-    github->move(20, 260);
+    _githubCard = new fancy::IntroductionCard(_uiHome->homeImage, _uiHome->homeImage);
+    _githubCard->setBlurRadius(30);
+    _githubCard->setIcon(fancy::iconId(fancy::BootstrapIcons::Github));
+    _githubCard->setMainText("FancyUI On Github");
+    _githubCard->setSubText("Explore the FancyUI source code\nand repository.");
+    _githubCard->setUrl(QUrl(R"(https://github.com/COLORREF/QWidget-FancyUI)"));
+    _githubCard->move(20, 260);
 
-    auto bilibili = new fancy::IntroductionCard(_uiHome->homeImage, _uiHome->homeImage);
-    bilibili->setBlurRadius(30);
-    bilibili->setIcon(fancy::iconId(fancy::AntDesignIcons::Bilibili));
-    bilibili->setMainText("Developer's homepage");
-    bilibili->setSubText("Contact the developer \nor provide your feedback.\nLook forward to your attention.");
-    bilibili->setUrl(QUrl(R"(https://m.bilibili.com/space/1843315943)"));
-    bilibili->move(280, 260);
-
-    auto onPixmapUpdate = [github, bilibili] {
-        github->blur();
-        bilibili->blur();
-    };
-    auto onThemeChanged = [this, onPixmapUpdate] {
-        _uiHome->homeImage->setFillColor(fancy::ThemeModeController::controller().isAppLight() ? QColor(208, 217, 228) : QColor(2, 11, 32));
-        onPixmapUpdate();
-    };
-    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::SmoothPixmapUpdate, this, onPixmapUpdate);
-    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::FastTPixmapUpdate, this, onPixmapUpdate);
-    connect(&fancy::Palette::palette(), &fancy::Palette::appThemeChange, this, onThemeChanged);
+    _bilibiliCard = new fancy::IntroductionCard(_uiHome->homeImage, _uiHome->homeImage);
+    _bilibiliCard->setBlurRadius(30);
+    _bilibiliCard->setIcon(fancy::iconId(fancy::AntDesignIcons::Bilibili));
+    _bilibiliCard->setMainText("Developer's homepage");
+    _bilibiliCard->setSubText("Contact the developer \nor provide your feedback.\nLook forward to your attention.");
+    _bilibiliCard->setUrl(QUrl(R"(https://m.bilibili.com/space/1843315943)"));
+    _bilibiliCard->move(280, 260);
 
     auto button = new fancy::ExampleNavigationCard(_uiHome->homeImage);
     button->setIcon(QPixmap(":/Button.png"));
@@ -70,6 +73,39 @@ HomePage::HomePage(QWidget *parent) :
     flowLayout->addWidget(button);
     flowLayout->addWidget(acrylicBrush);
     flowLayout->addWidget(hyperlinkButton);
+}
+
+void HomePage::onFastPixmapUpdate()
+{
+    if (_fastBlurSignalCount < 0 || ++_fastBlurSignalCount >= FastBlurMergeCount)
+    {
+        // 预览截图的有效 DPR 为 1，减少快速缩放期间的滤波像素数
+        const qreal scale = 1.0 / qMax<qreal>(1.0, _uiHome->homeImage->devicePixelRatioF());
+        _githubCard->setResolutionScale(scale);
+        _bilibiliCard->setResolutionScale(scale);
+        _githubCard->blur();
+        _bilibiliCard->blur();
+        _fastBlurSignalCount = 0;
+    }
+}
+
+void HomePage::updateSmoothBlur()
+{
+    _fastBlurSignalCount = -1;
+    _githubCard->setResolutionScale(1.0);
+    _bilibiliCard->setResolutionScale(1.0);
+    _githubCard->blur();
+    _bilibiliCard->blur();
+}
+
+void HomePage::onThemeChanged()
+{
+    _uiHome->homeImage->setFillColor(
+        fancy::ThemeModeController::controller().isAppLight()
+            ? QColor(208, 217, 228)
+            : QColor(2, 11, 32)
+    );
+    updateSmoothBlur();
 }
 
 HomePage::~HomePage()
