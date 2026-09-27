@@ -87,7 +87,7 @@ namespace fancy
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return _icon->pixmap(size, devicePixelRatio, mode, state);
 #else
-        QPixmap pix = _icon->pixmap(size, mode, state);
+        QPixmap pix = _engine->pixmap(size * devicePixelRatio, mode, state);
         pix.setDevicePixelRatio(devicePixelRatio);
         return pix;
 #endif
