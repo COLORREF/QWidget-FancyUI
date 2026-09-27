@@ -15,6 +15,11 @@ namespace Ui
 
 QT_END_NAMESPACE
 
+namespace fancy
+{
+    class IntroductionCard;
+}
+
 class HomePage : public QWidget
 {
     Q_OBJECT
@@ -25,7 +30,22 @@ public:
     ~HomePage() override;
 
 private:
-    Ui::Home *_uiHome;;
+    static constexpr int FastBlurMergeCount = 2;
+
+    void initializeUi();
+
+private slots:
+    void onFastPixmapUpdate();
+
+    void updateSmoothBlur();
+
+    void onThemeChanged();
+
+private:
+    Ui::Home *_uiHome;
+    fancy::IntroductionCard *_githubCard;
+    fancy::IntroductionCard *_bilibiliCard;
+    int _fastBlurSignalCount;
 };
 
 

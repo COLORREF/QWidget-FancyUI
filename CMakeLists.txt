@@ -11,10 +11,10 @@ set(CMAKE_AUTOUIC ON)
 # 在此设置你的 Qt 路径，并按实际按需开启静态编译选项
 # 已支持 Qt5 可设置 Qt5 路径 推荐 5.15 及以上版本
 if (MSVC)
-    set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64")
+    set(CMAKE_PREFIX_PATH "D:/ProgramFiles/Qt/6.11.1/msvc2022_64")
     # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") # 仅当 Qt 为静态库且为 /MT 时开启，/MD 保持注释
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_PREFIX_PATH "C:/Qt/6.11.1/mingw_64")
+    set(CMAKE_PREFIX_PATH "D:/ProgramFiles/Qt/6.11.1/mingw_64")
     # add_link_options(-static -static-libgcc -static-libstdc++) # MinGW 全静态链接时按需开启；静态 Qt 库本身不要求这些选项
 endif ()
 

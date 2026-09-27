@@ -8,10 +8,19 @@ file(GLOB_RECURSE FANCYUI_SOURCES CONFIGURE_DEPENDS
 # 将 源码和资源直接加入示例程序
 target_sources(${PROJECT_NAME} PRIVATE ${FANCYUI_SOURCES})
 
+# 精简版 OpenCV 滤波实现直接编入应用，不生成额外的库。
+target_sources(${PROJECT_NAME} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/mini_blur/mini_blur.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/mini_blur/mini_blur_avx2.cpp"
+)
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+
 # 设置 FancyUI 源码及 magic_enum 的头文件路径
 target_include_directories(${PROJECT_NAME} PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/Fancy"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/magic_enum"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/mini_blur"
 )
 
 # 链接 Qt 通用模块

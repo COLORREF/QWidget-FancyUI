@@ -5,6 +5,7 @@
 *.idea/  
 build/
 *build/
+build-mini-blur*/
 opencv2/
 .vscode/
 OpenCV_static/
@@ -17,3 +18,4 @@ out/
 *.py
 *.pyc
 *.exe
+benchmarks/

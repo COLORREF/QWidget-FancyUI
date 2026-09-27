@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QRect>
 #include <QLine>
+#include <QtMath>
 
 namespace fancy
 {
@@ -23,16 +24,26 @@ namespace fancy
         };
     }
 
-    inline QImage renderWidgetRegion(QWidget *widget, const QRect &region)
+    // region 使用逻辑坐标；resolutionScale 为原生分辨率的采样比例，1 为原生，0.5 为宽高各减半
+    // 无效区域或非正、非有限的比例返回空图像；返回图像的 DPR 包含采样比例
+    inline QImage renderWidgetRegion(QWidget *widget, const QRect &region, const qreal resolutionScale = 1.0)
     {
-        if (!widget)
+        if (!widget || region.isEmpty() || !qIsFinite(resolutionScale) || resolutionScale <= 0)
             return {};
-        // const qreal dpr = widget->devicePixelRatioF();
-        QImage image(region.size() /* *dpr */, QImage::Format_ARGB32_Premultiplied);
-        // image.setDevicePixelRatio(dpr);
-        image.fill(Qt::GlobalColor::black);
+        const qreal dpr = widget->devicePixelRatioF() * resolutionScale;
+        // 向下取整可避免图像的逻辑范围超过 region，防止多出的透明边缘被模糊到图像内部
+        const QSize pixelSize(qMax(1, qFloor(region.width() * dpr)), qMax(1, qFloor(region.height() * dpr)));
+        QImage image(pixelSize, QImage::Format_ARGB32_Premultiplied);
+        if (image.isNull())
+            return {};
+        image.setDevicePixelRatio(dpr);
+        image.fill(Qt::GlobalColor::transparent);
         if (const QRect intersected = region.intersected({{0, 0}, widget->size()}); !intersected.isEmpty())
-            widget->render(&image, QPoint(0, 0), intersected, QWidget::RenderFlag::DrawWindowBackground);
+            widget->render(
+                &image,
+                intersected.topLeft() - region.topLeft(),
+                intersected,
+                QWidget::RenderFlag::DrawWindowBackground);
         return image;
     }
 
@@ -40,9 +51,8 @@ namespace fancy
     {
         if (!child || !ancestor)
             return {};
-        return {child->mapTo(ancestor, QPoint{0, 0}), child->mapTo(ancestor, QPoint{child->width(), child->height()})};
+        return {child->mapTo(ancestor, QPoint{0, 0}), child->size()};
     }
-
 }
 
 #endif //QWIDGET_FANCYUI_UTILS_H
