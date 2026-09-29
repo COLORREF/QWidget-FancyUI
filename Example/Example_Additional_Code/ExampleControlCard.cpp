@@ -53,6 +53,10 @@ ExampleControlCard::ExampleControlCard(QWidget *parent) :
 {
     _layout->setContentsMargins(0, 0, 0, 0);
     _layout->setSpacing(0);
+    // Grow the card before laying out an expanding code area. The default
+    // constraint allows a child widget's layout to temporarily compress its
+    // contents while the ancestor layouts are still updating their sizes.
+    _layout->setSizeConstraint(QLayout::SetMinimumSize);
     _layout->addWidget(_control);
     _layout->addWidget(_code);
     _layout->addStretch(1);
@@ -63,25 +67,11 @@ ExampleControlCard::ExampleControlCard(QWidget *parent) :
     _title->setFont(titleFont);
     _title->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
+    _arrow->_ani->setStartValue(0);
+    _arrow->_ani->setEndValue(180);
     _code->_aniGroup->addAnimation(_arrow->_ani);
 
     connect(_arrow, &QPushButton::clicked, _code->_title, &QPushButton::click);
-    connect(_code->_title,
-            &QPushButton::clicked,
-            this,
-            [this] {
-                if (_code->_title->_show)
-                {
-                    _arrow->_ani->setStartValue(180);
-                    _arrow->_ani->setEndValue(360);
-                }
-                else
-                {
-                    _arrow->_ani->setStartValue(0);
-                    _arrow->_ani->setEndValue(180);
-                }
-            }
-    );
 }
 
 void ExampleControlCard::setTitleText(const QString &text)
