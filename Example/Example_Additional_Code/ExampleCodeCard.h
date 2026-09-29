@@ -114,7 +114,7 @@ private slots:
 
     void onAniFinished() const;
 
-    void clickedToShowCode() const;
+    void clickedToShowCode();
 
 private:
     void updateHeight() const;
@@ -124,6 +124,7 @@ private:
     QVariantAnimation *_ani;
     QPropertyAnimation *_codeAni;
     QParallelAnimationGroup *_aniGroup;
+    bool _expanded = false; // Target state, including while the animation is running.
 };
 
 

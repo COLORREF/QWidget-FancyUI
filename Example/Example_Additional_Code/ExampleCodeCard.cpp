@@ -117,7 +117,11 @@ ExampleCodeCardTextEditStyle::ExampleCodeCardTextEditStyle(QTextEdit *parent) :
     setParent(parent);
 }
 
-void ExampleCodeCardTextEditStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+void ExampleCodeCardTextEditStyle::drawPrimitive(
+    PrimitiveElement element,
+    const QStyleOption *option,
+    QPainter *painter,
+    const QWidget *widget) const
 {
     using namespace fancy;
     if (element == PE_Frame)
@@ -159,16 +163,15 @@ ExampleCodeCardTextEdit::ExampleCodeCardTextEdit(QWidget *parent) :
 
     _copy->setFixedSize(32, 32);
     _copy->setIcon(IconPark::Copy);
-    _copy->setDrawBorder(true);
-    _copy->setBorderWidth(0.5);
     connect(_copy, &TransparentButton::clicked, this, &ExampleCodeCardTextEdit::copyCode);
 }
 
 void ExampleCodeCardTextEdit::resizeEvent(QResizeEvent *event)
 {
     QTextEdit::resizeEvent(event);
-    // _copy->move(width() - 10 - 32, height() / 2 - 32 / 2);
-    _copy->move(width() - 42, height() / 2 - 16);
+    constexpr int margin = 10;
+    const int top = qBound(2, (height() - _copy->height()) / 2, margin);
+    _copy->move(width() - margin - _copy->width(), top);
 }
 
 void ExampleCodeCardTextEdit::copyCode() const
@@ -181,7 +184,7 @@ ExampleCodeCard::ExampleCodeCard(QWidget *parent) :
     _code(new ExampleCodeCardTextEdit(this)),
     _title(new ExampleCodeCardButton(this)),
     _ani(new QVariantAnimation(this)),
-    _codeAni(new QPropertyAnimation(_code, "geometry", this)),
+    _codeAni(new QPropertyAnimation(_code, "pos", this)),
     _aniGroup(new QParallelAnimationGroup(this))
 {
     _title->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -214,8 +217,7 @@ void ExampleCodeCard::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     _title->resize(width(), ExampleCodeCard_ButtonHeight);
-    if (_title->_show)
-        _code->resize(width(), _code->height());
+    _code->resize(width(), _code->height());
 }
 
 void ExampleCodeCard::onAnimationChanged(const QVariant &val)
@@ -226,8 +228,8 @@ void ExampleCodeCard::onAnimationChanged(const QVariant &val)
 
 void ExampleCodeCard::onAniFinished() const
 {
-    _title->_show = !_title->_show;
-    if (!_title->_show)
+    _title->_show = _expanded;
+    if (!_expanded)
     {
         _code->document()->setTextWidth(-1); // 重置文本宽度
         _code->hide();
@@ -236,38 +238,32 @@ void ExampleCodeCard::onAniFinished() const
     _title->update();
 }
 
-void ExampleCodeCard::clickedToShowCode() const
+void ExampleCodeCard::clickedToShowCode()
 {
-    if (!_title->_show)
-        _code->document()->setTextWidth(-1);
+    _expanded = !_expanded;
+    const auto direction = _expanded ? QAbstractAnimation::Forward : QAbstractAnimation::Backward;
+    if (_aniGroup->state() == QAbstractAnimation::Running)
+    {
+        // Reverse the shared timeline without resetting height, position or arrow angle.
+        _aniGroup->setDirection(direction);
+        return;
+    }
+
+    _code->document()->setTextWidth(-1);
     updateHeight();
+    _code->resize(width(), _code->height());
+    _ani->setStartValue(ExampleCodeCard_ButtonHeight);
+    _ani->setEndValue(ExampleCodeCard_ButtonHeight + _code->height());
+    _codeAni->setStartValue(QPoint(0, -_code->height() - ExampleCodeCard_ButtonHeight));
+    _codeAni->setEndValue(QPoint(0, ExampleCodeCard_ButtonHeight));
 
-    const QSize codeSize{width(), _code->height()};
-    if (_title->_show)
-    {
-        _ani->setStartValue(ExampleCodeCard_ButtonHeight + _code->height());
-        _ani->setEndValue(ExampleCodeCard_ButtonHeight);
-        constexpr QPoint startPos{0, ExampleCodeCard_ButtonHeight};
-
-        const QPoint endPos{0, 0 - _code->height() - ExampleCodeCard_ButtonHeight};
-        _codeAni->setStartValue(QRect{startPos, codeSize});
-        _codeAni->setEndValue(QRect{endPos, codeSize});
-    }
-    else
-    {
-        _ani->setStartValue(ExampleCodeCard_ButtonHeight);
-        _ani->setEndValue(ExampleCodeCard_ButtonHeight + _code->height());
-        const QPoint startPos{0, 0 - _code->height() - ExampleCodeCard_ButtonHeight};
-        constexpr QPoint endPos{0, ExampleCodeCard_ButtonHeight};
-        _codeAni->setStartValue(QRect{startPos, codeSize});
-        _codeAni->setEndValue(QRect{endPos, codeSize});
-    }
-    if (_aniGroup->state() != QAbstractAnimation::State::Running)
-    {
-        _aniGroup->start();
-        _code->show();
-        _title->_transparent = false;
-    }
+    // Keep the header's bottom corners square until fully collapsed.
+    _title->_show = true;
+    _title->_transparent = false;
+    _aniGroup->setDirection(direction);
+    _aniGroup->start();
+    _code->show();
+    _title->update();
 }
 
 void ExampleCodeCard::updateHeight() const
@@ -277,5 +273,7 @@ void ExampleCodeCard::updateHeight() const
                   + _code->contentsMargins().top()
                   + _code->contentsMargins().bottom()
                   + qRound(_code->document()->documentMargin() * 2);
-    _code->setFixedHeight(h);
+    // Leave room for the 32px copy button and 4px of padding on each side,
+    // including for a single line rendered with a small font.
+    _code->setFixedHeight(qMax(h, 40));
 }
