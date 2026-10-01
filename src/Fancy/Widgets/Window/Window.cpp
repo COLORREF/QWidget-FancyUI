@@ -9,8 +9,10 @@
 #include <QWindow>
 #include <QWindowStateChangeEvent>
 #include <QScreen>
+#include <QTimer>
 #include <QDebug>
 #include <QPainter>
+#include <QtMath>
 
 #include "Core/Defs.h"
 #include "Core/SystemAccessor.h"
@@ -44,23 +46,26 @@ namespace fancy
         _verticalLayout->setContentsMargins(0, 0, 0, 0);
         _verticalLayout->addWidget(_titleBar);
         _verticalLayout->addWidget(_clientArea);
-        setBorderWidth();
-
         setWindowFlags(windowFlags() | Qt::WindowType::FramelessWindowHint);
 
 #ifdef Q_OS_WIN
+        const HWND hwnd = reinterpret_cast<HWND>(winId());
         MARGINS margins = {1, 1, 0, 1};
-        SystemAccessor::DwmExtendFrameIntoClientArea(reinterpret_cast<HWND>(winId()), &margins);
-        SetWindowLongPtr(reinterpret_cast<HWND>(winId()),
+        SystemAccessor::DwmExtendFrameIntoClientArea(hwnd, &margins);
+        SetWindowLongPtr(hwnd,
                          GWL_STYLE,
                          GetWindowLongPtr(
-                             reinterpret_cast<HWND>(winId()),
+                             hwnd,
                              GWL_STYLE
                          ) | WS_BORDER | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU
         );
 #endif
+        setBorderWidth();
 
         connect(windowHandle(), &QWindow::screenChanged, this, &Window::setDwmMargins);
+        connect(windowHandle(), &QWindow::screenChanged, this, [this] {
+            QTimer::singleShot(0, this, &Window::setBorderWidth);
+        });
         connect(_animation, &QVariantAnimation::valueChanged, this, &Window::updateBkgColor);
         connect(&Palette::palette(), &Palette::appThemeChange, this, &Window::onThemeChanged);
 
@@ -221,55 +226,59 @@ namespace fancy
                 if (!isMaximized())
                 {
                     RECT widget_rect{0, 0, 0, 0};
-                    GetWindowRect(msg->hwnd, &widget_rect); // 获取窗口的绝对区域
+                    if (!GetWindowRect(msg->hwnd, &widget_rect))
+                        break;
+                    if (p.x < widget_rect.left || p.x >= widget_rect.right ||
+                        p.y < widget_rect.top || p.y >= widget_rect.bottom)
+                        break;
 
                     // 综合考虑使用习惯以及其他一些写法（8个if直接判断、九宫格位视图法）
                     // 下面的代码可能有些冗余，但能有效减少if判断的次平均次数以及减少临时变量的创建
-                    if (p.x <= widget_rect.right && p.x >= widget_rect.right - _xBorderWidth) // 右
+                    if (p.x < widget_rect.right && p.x >= widget_rect.right - _xBorderWidth) // 右
                     {
-                        if (p.y <= widget_rect.bottom && p.y >= widget_rect.bottom - _yBorderWidth) // 下
+                        if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - _yBorderWidth) // 下
                             *result = HTBOTTOMRIGHT;
-                        else if (p.y >= widget_rect.top && p.y <= widget_rect.top + _yBorderWidth) // 上
+                        else if (p.y < widget_rect.top + _yBorderWidth) // 上
                             *result = HTTOPRIGHT;
                         else
                             *result = HTRIGHT;
                         return true;
                     }
-                    if (p.y <= widget_rect.bottom && p.y >= widget_rect.bottom - _yBorderWidth) // 下
+                    if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - _yBorderWidth) // 下
                     {
-                        if (p.x >= widget_rect.left && p.x <= widget_rect.left + _xBorderWidth) // 左
+                        if (p.x < widget_rect.left + _xBorderWidth) // 左
                             *result = HTBOTTOMLEFT;
                         else
                             *result = HTBOTTOM;
                         return true;
                     }
-                    if (p.y >= widget_rect.top && p.y <= widget_rect.top + _yBorderWidth) // 上
+                    if (p.y < widget_rect.top + _yBorderWidth) // 上
                     {
-                        if (p.x >= widget_rect.left && p.x <= widget_rect.left + _xBorderWidth) // 左
+                        if (p.x < widget_rect.left + _xBorderWidth) // 左
                             *result = HTTOPLEFT;
                         else
                             *result = HTTOP;
                         return true;
                     }
-                    if (p.x >= widget_rect.left && p.x <= widget_rect.left + _xBorderWidth) // 左
+                    if (p.x < widget_rect.left + _xBorderWidth) // 左
                     {
                         *result = HTLEFT;
                         return true;
                     }
                 }
 
-                if (_titleBar->_maximizeButton && !_titleBar->_minimizeButton->isHidden())
+                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
                 {
-                    if (!MapWindowPoints(HWND_DESKTOP, msg->hwnd, &p, 1)) // 将p转换成相对坐标
+                    // 返回零也可能表示成功且坐标位移为零，需结合错误码判断。
+                    POINT clientPoint = p;
+                    SetLastError(ERROR_SUCCESS);
+                    if (MapWindowPoints(HWND_DESKTOP, msg->hwnd, &clientPoint, 1) == 0 && GetLastError() != ERROR_SUCCESS)
                     {
-                        if (!ScreenToClient(reinterpret_cast<HWND>(winId()), &p))
-                        {
-                            QPoint t(mapFromGlobal(QPoint(p.x, p.y)));
-                            p.x = t.x();
-                            p.y = t.y();
-                        }
+                        clientPoint = p;
+                        if (!ScreenToClient(msg->hwnd, &clientPoint))
+                            break;
                     }
-                    QPoint widget_point(p.x, p.y); // Qt相对坐标
+                    QPoint widget_point(clientPoint.x, clientPoint.y); // Win32 客户区物理像素
                     widget_point /= devicePixelRatioF(); // 除以缩放dpi
 
                     QRect max_btn_rect(_titleBar->_maximizeButton->mapTo(this, QPoint{0, 0}), _titleBar->_maximizeButton->size()); // 最大化按钮区域
@@ -330,9 +339,13 @@ namespace fancy
                     }
                 }
                 break;
-            case WM_DISPLAYCHANGE : // 分辨率或dpi改变
-                setBorderWidth();
-                update();
+            case WM_DPICHANGED : // Qt 处理完新的窗口 DPI 后再刷新边框及布局单位
+            case WM_DISPLAYCHANGE :
+                QTimer::singleShot(0, this, [this] {
+                    setBorderWidth();
+                    setDwmMargins();
+                    update();
+                });
                 break;
             // case WM_WININICHANGE :
             // *result = 0;
@@ -358,7 +371,7 @@ namespace fancy
                 {
                     if (_titleBar->_maximizeButton)
                         emit _titleBar->_maximizeButton->stateChange(MaximizeBtnState::Maximize);
-                    _verticalLayout->setContentsMargins(_xBorderWidth, _yBorderWidth, _xBorderWidth, _yBorderWidth);
+                    updateMaximizedMargins();
                     update();
                 }
                 // 最大化后还原
@@ -426,18 +439,22 @@ namespace fancy
     void Window::setBorderWidth()
     {
 #ifdef Q_OS_WIN
-#ifdef _MSC_VER
-        _xBorderWidth = GetSystemMetrics(SM_CXSIZEFRAME);
-        _yBorderWidth = GetSystemMetrics(SM_CYSIZEFRAME);
-        if (!_xBorderWidth)
-            _xBorderWidth = 5;
-        if (!_yBorderWidth)
-            _yBorderWidth = 5;
-#elif defined(__GNUC__)
-        _xBorderWidth = 5;
-        _yBorderWidth = 5;
+        const QSize borderSize = SystemAccessor::windowResizeBorderSize();
+        _xBorderWidth = borderSize.width();
+        _yBorderWidth = borderSize.height();
 #endif
-#endif
+        updateMaximizedMargins();
+    }
+
+    void Window::updateMaximizedMargins()
+    {
+        if (!isMaximized())
+            return;
+        // Win32 命中测试使用原始像素值；Qt 布局边距转换为窗口的逻辑像素
+        const qreal dpr = devicePixelRatioF();
+        _verticalLayout->setContentsMargins(
+            qRound(_xBorderWidth / dpr), qRound(_yBorderWidth / dpr),
+            qRound(_xBorderWidth / dpr), qRound(_yBorderWidth / dpr));
     }
 
     void Window::setDwmWindowEffect(DwmWindowEffect effect)

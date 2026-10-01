@@ -164,6 +164,13 @@ namespace fancy
         return ver;
     }
 
+    QSize SystemAccessor::windowResizeBorderSize()
+    {
+        const int width = ::GetSystemMetrics(SM_CXSIZEFRAME);
+        const int height = ::GetSystemMetrics(SM_CYSIZEFRAME);
+        return {qMax(1, width), qMax(1, height)};
+    }
+
     bool SystemAccessor::isWindows11()
     {
         auto [Major,Minor,Build] = windowsVersion();

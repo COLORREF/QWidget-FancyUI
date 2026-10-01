@@ -7,6 +7,7 @@
 
 #include <QColor>
 #include <QMap>
+#include <QSize>
 #ifdef Q_OS_WIN
 #define WIN32_LEAN_AND_MEAN
 #include <dwmapi.h>
@@ -94,6 +95,12 @@ namespace fancy
          * @return 静态WindowsVersion结构体变量的引用
          */
         static const WindowsVersion &windowsVersion(); //获取Windows版本信息 //单例模式,首次初始化
+
+        /**
+         * 使用 GetSystemMetrics() 获取系统缩放边框尺寸，单位为 Win32 像素。
+         * 不进行 Qt DPR 换算，也不保证按窗口所在显示器的 DPI 查询。
+         */
+        static QSize windowResizeBorderSize();
 
         /**
          * @return 是否是Windows11操作系统 若是则返回true否则返回false

@@ -13,7 +13,6 @@ target_sources(${PROJECT_NAME} PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/include/mini_blur/mini_blur.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/mini_blur/mini_blur_avx2.cpp"
 )
-find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
 # 设置 FancyUI 源码及 magic_enum 的头文件路径

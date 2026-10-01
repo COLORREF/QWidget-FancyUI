@@ -19,6 +19,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 # 根据指定的 Qt 路径查找 Qt 5 或 Qt 6 及所需模块
+find_package(Threads REQUIRED)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Xml Svg)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Xml Svg)
 if (QT_VERSION_MAJOR EQUAL 6)
