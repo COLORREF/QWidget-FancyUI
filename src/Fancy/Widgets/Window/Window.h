@@ -94,6 +94,8 @@ namespace fancy
 
         void setBorderWidth();
 
+        void updateMaximizedMargins();
+
         void setDwmWindowEffect(DwmWindowEffect effect);
 
         void setCompositionWindowEffect(CompositionWindowEffect effect, const QColor &color = {});
