@@ -205,6 +205,55 @@ BasicInput::BasicInput(QWidget *parent) :
         layout->addStretch(1);
     }
 
+    // TristateCheckbox
+    {
+        auto *checkBox_Card = makeCardLayout("三态复选框", "TristateCheckbox");
+        auto *content = checkBox_Card->controlAreaWidget();
+        auto *layout = qobject_cast<QHBoxLayout *>(content->layout());
+        auto *wrap = new QWidget(content);
+        auto *groupLayout = new QVBoxLayout(wrap);
+        groupLayout->setContentsMargins(0, 0, 0, 0);
+        groupLayout->setSpacing(12);
+
+        auto *selectAll = new fancy::CheckBox("全选", wrap);
+        selectAll->setTristate(true);
+        selectAll->setAnimationEnabled(false);
+        groupLayout->addWidget(selectAll);
+
+        auto *itemsLayout = new QVBoxLayout;
+        itemsLayout->setContentsMargins(24, 0, 0, 0);
+        itemsLayout->setSpacing(10);
+        QList<fancy::CheckBox *> items;
+        for (int i = 1; i <= 4; ++i)
+        {
+            auto *item = new fancy::CheckBox(QString("选项 %1").arg(i), wrap, true);
+            items.append(item);
+            itemsLayout->addWidget(item);
+        }
+        groupLayout->addLayout(itemsLayout);
+        layout->addWidget(wrap);
+        layout->addStretch(1);
+
+        auto updateSelectAll = [selectAll, items]() {
+            int checkedCount = 0;
+            for (const auto *item : items)
+                checkedCount += item->isChecked() ? 1 : 0;
+            selectAll->setCheckState(checkedCount == 0 ? Qt::Unchecked
+                : checkedCount == items.size() ? Qt::Checked : Qt::PartiallyChecked);
+        };
+        for (auto *item : items)
+            connect(item, &QCheckBox::toggled, selectAll, updateSelectAll);
+
+        // clicked 仅响应用户操作，子项汇总引起的状态变化不会反向修改子项。
+        // 从未选中或半选状态点击时选中全部，从全选状态点击时取消全部。
+        connect(selectAll, &QCheckBox::clicked, wrap, [items, updateSelectAll](bool checked) {
+            for (auto *item : items)
+                item->setChecked(checked);
+            updateSelectAll();
+        });
+        updateSelectAll();
+    }
+
     // RadioButton
     {
         auto *radioButton_Card = makeCardLayout("单选按钮", "RadioButton");

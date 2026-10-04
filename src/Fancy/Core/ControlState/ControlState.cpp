@@ -10,12 +10,13 @@ namespace fancy
     ControlState::ControlState(QStyle::State state, ControlType type) :
         _state(VisualState::UnKnown)
     {
-        _enable = state & QStyle::StateFlag::State_Enabled;
-        _on = state & QStyle::StateFlag::State_On;
-        _off = state & QStyle::StateFlag::State_Off;
-        _over = state & QStyle::StateFlag::State_MouseOver;
-        _sunken = state & QStyle::StateFlag::State_Sunken;
-        _focus = state & QStyle::StateFlag::State_HasFocus;
+        _enable = state.testFlag(QStyle::StateFlag::State_Enabled);
+        _on = state.testFlag(QStyle::StateFlag::State_On);
+        _off = state.testFlag(QStyle::StateFlag::State_Off);
+        _partial = state.testFlag(QStyle::StateFlag::State_NoChange);
+        _over = state.testFlag(QStyle::StateFlag::State_MouseOver);
+        _sunken = state.testFlag(QStyle::StateFlag::State_Sunken);
+        _focus = state.testFlag(QStyle::StateFlag::State_HasFocus);
         _type = type;
 
         _state = visualState();
@@ -26,13 +27,14 @@ namespace fancy
         switch (_type)
         {
             case ControlType::IndicatorCheckable :
+            case ControlType::WidgetCheckable :
             {
+                const bool selected = _on || _partial;
                 if (!_enable)
-                    return _on ? VisualState::SelectedDisabled : VisualState::Disabled;
-                if (_on)
+                    return selected ? VisualState::SelectedDisabled : VisualState::Disabled;
+                if (selected)
                     return _over ? (_sunken ? VisualState::SelectedPressed : VisualState::SelectedHover) : VisualState::Selected;
-                if (_off)
-                    return _over ? (_sunken ? VisualState::Pressed : VisualState::Hover) : VisualState::Normal;
+                return _over ? (_sunken ? VisualState::Pressed : VisualState::Hover) : VisualState::Normal;
             }
             case ControlType::Widget :
             {
@@ -41,14 +43,6 @@ namespace fancy
                 if (_over)
                     return _sunken ? VisualState::Pressed : VisualState::Hover;
                 return VisualState::Normal;
-            }
-            case ControlType::WidgetCheckable :
-            {
-                if (!_enable)
-                    return _on ? VisualState::SelectedDisabled : VisualState::Disabled;
-                if (_on)
-                    return _over ? (_sunken ? VisualState::SelectedPressed : VisualState::SelectedHover) : VisualState::Selected;
-                return _over ? (_sunken ? VisualState::Pressed : VisualState::Hover) : VisualState::Normal;
             }
             case ControlType::TextEdit :
             {

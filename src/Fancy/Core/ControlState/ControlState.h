@@ -32,8 +32,9 @@ namespace fancy
         VisualState _state;
         ControlType _type;
         bool _enable; // 启用
-        bool _on; // 选中
+        bool _on; // 全选（State_On）
         bool _off; // 未选中
+        bool _partial; // 半选（State_NoChange）
         bool _over; // 悬浮
         bool _sunken; // 按下或具有凹陷外观
         bool _focus; // 焦点
