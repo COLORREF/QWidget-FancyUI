@@ -16,6 +16,10 @@ namespace fancy
         explicit CheckBox(QWidget *parent = nullptr, bool smallIndicatorSize = false);
 
         explicit CheckBox(const QString &text, QWidget *parent = nullptr, bool smallIndicatorSize = false);
+
+        void setAnimationEnabled(bool enabled);
+
+        [[nodiscard]] bool isAnimationEnabled() const;
     };
 } // fancy
 

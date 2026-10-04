@@ -21,4 +21,21 @@ namespace fancy
     {
         setText(text);
     }
+
+    void CheckBox::setAnimationEnabled(bool enabled)
+    {
+        if (auto *checkBoxStyle = qobject_cast<CheckBoxStyle *>(style()))
+            checkBoxStyle->setAnimationEnabled(enabled);
+        else if (auto *smallCheckBoxStyle = qobject_cast<CheckBoxStyle_SM *>(style()))
+            smallCheckBoxStyle->setAnimationEnabled(enabled);
+    }
+
+    bool CheckBox::isAnimationEnabled() const
+    {
+        if (auto *checkBoxStyle = qobject_cast<CheckBoxStyle *>(style()))
+            return checkBoxStyle->isAnimationEnabled();
+        if (auto *smallCheckBoxStyle = qobject_cast<CheckBoxStyle_SM *>(style()))
+            return smallCheckBoxStyle->isAnimationEnabled();
+        return false;
+    }
 } // fancy
