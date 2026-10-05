@@ -12,14 +12,24 @@
 
 namespace fancy
 {
+    namespace
+    {
+        constexpr qreal borderSpace = 1.0;
+        constexpr qreal normalRatio = 10.0 / 20.0;
+        constexpr qreal activeRatio = 14.0 / 20.0;
+        constexpr qreal pressedRatio = 8.0 / 20.0;
+    }
+
     SliderIndicator::SliderIndicator(QWidget *parent) :
         QWidget(parent),
         _ani(new QVariantAnimation(this))
     {
         QRectF rect_ = rect();
-        rect_.adjust(0.5, 0.5, -0.5, -0.5);
+        const qreal inset = borderSpace / 2;
+        rect_.adjust(inset, inset, -inset, -inset);
         _r = qMin(rect_.width(), rect_.height()) / 2;
-        _aniValue = _r / 2;
+        _center = rect_.center();
+        _aniValue = normalRatio;
 
         _ani->setStartValue(0.0f);
         _ani->setEndValue(0.0f);
@@ -35,6 +45,14 @@ namespace fancy
         );
     }
 
+    void SliderIndicator::animateState()
+    {
+        _ani->stop();
+        _ani->setStartValue(_aniValue);
+        _ani->setEndValue(_pressed ? pressedRatio : (_isContains ? activeRatio : normalRatio));
+        _ani->start();
+    }
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     void SliderIndicator::enterEvent(QEnterEvent *event)
 #else
@@ -42,18 +60,14 @@ namespace fancy
 #endif
     {
         _isContains = true;
-        _ani->setStartValue(_r / 2);
-        _ani->setEndValue(_r / 1.3);
-        _ani->start();
+        animateState();
         QWidget::enterEvent(event);
     }
 
     void SliderIndicator::leaveEvent(QEvent *event)
     {
         _isContains = false;
-        _ani->setStartValue(_aniValue);
-        _ani->setEndValue(_r / 2);
-        _ani->start();
+        animateState();
         QWidget::leaveEvent(event);
     }
 
@@ -61,20 +75,18 @@ namespace fancy
     {
         if (event->button() == Qt::LeftButton)
         {
-            _ani->setStartValue(_aniValue);
-            _ani->setEndValue(_r / 2.8);
-            _ani->start();
+            _pressed = true;
+            animateState();
         }
         QWidget::mousePressEvent(event);
     }
 
     void SliderIndicator::mouseReleaseEvent(QMouseEvent *event)
     {
-        if (_isContains && event->button() == Qt::LeftButton)
+        if (event->button() == Qt::LeftButton)
         {
-            _ani->setStartValue(_r / 2.5);
-            _ani->setEndValue(_r / 1.3);
-            _ani->start();
+            _pressed = false;
+            animateState();
         }
         // 不在里面直接触发leaveEvent
         return QWidget::mouseReleaseEvent(event);
@@ -84,10 +96,10 @@ namespace fancy
     {
         QWidget::resizeEvent(event);
         QRectF rect_ = rect();
-        rect_.adjust(0.5, 0.5, -0.5, -0.5);
-        _r = qMin(rect_.width(), rect_.height()) / 2;
+        const qreal inset = borderSpace / 2;
+        rect_.adjust(inset, inset, -inset, -inset);
+        _r = qMax(0.0, qMin(rect_.width(), rect_.height()) / 2);
         _center = rect_.center();
-        _aniValue = _r / 2;
     }
 
     void SliderIndicator::paintEvent(QPaintEvent *paint_event)
@@ -95,11 +107,11 @@ namespace fancy
         QPainter painter(this);
         painter.setRenderHints(QPainter::RenderHint::Antialiasing);
         auto &palette = Palette::palette();
-        painter.setPen(QPen(palette[ColorRole::Border], 1));
+        painter.setPen(Qt::NoPen);
         painter.setBrush(palette[ColorRole::Button]);
         painter.drawEllipse(_center, _r, _r);
         painter.setPen(Qt::NoPen);
         painter.setBrush(palette[ColorRole::AppAccent]);
-        painter.drawEllipse(_center, _aniValue, _aniValue);
+        painter.drawEllipse(_center, _r * _aniValue, _r * _aniValue);
     }
 } // fancy
