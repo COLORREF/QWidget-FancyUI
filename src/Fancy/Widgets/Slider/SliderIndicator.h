@@ -21,9 +21,12 @@ namespace fancy
         Qt::Orientation _orientation = Qt::Orientation::Horizontal;
         QVariantAnimation *_ani = nullptr;
         qreal _r;
-        qreal _aniValue;
+        qreal _aniValue; // 内圆与外圆的半径比，调整尺寸时保持动画比例
         QPointF _center;
         bool _isContains = false;
+        bool _pressed = false;
+
+        void animateState();
 
     protected:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
