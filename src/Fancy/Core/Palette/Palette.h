@@ -31,7 +31,7 @@ namespace fancy
 
         /**
          * @brief 返回全局唯一的调色板对象
-         * @return Palettr的引用
+         * @return Palette 的引用
          */
         static Palette &palette();
 
