@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by TX on 2025/8/8.
 //
 
@@ -93,6 +93,12 @@ namespace fancy
         WindowBright, // 窗口高度对比色（关闭按钮悬浮时基础色）
         Border, // 通用边框色
         Text, // 通用文本色
+        SelectorBarItemTextHover, // SelectorBarItem 项目悬停时的文本色
+        SelectorBarItemTextPressed, // SelectorBarItem 项目按下时的文本色
+        SelectorBarItemTextSelected, // SelectorBarItem 项目选中时的文本色
+        SelectorBarItemTextSelectedHover, // SelectorBarItem 项目选中悬停时的文本色
+        SelectorBarItemTextSelectedPressed, // SelectorBarItem 项目选中按下时的文本色
+        SelectorBarItemBackground, // SelectorBarItem 统一背景色，默认透明，不区分交互和禁用状态
         Button, // 按钮背景色
         ButtonBorder, // 按钮边框色
         ButtonBottomLine, // 按钮底线色

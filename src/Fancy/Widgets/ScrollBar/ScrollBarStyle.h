@@ -19,10 +19,11 @@ namespace fancy
     public:
         explicit ScrollBarStyle(QScrollBar *parent);
 
-    protected:
         void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const override;
 
         int pixelMetric(PixelMetric metric, const QStyleOption *option, const QWidget *widget) const override;
+
+        QRect subControlRect(ComplexControl control, const QStyleOptionComplex *option, SubControl subControl, const QWidget *widget) const override;
 
         static void drawArrow(QPainter *painter, const QRectF &arrowRect, Direction dir);
     };

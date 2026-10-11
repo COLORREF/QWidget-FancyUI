@@ -9,9 +9,37 @@
 #include <QRect>
 #include <QLine>
 #include <QtMath>
+#include <QFontMetrics>
+#include <QStringList>
 
 namespace fancy
 {
+    // 按显式换行拆分文本，统一换行格式并保留空行和末尾换行
+    inline QStringList textLines(QString text)
+    {
+        text.replace(QStringLiteral("\r\n"), QStringLiteral("\n"));
+        text.replace(QChar('\r'), QChar('\n'));
+        return text.split(QChar('\n'), Qt::KeepEmptyParts);
+    }
+
+    // 测量显式多行文本，不自动折行；空文本返回空尺寸
+    inline QSize textSize(const QFontMetrics &metrics, const QString &text)
+    {
+        if (text.isEmpty())
+            return {};
+        const auto lines = textLines(text);
+        int width = 0;
+        for (const auto &line: lines)
+            width = qMax(width, metrics.horizontalAdvance(line));
+        return {width, metrics.height() + (static_cast<int>(lines.size()) - 1) * metrics.lineSpacing()};
+    }
+
+    // 将图标可见尺寸按指定比例换算为布局尺寸，比例由调用方的样式决定
+    inline QSize iconLayoutSize(const QSize &visibleSize, qreal layoutScale)
+    {
+        return {qRound(visibleSize.width() * layoutScale), qRound(visibleSize.height() * layoutScale)};
+    }
+
     inline QLine bottomLine(const QRect &rect, const int filletRadius)
     {
         if (int x = rect.center().x(); rect.width() - 2 * filletRadius <= 0)

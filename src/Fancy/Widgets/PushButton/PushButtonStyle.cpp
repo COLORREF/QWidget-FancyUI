@@ -93,7 +93,7 @@ namespace fancy
         _parent->update();
     }
 
-    qreal PushButtonStyle::radius() const
+    int PushButtonStyle::radius() const
     {
         return _buttonRadius;
     }

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>Logos/iconpark.png</file>
+        <file>Logos/ant-design.svg</file>
+        <file>Logos/bootstrap.png</file>
         <file>Accessibility.png</file>
         <file>Acrylic.png</file>
         <file>AnimatedIcon.png</file>

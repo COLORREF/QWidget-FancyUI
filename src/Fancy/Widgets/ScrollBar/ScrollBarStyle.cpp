@@ -14,6 +14,18 @@
 
 namespace fancy
 {
+    namespace
+    {
+        constexpr int scrollBarExtent = 12;
+        constexpr qreal normalThumbWidth = 2;
+        constexpr qreal activeThumbWidth = 6;
+        constexpr qreal arrowWidth = 8;
+        constexpr int arrowLength = 6;
+        constexpr int arrowEndMargin = 5;
+        constexpr int arrowThumbGap = 4;
+        constexpr int endExtent = arrowEndMargin + arrowLength + arrowThumbGap;
+    }
+
     ScrollBarStyle::ScrollBarStyle(QScrollBar *parent) :
         QProxyStyle(nullptr)
     {
@@ -21,7 +33,11 @@ namespace fancy
         parent->setAttribute(Qt::WidgetAttribute::WA_OpaquePaintEvent, false);
     }
 
-    void ScrollBarStyle::drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const
+    void ScrollBarStyle::drawComplexControl(
+        ComplexControl control,
+        const QStyleOptionComplex *option,
+        QPainter *painter,
+        const QWidget *widget) const
     {
         if (const auto *opt = qstyleoption_cast<const QStyleOptionSlider *>(option); control == CC_ScrollBar && opt)
         {
@@ -30,23 +46,23 @@ namespace fancy
             const bool isHorizontal = opt->orientation == Qt::Horizontal;
             const bool isActive = state == VisualState::Hover || state == VisualState::Pressed || (state == VisualState::Disabled && state._over);
             const QRectF sliderRect = subControlRect(control, option, SC_ScrollBarSlider, widget);
-            const QRectF grooveRect = subControlRect(control, option, SC_ScrollBarGroove, widget);
             const QRectF rect = opt->rect;
-            const qreal center = isHorizontal ? sliderRect.center().y() : sliderRect.center().x(); // 中心坐标
+            const qreal center = isHorizontal ? rect.center().y() : rect.center().x(); // 中心坐标
             const qreal bgRadius = (isHorizontal ? opt->rect.height() : opt->rect.width()) / 2.0; // 背景圆角
             const QRectF addArrowRect = isHorizontal
-                                            ? QRectF{grooveRect.topRight(), rect.bottomRight()}.adjusted(4, 2, -1, -2)
-                                            : QRectF{grooveRect.bottomLeft(), rect.bottomRight()}.adjusted(2, 4, -2, -1);
+                                            ? QRectF(rect.right() - arrowEndMargin - arrowLength, center - arrowWidth / 2, arrowLength, arrowWidth)
+                                            : QRectF(center - arrowWidth / 2, rect.bottom() - arrowEndMargin - arrowLength, arrowWidth, arrowLength);
             const QRectF subArrowRect = isHorizontal
-                                            ? QRectF{rect.topLeft(), grooveRect.bottomLeft()}.adjusted(1, 2, -4, -2)
-                                            : QRectF{rect.topLeft(), grooveRect.topRight()}.adjusted(2, 1, -2, -4);
-            const QRectF slider = isActive
-                                      ? (isHorizontal
-                                             ? QRectF(sliderRect.left(), center - 3, sliderRect.width(), 6)
-                                             : QRectF(center - 3, sliderRect.top(), 6, sliderRect.height()))
-                                      : isHorizontal
-                                            ? QRectF(sliderRect.left(), center - 1, sliderRect.width(), 2)
-                                            : QRectF(center - 1, sliderRect.top(), 2, sliderRect.height());
+                                            ? QRectF(rect.left() + arrowEndMargin, center - arrowWidth / 2, arrowLength, arrowWidth)
+                                            : QRectF(center - arrowWidth / 2, rect.top() + arrowEndMargin, arrowWidth, arrowLength);
+            const qreal thumbWidth = isActive ? activeThumbWidth : normalThumbWidth;
+            // 收起时细条靠右（水平滚动条靠下），距外侧边缘 2 px。
+            const qreal thumbCenter = isActive
+                                          ? center
+                                          : (isHorizontal ? rect.bottom() : rect.right()) - 2 - thumbWidth / 2;
+            const QRectF slider = isHorizontal
+                                      ? QRectF(sliderRect.left(), thumbCenter - thumbWidth / 2, sliderRect.width(), thumbWidth)
+                                      : QRectF(thumbCenter - thumbWidth / 2, sliderRect.top(), thumbWidth, sliderRect.height());
             const qreal sdRadius = (isHorizontal ? slider.height() : slider.width()) / 2.0; // 滑块圆角
 
             const auto drawArrow = [painter, &addArrowRect, &subArrowRect](const bool horizontal) {
@@ -75,7 +91,8 @@ namespace fancy
             painter->drawRoundedRect(slider, sdRadius, sdRadius);
 
             // 绘制箭头
-            isActive ? drawArrow(isHorizontal) : void();
+            if (isActive && (isHorizontal ? rect.width() : rect.height()) >= 2 * endExtent)
+                drawArrow(isHorizontal);
             painter->restore();
             return;
         }
@@ -88,53 +105,98 @@ namespace fancy
     {
         switch (metric)
         {
-            case PM_ScrollBarExtent : // 12 垂直滚动条的宽度和水平滚动条的高度
-                return 12;
-            case PM_ScrollBarSliderMin : // 18 垂直滚动条滑块的最小高度和水平滚动条滑块的最小宽度
+            case PM_ScrollBarExtent: // 12 垂直滚动条的宽度和水平滚动条的高度
+                return scrollBarExtent;
+            case PM_ScrollBarSliderMin: // 18 垂直滚动条滑块的最小高度和水平滚动条滑块的最小宽度
                 return 18;
-            default :
+            default:
                 break;
         }
         return QProxyStyle::pixelMetric(metric, option, widget);
     }
 
-    void ScrollBarStyle::drawArrow(QPainter *painter, const QRectF &arrowRect, const Direction dir)
+    QRect ScrollBarStyle::subControlRect(ComplexControl control, const QStyleOptionComplex *option, SubControl subControl, const QWidget *widget) const
     {
-        QPainterPath path;
-        QPointF p1, p2, p3;
-        auto &pal = Palette::palette();
-        switch (dir)
+        const auto *opt = qstyleoption_cast<const QStyleOptionSlider *>(option);
+        if (control != CC_ScrollBar || !opt)
+            return QProxyStyle::subControlRect(control, option, subControl, widget);
+
+        const bool horizontal = opt->orientation == Qt::Horizontal;
+        const QRect rect = opt->rect;
+        const int length = qMax(0, horizontal ? rect.width() : rect.height());
+        const int buttonLength = qMin(endExtent, length / 2);
+        const int grooveLength = length - 2 * buttonLength;
+        const qint64 range = qMax(qint64(0), qint64(opt->maximum) - qint64(opt->minimum));
+        const qint64 pageStep = qMax(0, opt->pageStep);
+        const int thumbLength =
+                range == 0
+                    ? grooveLength
+                    : qMin(grooveLength, qMax(pixelMetric(PM_ScrollBarSliderMin, option, widget), static_cast<int>(pageStep * grooveLength / (range + pageStep))));
+        const int thumbStart =
+                buttonLength +
+                sliderPositionFromValue(opt->minimum, opt->maximum, opt->sliderPosition, grooveLength - thumbLength, opt->upsideDown);
+
+        // 绘制、点击和拖拽共用同一套端部留白，滑块到端点时仍留 4 px 空隙。
+        const auto section = [&](int start, int span) {
+            const QRect result = horizontal
+                                     ? QRect(rect.x() + start, rect.y(), span, rect.height())
+                                     : QRect(rect.x(), rect.y() + start, rect.width(), span);
+            return horizontal ? visualRect(opt->direction, rect, result) : result;
+        };
+        switch (subControl)
         {
-            case Direction::Right :
-                p1 = arrowRect.topLeft();
-                p2 = arrowRect.bottomLeft();
-                p3 = QPointF(arrowRect.right(), arrowRect.center().y());
-                break;
-            case Direction::Left :
-                p1 = arrowRect.topRight();
-                p2 = arrowRect.bottomRight();
-                p3 = QPointF(arrowRect.left(), arrowRect.center().y());
-                break;
-            case Direction::Down :
-                p1 = arrowRect.topLeft();
-                p2 = arrowRect.topRight();
-                p3 = QPointF(arrowRect.center().x(), arrowRect.bottom());
-                break;
-            case Direction::Up :
-                p1 = arrowRect.bottomLeft();
-                p2 = arrowRect.bottomRight();
-                p3 = QPointF(arrowRect.center().x(), arrowRect.top());
-                break;
-            default :
-                return;
+            case SC_ScrollBarSubLine:
+                return section(0, buttonLength);
+            case SC_ScrollBarAddLine:
+                return section(length - buttonLength, buttonLength);
+            case SC_ScrollBarGroove:
+                return section(buttonLength, grooveLength);
+            case SC_ScrollBarSlider:
+                return section(thumbStart, thumbLength);
+            case SC_ScrollBarSubPage:
+                return section(buttonLength, thumbStart - buttonLength);
+            case SC_ScrollBarAddPage:
+                return section(thumbStart + thumbLength,
+                               length - buttonLength - thumbStart - thumbLength);
+            default:
+                return QProxyStyle::subControlRect(control, option, subControl, widget);
         }
-        path.moveTo(p1);
-        path.lineTo(p2);
-        path.lineTo(p3);
-        path.closeSubpath();
-        painter->fillPath(path, pal[ColorRole::ScrollBarSlider]);
-        painter->strokePath(path, QPen(pal[ColorRole::ScrollBarSlider], 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
 
+    void ScrollBarStyle::drawArrow(QPainter *painter, const QRectF &arrowRect, const Direction dir)
+    {
+        // 8 × 6 的圆角实心三角形；只填充，避免描边向外扩张尺寸。
+        QPainterPath path;
+        path.moveTo(1, 0);
+        path.lineTo(7, 0);
+        path.quadTo(8, 0, 8, 1);
+        path.quadTo(8, 1.3, 7.8, 1.6);
+        path.lineTo(4.8, 5.6);
+        path.quadTo(4, 6.4, 3.2, 5.6);
+        path.lineTo(0.2, 1.6);
+        path.quadTo(0, 1.3, 0, 1);
+        path.quadTo(0, 0, 1, 0);
+        path.closeSubpath();
 
+        QTransform transform;
+        transform.translate(arrowRect.center().x(), arrowRect.center().y());
+        switch (dir)
+        {
+            case Direction::Right:
+                transform.rotate(-90);
+                break;
+            case Direction::Left:
+                transform.rotate(90);
+                break;
+            case Direction::Up:
+                transform.rotate(180);
+                break;
+            case Direction::Down:
+                break;
+            default:
+                return;
+        }
+        transform.translate(-arrowWidth / 2, -arrowLength / 2.0);
+        painter->fillPath(transform.map(path), Palette::palette()[ColorRole::ScrollBarSlider]);
+    }
 } // fancy
