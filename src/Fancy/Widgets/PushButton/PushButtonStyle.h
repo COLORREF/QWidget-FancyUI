@@ -24,9 +24,9 @@ namespace fancy
 
         void setRadius(int radius);
 
-        [[nodiscard]] qreal radius() const;
+        [[nodiscard]] int radius() const;
     private:
-        qreal _buttonRadius;
+        int _buttonRadius;
         QPushButton *_parent;
     };
 } // fancy

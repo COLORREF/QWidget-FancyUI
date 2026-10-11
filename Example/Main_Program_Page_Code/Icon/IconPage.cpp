@@ -4,10 +4,14 @@
 
 #include "IconPage.h"
 
+#include <QVBoxLayout>
+#include <QIcon>
+
 #include "../ui_general_display_page.h"
 
 #include "ExampleControlCard.h"
-#include "Widgets/PushButton/TransparentButton.h"
+#include "Widgets/SelectorBar/SelectorBar.h"
+#include "Widgets/SelectorBar/SelectorBarItem.h"
 #include "Widgets/TextLabel/TextLabel.h"
 
 IconPage::IconPage(QWidget *parent) :
@@ -21,13 +25,20 @@ IconPage::IconPage(QWidget *parent) :
     contents_layout->setSpacing(32);
 
     contents_layout->setContentsMargins(36, 28, 36, 28);
-    auto *tip = new fancy::TransparentButton(fancy::IconPark::Code, "编写中......", _ui->contents);
-    QFont tipFont = tip->font();
-    tipFont.setPointSize(70);
-    tip->setFont(tipFont);
-    tip->setIconSize(QSize(265, 265));
-    tip->setMinimumSize(1000, 365);
-    contents_layout->addWidget(tip);
+    auto *selectorBar = new fancy::SelectorBar(_ui->contents);
+    QFont selectorFont = selectorBar->font();
+    selectorFont.setPixelSize(18);
+    selectorBar->setFont(selectorFont);
+    auto *allItem = selectorBar->addItem(QStringLiteral("全部"));
+    selectorBar->addItem("IconPark", QIcon(QStringLiteral(":/Logos/iconpark.png")));
+    selectorBar->addItem("Ant Design", QIcon(QStringLiteral(":/Logos/ant-design.svg")));
+    selectorBar->addItem("Bootstrap", QIcon(QStringLiteral(":/Logos/bootstrap.png")));
+
+    for (int i = 0; i < selectorBar->itemCount(); ++i)
+        selectorBar->itemAt(i)->setIconSize(QSize(24, 24));
+
+    selectorBar->setSelectedItem(allItem);
+    contents_layout->addWidget(selectorBar);
 
     contents_layout->addStretch(1);
 }
