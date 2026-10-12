@@ -29,7 +29,7 @@ IconPage::IconPage(QWidget *parent) :
     QFont selectorFont = selectorBar->font();
     selectorFont.setPixelSize(18);
     selectorBar->setFont(selectorFont);
-    auto *allItem = selectorBar->addItem(QStringLiteral("全部"));
+    auto *allItem = selectorBar->addItem(QStringLiteral("所有图标"));
     selectorBar->addItem("IconPark", QIcon(QStringLiteral(":/Logos/iconpark.png")));
     selectorBar->addItem("Ant Design", QIcon(QStringLiteral(":/Logos/ant-design.svg")));
     selectorBar->addItem("Bootstrap", QIcon(QStringLiteral(":/Logos/bootstrap.png")));

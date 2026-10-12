@@ -8,6 +8,7 @@
 
 namespace fancy
 {
+    namespace detail { class SelectorBarIndicatorLayer; }
     class SelectorBarItem : public QAbstractButton
     {
         Q_OBJECT
@@ -39,8 +40,12 @@ namespace fancy
         void paintEvent(QPaintEvent *event) override;
 
     private:
+        friend class SelectorBar;
+        void setIndicatorManagedByBar(bool managed);
         void refreshIconColors();
 
+        detail::SelectorBarIndicatorLayer *_localIndicator = nullptr;
+        bool _indicatorManagedByBar = false;
         std::optional<IconId> _iconId;
         bool _textElideEnabled = false;
     };

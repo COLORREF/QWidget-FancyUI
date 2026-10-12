@@ -8,8 +8,6 @@
 
 #include "SelectorBarItem.h"
 
-class QVariantAnimation;
-
 namespace fancy
 {
     class SelectorBarItemStyle : public QProxyStyle
@@ -29,8 +27,6 @@ namespace fancy
         QRectF iconInkBounds(const QIcon &icon) const;
 
         SelectorBarItem *_parent;
-        QVariantAnimation *_indicatorAnimation;
-        qreal _indicatorProgress = 0.0; // 指示条展开和淡入的共同进度
         mutable qint64 _measuredIconKey = 0; // 已测量图标的缓存标识
         mutable QRectF _iconInkBounds; // 图标笔画在测量画布中的边界
     };

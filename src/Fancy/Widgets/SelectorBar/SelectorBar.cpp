@@ -6,13 +6,15 @@
 #include <QVBoxLayout>
 
 #include "SelectorBarItem.h"
-#include "SelectorBarScrollArea_p.h"
+#include "private/SelectorBarScrollArea.h"
+#include "private/SelectorBarIndicatorLayer.h"
 
 namespace fancy
 {
     SelectorBar::SelectorBar(QWidget *parent) :
         QWidget(parent),
         _scrollArea(new detail::SelectorBarScrollArea(this)),
+        _indicatorLayer(new detail::SelectorBarIndicatorLayer(_scrollArea->widget())),
         _buttonGroup(new QButtonGroup(this))
     {
         _buttonGroup->setExclusive(true);
@@ -27,6 +29,8 @@ namespace fancy
 
     SelectorBar::~SelectorBar()
     {
+        // 先销毁覆盖层，停止动画和项目事件监听。
+        delete _indicatorLayer;
         for (const auto *item: _items)
             disconnect(item, nullptr, this, nullptr);
         disconnect(_buttonGroup, nullptr, this, nullptr);
@@ -76,6 +80,7 @@ namespace fancy
         }
 
         index = qBound(0, index, _items.size());
+        item->setIndicatorManagedByBar(true);
         _scrollArea->insertWidget(index, item);
         item->setChecked(false);
         _items.insert(index, item);
@@ -103,6 +108,7 @@ namespace fancy
         disconnect(item, nullptr, this, nullptr);
         _scrollArea->removeWidget(item);
         item->setChecked(false);
+        item->setIndicatorManagedByBar(false);
         // 选中项被移除后优先选择剩余第一项；回调已指定新选择时保留其结果。
         if (wasSelected && !selectedItem() && !_items.isEmpty())
             setSelectedItem(_items.first());
@@ -156,7 +162,18 @@ namespace fancy
         _lastNotifiedItem = item;
         if (item)
             _scrollArea->ensureItemVisible(item);
+        _indicatorLayer->select(item);
         emit selectionChanged(item);
+    }
+
+    void SelectorBar::setIndicatorSlideEnabled(bool enabled)
+    {
+        _indicatorLayer->setSlideEnabled(enabled);
+    }
+
+    bool SelectorBar::isIndicatorSlideEnabled() const
+    {
+        return _indicatorLayer->isSlideEnabled();
     }
 
     void SelectorBar::setHorizontalScrollBarVisible(bool visible)

@@ -6,6 +6,7 @@
 #include <QStyleOptionButton>
 
 #include "SelectorBarItemStyle.h"
+#include "private/SelectorBarIndicatorLayer.h"
 #include "Core/Palette/Palette.h"
 #include "Icon/Icon.h"
 
@@ -20,6 +21,15 @@ namespace fancy
         setAttribute(Qt::WA_Hover);
         setMouseTracking(true);
         setFocusPolicy(Qt::StrongFocus);
+        connect(this, &QAbstractButton::toggled, this, [this](bool checked) {
+            if (_indicatorManagedByBar)
+                return;
+            // 独立使用时按需创建局部覆盖层，加入栏后由栏的共享层接管。
+            if (checked && !_localIndicator)
+                _localIndicator = new detail::SelectorBarIndicatorLayer(this);
+            if (_localIndicator)
+                _localIndicator->select(checked ? this : nullptr);
+        });
         auto &palette = Palette::palette();
         connect(&palette, &Palette::appColorChange, this, &SelectorBarItem::refreshIconColors);
         connect(&palette, &Palette::appThemeChange, this, &SelectorBarItem::refreshIconColors);
@@ -31,6 +41,16 @@ namespace fancy
         SelectorBarItem(parent)
     {
         setText(text);
+    }
+
+    void SelectorBarItem::setIndicatorManagedByBar(bool managed)
+    {
+        _indicatorManagedByBar = managed;
+        if (managed)
+        {
+            delete _localIndicator;
+            _localIndicator = nullptr;
+        }
     }
 
     void SelectorBarItem::setIcon(const QIcon &icon)
