@@ -15,12 +15,14 @@ namespace fancy
     namespace detail
     {
         class SelectorBarScrollArea;
+        class SelectorBarIndicatorLayer;
     }
 
     class SelectorBar : public QWidget
     {
         Q_OBJECT
         Q_PROPERTY(bool horizontalScrollBarVisible READ isHorizontalScrollBarVisible WRITE setHorizontalScrollBarVisible)
+        Q_PROPERTY(bool indicatorSlideEnabled READ isIndicatorSlideEnabled WRITE setIndicatorSlideEnabled)
 
     public:
         explicit SelectorBar(QWidget *parent = nullptr);
@@ -100,13 +102,23 @@ namespace fancy
 
         /**
          * @brief 设置是否允许按需显示横向滚动条
-         * @param visible true 在内容宽度超出可用空间时显示，false 始终隐藏；默认 true
+         * @param visible true 在内容宽度超出可用空间时显示，false 始终隐藏；默认 false
          * @note 隐藏滚动条不禁用滚动，仍可使用滚轮和选中项定位
          */
         void setHorizontalScrollBarVisible(bool visible);
 
-        /** @brief 返回是否允许按需显示横向滚动条，不表示滚动条此刻实际可见 */
+        /**
+         * @brief 返回是否允许按需显示横向滚动条，不表示滚动条此刻实际可见
+         */
         [[nodiscard]] bool isHorizontalScrollBarVisible() const;
+
+        /**
+         * @brief 设置跨项拉伸滑动，默认开启；关闭后使用入场动画，首次选中仍使用入场动画。
+         *  @note 开关不改变选择，不发出 selectionChanged；中途关闭会立即定位到当前选中项
+         */
+        void setIndicatorSlideEnabled(bool enabled);
+
+        [[nodiscard]] bool isIndicatorSlideEnabled() const;
 
         [[nodiscard]] QSize sizeHint() const override;
 
@@ -119,6 +131,7 @@ namespace fancy
         void syncSelection();
 
         detail::SelectorBarScrollArea *_scrollArea; // 管理内容布局与滚动，不参与选择决策
+        detail::SelectorBarIndicatorLayer *_indicatorLayer;
         QButtonGroup *_buttonGroup;
         QList<SelectorBarItem *> _items;
         SelectorBarItem *_lastNotifiedItem = nullptr; // 仅用于去重通知，选择状态由按钮组维护

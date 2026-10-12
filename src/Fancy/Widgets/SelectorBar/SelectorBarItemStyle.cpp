@@ -7,8 +7,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QStyleOptionButton>
-#include <QVariantAnimation>
-#include <QEasingCurve>
 
 #include "Core/ControlState/ControlState.h"
 #include "Core/Palette/Palette.h"
@@ -26,46 +24,16 @@ namespace fancy
         constexpr int DefaultIconLayoutSize = 20; // 默认图标参与布局的宽高
         constexpr int IconHorizontalMargin = -2; // 图标左右两侧的布局边距
         constexpr int IconMeasureSize = 128; // 测量图标透明留白时使用的画布大小
-        constexpr int IndicatorWidth = 16; // 选中指示条的宽度
-        constexpr int IndicatorInitialWidth = 4; // 指示条入场时的初始宽度
         constexpr int IndicatorHeight = 3; // 选中指示条的高度
-        constexpr int IndicatorAnimationDuration = 167; // 指示条入场动画时长，单位为毫秒
-
         constexpr qreal IconLayoutScale = static_cast<qreal>(DefaultIconLayoutSize) / DefaultIconSize; // 图标布局尺寸与可见尺寸的比例
     }
 
     SelectorBarItemStyle::SelectorBarItemStyle(SelectorBarItem *parent) :
         QProxyStyle(nullptr),
-        _parent(parent),
-        _indicatorAnimation(new QVariantAnimation(this))
+        _parent(parent)
     {
         setParent(parent);
         parent->setIconSize(QSize(DefaultIconSize, DefaultIconSize));
-        _indicatorProgress = parent->isChecked() ? 1.0 : 0.0;
-        _indicatorAnimation->setDuration(IndicatorAnimationDuration);
-        _indicatorAnimation->setStartValue(0.0);
-        _indicatorAnimation->setEndValue(1.0);
-        QEasingCurve easing(QEasingCurve::BezierSpline);
-        easing.addCubicBezierSegment(QPointF(0, 0), QPointF(0, 1), QPointF(1, 1));
-        _indicatorAnimation->setEasingCurve(easing);
-
-        connect(_indicatorAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
-            _indicatorProgress = value.toReal();
-            _parent->update();
-        });
-        connect(parent, &QAbstractButton::toggled, this, [this](bool checked) {
-            _indicatorAnimation->stop();
-            _indicatorProgress = 0.0;
-            if (checked)
-            {
-                if (_parent->isVisible())
-                    _indicatorAnimation->start();
-                else
-                    _indicatorProgress = 1.0; // 显示前设置的初始选中项直接呈现最终状态
-            }
-            // 取消选中立即隐藏，不反向播放；悬停和重复按下不重启动画
-            _parent->update();
-        });
     }
 
     void SelectorBarItemStyle::drawItemText(
@@ -113,7 +81,6 @@ namespace fancy
         {
             case CE_PushButton:
             {
-                // 绘制状态背景、选中指示条及图标文字
                 drawControl(CE_PushButtonBevel, button, painter, widget);
                 drawControl(CE_PushButtonLabel, button, painter, widget);
                 return;
@@ -121,19 +88,6 @@ namespace fancy
             case CE_PushButtonBevel:
             {
                 painter->fillRect(button->rect, Palette::palette()[ColorRole::SelectorBarItemBackground]);
-                if (selected)
-                {
-                    painter->save();
-                    painter->setRenderHint(QPainter::Antialiasing);
-                    painter->setPen(Qt::NoPen);
-                    painter->setBrush(Palette::palette()[state._enable ? ColorRole::AppAccent : ColorRole::DisEnabledText]);
-                    painter->setOpacity(painter->opacity() * _indicatorProgress);
-                    const qreal indicatorWidth = IndicatorInitialWidth + (IndicatorWidth - IndicatorInitialWidth) * _indicatorProgress;
-                    const qreal x = button->rect.x() + (button->rect.width() - indicatorWidth) / 2.0;
-                    const int y = button->rect.bottom() - IndicatorHeight + 1;
-                    painter->drawRoundedRect(QRectF(x, y, indicatorWidth, IndicatorHeight), 1.5, 1.5);
-                    painter->restore();
-                }
                 return;
             }
             case CE_PushButtonLabel:

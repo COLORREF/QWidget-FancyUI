@@ -1,5 +1,5 @@
-#ifndef QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_P_H
-#define QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_P_H
+#ifndef QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_H
+#define QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_H
 
 #include "Widgets/ScrollArea/ScrollArea.h"
 
@@ -30,13 +30,19 @@ namespace fancy::detail
          */
         void removeWidget(QWidget *widget);
 
-        /** @brief 滚动至指定项目可见；超宽项目居中，完整可见的项目不移动 */
+        /**
+         * @brief 滚动至指定项目可见；超宽项目居中，完整可见的项目不移动
+         */
         void ensureItemVisible(const QWidget *item) const;
 
-        /** @brief 设置是否允许在内容溢出时显示横向滚动条，隐藏时仍可滚动 */
+        /**
+         * @brief 设置是否允许在内容溢出时显示横向滚动条，隐藏时仍可滚动
+         */
         void setHorizontalScrollBarVisible(bool visible);
 
-        /** @brief 返回是否允许按需显示横向滚动条，不表示此刻实际可见 */
+        /**
+         * @brief 返回是否允许按需显示横向滚动条，不表示此刻实际可见
+         */
         [[nodiscard]] bool isHorizontalScrollBarVisible() const;
 
         [[nodiscard]] QSize sizeHint() const override;
@@ -44,7 +50,9 @@ namespace fancy::detail
         [[nodiscard]] QSize minimumSizeHint() const override;
 
     signals:
-        /** @brief 尺寸提示的计算结果变化时，通知外层同步更新 */
+        /**
+         * @brief 尺寸提示的计算结果变化时，通知外层同步更新
+         */
         void sizeHintChanged();
 
     protected:
@@ -60,7 +68,9 @@ namespace fancy::detail
         void wheelEvent(QWheelEvent *event) override;
 
     private:
-        /** @brief 仅在尺寸提示变化时更新布局协商，避免重复通知内外层布局 */
+        /**
+         * @brief 仅在尺寸提示变化时更新布局协商，避免重复通知内外层布局
+         */
         void invalidateSizeHint();
 
         QWidget *_contents;
@@ -69,4 +79,4 @@ namespace fancy::detail
     };
 }
 
-#endif // QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_P_H
+#endif // QWIDGET_FANCYUI_SELECTORBARSCROLLAREA_H

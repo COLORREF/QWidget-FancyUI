@@ -1,4 +1,4 @@
-#include "SelectorBarScrollArea_p.h"
+#include "SelectorBarScrollArea.h"
 
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -17,7 +17,7 @@ namespace fancy::detail
         _layout->setSpacing(0);
         _layout->setAlignment(Qt::AlignLeft);
         _layout->setSizeConstraint(QLayout::SetFixedSize); // 内容保持自然尺寸，空间不足时滚动，不压缩项目
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setWidgetResizable(false);
         setAlignment(Qt::AlignLeft | Qt::AlignTop);
