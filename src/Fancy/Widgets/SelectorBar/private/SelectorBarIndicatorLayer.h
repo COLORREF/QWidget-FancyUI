@@ -13,7 +13,7 @@ namespace fancy
     {
         /**
          * @brief 绘制指示器的入场、跨项运动及静态状态
-         * @note 不参与布局和鼠标命中；栏内使用内容坐标，独立 Item 使用自身坐标
+         * @note 不参与布局和鼠标命中，统一使用 SelectorBar 滚动内容坐标。
          */
         class SelectorBarIndicatorLayer : public QWidget
         {

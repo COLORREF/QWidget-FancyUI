@@ -8,7 +8,7 @@
 
 namespace fancy
 {
-    namespace detail { class SelectorBarIndicatorLayer; }
+    /** @brief 透明选择按钮；指示器仅由所属 SelectorBar 的共享覆层绘制。 */
     class SelectorBarItem : public QAbstractButton
     {
         Q_OBJECT
@@ -20,10 +20,14 @@ namespace fancy
 
         explicit SelectorBarItem(const QString &text, QWidget *parent = nullptr);
 
-        /** @brief 使用调用者提供的图标，不补充状态配色，并停止此前的自动主题适配 */
+        /**
+         * @brief 使用调用者提供的图标，不补充状态配色，并停止此前的自动主题适配
+         */
         void setIcon(const QIcon &icon);
 
-        /** @brief 使用库图标，自动生成各状态配色并随主题更新 */
+        /**
+         * @brief 使用库图标，自动生成各状态配色并随主题更新
+         */
         void setIcon(const IconId &id);
 
         void setIcon(AntDesignIcons icon) { setIcon(iconId(icon)); }
@@ -40,12 +44,8 @@ namespace fancy
         void paintEvent(QPaintEvent *event) override;
 
     private:
-        friend class SelectorBar;
-        void setIndicatorManagedByBar(bool managed);
         void refreshIconColors();
 
-        detail::SelectorBarIndicatorLayer *_localIndicator = nullptr;
-        bool _indicatorManagedByBar = false;
         std::optional<IconId> _iconId;
         bool _textElideEnabled = false;
     };

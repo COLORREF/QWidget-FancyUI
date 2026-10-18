@@ -6,7 +6,6 @@
 #define QWIDGET_FANCYUI_ICONPAGE_H
 #include <QWidget>
 
-class ExampleControlCard;
 QT_BEGIN_NAMESPACE
 
 namespace Ui
@@ -26,10 +25,7 @@ public:
     ~IconPage() override;
 
 private:
-    ExampleControlCard *makeCardLayout(const QString &introductionText, const QString &objName);
-
     Ui::GeneralDisplayPage *_ui;
-    QList<ExampleControlCard *> _controlCards;
 };
 
 

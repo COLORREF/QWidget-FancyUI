@@ -2,7 +2,6 @@
 
 #include <QDebug>
 #include <QButtonGroup>
-#include <QSignalBlocker>
 #include <QVBoxLayout>
 
 #include "SelectorBarItem.h"
@@ -23,7 +22,7 @@ namespace fancy
         outerLayout->setContentsMargins(0, 0, 0, 0);
         outerLayout->addWidget(_scrollArea);
 
-        connect(_buttonGroup, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), this, [this] { syncSelection(); });
+        connect(_buttonGroup, &QButtonGroup::buttonToggled, this, &SelectorBar::syncSelection);
         connect(_scrollArea, &detail::SelectorBarScrollArea::sizeHintChanged, this, &QWidget::updateGeometry);
     }
 
@@ -80,38 +79,40 @@ namespace fancy
         }
 
         index = qBound(0, index, _items.size());
-        item->setIndicatorManagedByBar(true);
         _scrollArea->insertWidget(index, item);
         item->setChecked(false);
         _items.insert(index, item);
         _buttonGroup->addButton(item);
 
         connect(item, &QObject::destroyed, this, [this, item] {
+            const int index = _items.indexOf(item);
             _items.removeOne(item);
             // QAbstractButton 析构时已从按钮组移除
+            if (!selectedItem() && !_items.isEmpty())
+                setSelectedItem(_items.at(qBound(0, index, _items.size() - 1)));
             syncSelection();
         });
         connect(item, &QAbstractButton::clicked, this, [this, item] {
-            // 手动滚动后再次点击已选项目，也应能看到选中指示条。
+            // 手动滚动后再次点击已选项目，也应能看到选中指示条
             if (selectedItem() == item)
                 _scrollArea->ensureItemVisible(item);
         });
+        syncSelection();
     }
 
-    void SelectorBar::removeItem(SelectorBarItem *item)
+    void SelectorBar::removeItem(SelectorBarItem *item, bool selectFirst)
     {
         if (!_items.contains(item))
             return;
-        const bool wasSelected = selectedItem() == item;
+        const int index = _items.indexOf(item);
         _buttonGroup->removeButton(item);
         _items.removeOne(item);
         disconnect(item, nullptr, this, nullptr);
         _scrollArea->removeWidget(item);
         item->setChecked(false);
-        item->setIndicatorManagedByBar(false);
-        // 选中项被移除后优先选择剩余第一项；回调已指定新选择时保留其结果。
-        if (wasSelected && !selectedItem() && !_items.isEmpty())
-            setSelectedItem(_items.first());
+        // 按参数选择第一项或相邻项；保留回调已指定的选择。
+        if (!selectedItem() && !_items.isEmpty())
+            setSelectedItem(_items.at(selectFirst ? 0 : qMin(index, _items.size() - 1)));
         syncSelection();
     }
 
@@ -132,6 +133,8 @@ namespace fancy
 
     void SelectorBar::setSelectedItem(SelectorBarItem *item)
     {
+        if (!item)
+            return; // 非空栏不允许清空；空栏本身已无选中项
         if (item && !_items.contains(item))
         {
             qWarning() << "SelectorBar::setSelectedItem: item is not in this bar";
@@ -140,16 +143,7 @@ namespace fancy
         if (selectedItem() == item)
             return;
 
-        if (item)
-            item->setChecked(true);
-        else
-        {
-            // 互斥组不允许直接取消唯一选中项；恢复互斥后再通知栏的使用者
-            const QSignalBlocker blocker(_buttonGroup);
-            _buttonGroup->setExclusive(false);
-            _buttonGroup->checkedButton()->setChecked(false);
-            _buttonGroup->setExclusive(true);
-        }
+        item->setChecked(true);
         syncSelection();
     }
 
@@ -157,6 +151,11 @@ namespace fancy
     {
         // 回调可能再次改选；以组的当前状态为准，而非 buttonToggled 的参数
         auto *item = selectedItem();
+        if (!item && !_items.isEmpty())
+        {
+            _items.first()->setChecked(true);
+            return; // buttonToggled 会同步选择并发出通知，避免重复通知
+        }
         if (_lastNotifiedItem == item)
             return;
         _lastNotifiedItem = item;

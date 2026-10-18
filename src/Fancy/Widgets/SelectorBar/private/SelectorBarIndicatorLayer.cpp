@@ -38,7 +38,7 @@ namespace fancy::detail
 
     QLineF SelectorBarIndicatorLayer::itemLine(const SelectorBarItem *item) const
     {
-        return indicatorLine(item == parentWidget() ? QRectF(item->rect()) : QRectF(item->geometry()));
+        return indicatorLine(QRectF(item->geometry()));
     }
 
     QLineF SelectorBarIndicatorLayer::currentLine() const
@@ -84,10 +84,10 @@ namespace fancy::detail
         /** @note 从旧选中项的完整线段重新开始，避免反向切换继承拉长的中间线段。 */
         const QLineF from = canSlide ? itemLine(_selected) : QLineF();
         _animation.stop();
-        if (_selected && _selected != parentWidget())
+        if (_selected)
             _selected->removeEventFilter(this);
         _selected = item;
-        if (item && item != parentWidget())
+        if (item)
             item->installEventFilter(this);
         if (canSlide)
             _animation.slide(from, itemLine(item), Qt::Horizontal, SlideDuration);
@@ -105,7 +105,7 @@ namespace fancy::detail
             return false;
         }
         if (watched == _selected && event->type() == QEvent::ParentChange &&
-            _selected != parentWidget() && _selected->parentWidget() != parentWidget())
+            _selected->parentWidget() != parentWidget())
         {
             select(nullptr);
             return false;

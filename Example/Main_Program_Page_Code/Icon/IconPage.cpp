@@ -9,10 +9,9 @@
 
 #include "../ui_general_display_page.h"
 
-#include "ExampleControlCard.h"
+#include "IconGallery.h"
 #include "Widgets/SelectorBar/SelectorBar.h"
 #include "Widgets/SelectorBar/SelectorBarItem.h"
-#include "Widgets/TextLabel/TextLabel.h"
 
 IconPage::IconPage(QWidget *parent) :
     QWidget(parent),
@@ -21,10 +20,16 @@ IconPage::IconPage(QWidget *parent) :
     _ui->setupUi(this);
     _ui->header->setMainText("图标");
     _ui->header->setSubText("namespace fancy");
+    // 网格和详情各自滚动，移除通用页面的外层滚动区，避免嵌套滚动和高度膨胀
+    auto *contents = _ui->scrollArea->takeWidget();
+    contents->setAutoFillBackground(false);
+    _ui->verticalLayout->removeWidget(_ui->scrollArea);
+    _ui->verticalLayout->addWidget(contents, 1);
+    delete _ui->scrollArea;
+    _ui->scrollArea = nullptr;
     auto *contents_layout = new QVBoxLayout(_ui->contents);
-    contents_layout->setSpacing(32);
-
-    contents_layout->setContentsMargins(36, 28, 36, 28);
+    contents_layout->setSpacing(12);
+    contents_layout->setContentsMargins(36, 0, 36, 28);
     auto *selectorBar = new fancy::SelectorBar(_ui->contents);
     QFont selectorFont = selectorBar->font();
     selectorFont.setPixelSize(18);
@@ -40,34 +45,21 @@ IconPage::IconPage(QWidget *parent) :
     selectorBar->setSelectedItem(allItem);
     contents_layout->addWidget(selectorBar);
 
-    contents_layout->addStretch(1);
+    auto *gallery = new IconGallery(_ui->contents);
+    contents_layout->addWidget(gallery, 1);
+    connect(selectorBar, &fancy::SelectorBar::selectionChanged, gallery, [selectorBar, gallery](fancy::SelectorBarItem *item) {
+        if (item == selectorBar->itemAt(1))
+            gallery->setLibrary(fancy::IconStyle::IconPark);
+        else if (item == selectorBar->itemAt(2))
+            gallery->setLibrary(fancy::IconStyle::AntDesignIcons);
+        else if (item == selectorBar->itemAt(3))
+            gallery->setLibrary(fancy::IconStyle::BootstrapIcons);
+        else
+            gallery->setLibrary(std::nullopt);
+    });
 }
 
 IconPage::~IconPage()
 {
     delete _ui;
-}
-
-ExampleControlCard * IconPage::makeCardLayout(const QString &introductionText, const QString &objName)
-{
-    auto *peripheral = new QWidget(_ui->contents);
-    auto introductionLabel = new fancy::TextLabel(introductionText, peripheral);
-    QFont font(introductionLabel->font());
-    font.setPointSizeF(10.5);
-    introductionLabel->setFont(font);
-    auto controlCard = new ExampleControlCard(peripheral);
-    controlCard->setObjectName(objName);
-    _controlCards.append(controlCard);
-    controlCard->setTitleText("源代码");
-    auto *control_content_layout = new QHBoxLayout(controlCard->controlAreaWidget());
-    control_content_layout->setContentsMargins(16, 12, 12, 16);
-
-    auto *layout = new QVBoxLayout(peripheral);
-    layout->setSpacing(12);
-    layout->setContentsMargins(36, 0, 36, 0);
-    layout->addWidget(introductionLabel);
-    layout->addWidget(controlCard);
-
-    _ui->contents->layout()->addWidget(peripheral);
-    return controlCard;
 }
