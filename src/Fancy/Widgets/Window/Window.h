@@ -93,6 +93,7 @@ namespace fancy
         int _yBorderWidth{};
         bool _useWindowEffects;
         bool _useCompositionWindowEffect;
+        bool _dwmPreviousNoSystemBackground{};
         DwmWindowEffect _dwmWindowEffect;
         QColor _bkgColor;
         TitleBar *_titleBar; // 标题栏

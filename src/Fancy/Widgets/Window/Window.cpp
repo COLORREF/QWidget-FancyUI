@@ -133,7 +133,10 @@ namespace fancy
             return;
         }
         if (!_useCompositionWindowEffect)
+        {
             _dwmWindowEffect = DwmWindowEffect::None;
+            setAttribute(Qt::WA_NoSystemBackground, _dwmPreviousNoSystemBackground);
+        }
         _useCompositionWindowEffect = false;
         _useWindowEffects = false;
         _titleBar->setTransparency(false);
@@ -500,13 +503,13 @@ namespace fancy
             return;
         }
         const auto oldFlags = windowFlags();
-        const bool wasTranslucent = testAttribute(Qt::WA_TranslucentBackground);
         const bool hadNoSystemBackground = testAttribute(Qt::WA_NoSystemBackground);
         const auto oldMargins = _frameMargins;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         setWindowFlags((this->windowFlags()) & (~Qt::WindowType::FramelessWindowHint));
 #endif
-        setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground);
+        // 只接管背景绘制；保留原生窗口格式，由 paintEvent 清出材料显示区域
+        setAttribute(Qt::WA_NoSystemBackground);
         // Qt 属性或标志改变后再获取句柄，避免使用已被重建的 HWND
         const auto hWnd = reinterpret_cast<HWND>(winId());
         // 与 resizeEvent 使用同一扩展方式，避免负边距带出系统标题栏按钮。
@@ -516,13 +519,15 @@ namespace fancy
             qWarning() << "Failed to enable DWM backdrop; retaining the previous effect state";
             if (windowFlags() != oldFlags)
                 setWindowFlags(oldFlags);
-            setAttribute(Qt::WA_TranslucentBackground, wasTranslucent);
             setAttribute(Qt::WA_NoSystemBackground, hadNoSystemBackground);
             if (frameReady)
                 applyFrameMargins(oldMargins);
             update();
             return;
         }
+        // 切换 DWM 材料时保留首次开启前的属性，关闭时恢复
+        if (!_useWindowEffects)
+            _dwmPreviousNoSystemBackground = hadNoSystemBackground;
         _useWindowEffects = true;
         _dwmWindowEffect = effect;
         _titleBar->setTransparency();
