@@ -10,6 +10,9 @@
 #include <QSpacerItem>
 #include <QStyle>
 #include <QWindow>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 #include "Widgets/TextLabel/TextLabel.h"
 #include "Widgets/TitleBar/Button/CloseButton.h"
@@ -143,13 +146,21 @@ namespace fancy
     {
         if (event->button() == Qt::MouseButton::LeftButton && _doubleClickMaximize)
         {
-            // this->_maximizeButton->click();
+#ifdef Q_OS_WIN
+            // Qt 的无边框 showMaximized/showNormal 路径只调整几何，可能与原生状态脱节
+            // 使用原生显示状态接口，交给系统维护最大化状态和还原位置
+            const auto hwnd = reinterpret_cast<HWND>(window()->winId());
+            ::ShowWindow(hwnd, ::IsZoomed(hwnd) ? SW_RESTORE : SW_MAXIMIZE);
+
+            // 另一种方式是发送系统命令，需先释放捕获才能使该命令生效；ShowWindow 无需此步骤
+            // ::ReleaseCapture();
+            // ::SendMessage(hwnd, WM_SYSCOMMAND, ::IsZoomed(hwnd) ? SC_RESTORE : SC_MAXIMIZE, 0);
+#else
             if (window()->isMaximized())
                 window()->showNormal();
-                // ::ShowWindow((HWND) (this->window()->winId()), SW_RESTORE); //还原窗口
             else
                 window()->showMaximized();
-            // ::ShowWindow((HWND) (this->window()->winId()), SW_MAXIMIZE); //最大化窗口
+#endif
         }
     }
 
