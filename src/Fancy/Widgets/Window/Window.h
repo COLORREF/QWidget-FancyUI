@@ -6,6 +6,7 @@
 #define QWIDGET_FANCYUI_WINDOW_H
 
 #include <QWidget>
+#include <array>
 
 class QVariantAnimation;
 class QHBoxLayout;
@@ -28,6 +29,10 @@ namespace fancy
     public:
         explicit Window(QWidget *parent = nullptr);
 
+        /**
+         * @brief 启用系统 Acrylic 材料，需要 Windows 11 Build 22621 或更新版本
+         * @note 特效设置失败时保留此前状态并输出诊断；框架回退失败时另行输出诊断
+         */
         void setAcrylicEffect();
 
         void setMicaEffect();
@@ -46,6 +51,9 @@ namespace fancy
 
         void setSolidColorFillEffect(const QColor &color);
 
+        /**
+         * @brief 关闭当前特效并恢复普通背景绘制；系统调用失败时保留已启用状态。
+         */
         void disabledWindowEffect();
 
         void setDoubleClickMaximize(bool allow);
@@ -91,6 +99,12 @@ namespace fancy
         QWidget *_clientArea; // 客户区
         QVBoxLayout *_verticalLayout;
         QVariantAnimation *_animation;
+        std::array<int, 4> _frameMargins{}; //最近成功应用的框架边距（左、右、上、下），用于失败回退
+
+        /**
+         * @brief 应用框架扩展；成功后才记录边距，失败输出诊断
+         */
+        bool applyFrameMargins(const std::array<int, 4> &margins);
 
         void setBorderWidth();
 
@@ -105,7 +119,7 @@ namespace fancy
 
         void updateBkgColor(const QVariant &value);
 
-        void setDwmMargins() const;
+        void setDwmMargins();
     };
 } // fancy
 

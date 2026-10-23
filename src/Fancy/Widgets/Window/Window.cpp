@@ -50,15 +50,17 @@ namespace fancy
 
 #ifdef Q_OS_WIN
         const HWND hwnd = reinterpret_cast<HWND>(winId());
-        MARGINS margins = {1, 1, 0, 1};
-        SystemAccessor::DwmExtendFrameIntoClientArea(hwnd, &margins);
-        SetWindowLongPtr(hwnd,
+        applyFrameMargins({1, 1, 0, 1});
+        SetLastError(ERROR_SUCCESS);
+        const auto previousStyle = SetWindowLongPtr(hwnd,
                          GWL_STYLE,
                          GetWindowLongPtr(
                              hwnd,
                              GWL_STYLE
                          ) | WS_BORDER | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU
         );
+        if (previousStyle == 0 && GetLastError() != ERROR_SUCCESS)
+            qWarning() << "Failed to configure native window style";
 #endif
         setBorderWidth();
 
@@ -119,21 +121,26 @@ namespace fancy
 
     void Window::disabledWindowEffect()
     {
-        if (_useWindowEffects)
+        if (!_useWindowEffects)
+            return;
+        const auto hwnd = reinterpret_cast<HWND>(winId());
+        const bool disabled = _useCompositionWindowEffect
+            ? WindowController::setCompositionWindowEffect(hwnd, CompositionWindowEffect::Disabled)
+            : WindowController::setDwmWindowEffect(hwnd, DwmWindowEffect::None);
+        if (!disabled)
         {
-            _useWindowEffects = false;
-            _titleBar->setTransparency(false);
-            if (_useCompositionWindowEffect)
-            {
-                _useCompositionWindowEffect = false;
-                WindowController::setCompositionWindowEffect(reinterpret_cast<HWND>(winId()), CompositionWindowEffect::Disabled);
-            }
-            if (_dwmWindowEffect != DwmWindowEffect::Last)
-            {
-                _dwmWindowEffect = DwmWindowEffect::None;
-                WindowController::setDwmWindowEffect(reinterpret_cast<HWND>(winId()), DwmWindowEffect::None);
-            }
+            qWarning() << "Failed to disable window effect; retaining the active effect state";
+            return;
         }
+        if (!_useCompositionWindowEffect)
+            _dwmWindowEffect = DwmWindowEffect::None;
+        _useCompositionWindowEffect = false;
+        _useWindowEffects = false;
+        _titleBar->setTransparency(false);
+        applyFrameMargins({1, 1, 0, 1});
+        _animation->stop();
+        _bkgColor = Palette::palette().color(ColorRole::Window);
+        update();
     }
 
     void Window::setDoubleClickMaximize(bool allow)
@@ -402,7 +409,8 @@ namespace fancy
     void Window::onThemeChanged()
     {
         const Theme theme = ThemeModeController::controller().appTheme();
-        WindowController::setWindowThemeMode(reinterpret_cast<HWND>(winId()), theme);
+        if (!WindowController::setWindowThemeMode(reinterpret_cast<HWND>(winId()), theme))
+            qWarning() << "Failed to apply native window theme";
 
         if (!_useWindowEffects)
         {
@@ -420,17 +428,26 @@ namespace fancy
         update();
     }
 
-    void Window::setDwmMargins() const
+    bool Window::applyFrameMargins(const std::array<int, 4> &margins)
+    {
+        const MARGINS nativeMargins{margins[0], margins[1], margins[2], margins[3]};
+        if (!WindowController::extendFrameIntoClientArea(reinterpret_cast<HWND>(winId()), nativeMargins))
+        {
+            qWarning() << "Failed to extend window frame into client area";
+            return false;
+        }
+        _frameMargins = margins;
+        return true;
+    }
+
+    void Window::setDwmMargins()
     {
         switch (_dwmWindowEffect)
         {
             case DwmWindowEffect::Acrylic : // 亚克力
             case DwmWindowEffect::Mica : // 云母
             case DwmWindowEffect::MicaAlt : // 云母ALT
-                WindowController::extendFrameIntoClientArea(
-                    reinterpret_cast<HWND>(winId()),
-                    {static_cast<int>(width() * devicePixelRatioF()) + 1, 0, 0, 0}
-                );
+                applyFrameMargins({static_cast<int>(width() * devicePixelRatioF()) + 1, 0, 0, 0});
             default :
                 break;
         }
@@ -459,10 +476,10 @@ namespace fancy
 
     void Window::setDwmWindowEffect(DwmWindowEffect effect)
     {
-        // DWM 窗口特效仅支持 Windows 11
-        if (!SystemAccessor::isWindows11())
+        // DWMWA_SYSTEMBACKDROP_TYPE 的正式支持下限为 Windows 11 22H2
+        if (!SystemAccessor::isWindows11() || SystemAccessor::windowsVersion().BuildNumber < 22621)
         {
-            qWarning() << "The DWM window effect is only supported in Windows 11;";
+            qWarning() << "The DWM backdrop requires Windows 11 build 22621 or later;";
             qWarning() << "Including acrylic effect, mica effect, mica Alt effect;";
             qWarning() << "The window has been initialized as the default window and will not use any DWM effects;";
             return;
@@ -473,17 +490,36 @@ namespace fancy
             qWarning() << "Must restart the application to switch window effects";
             return;
         }
-        _useWindowEffects = true;
-        _dwmWindowEffect = effect;
-        _titleBar->setTransparency();
-        auto hWnd = reinterpret_cast<HWND>(winId());
+        const auto oldFlags = windowFlags();
+        const bool wasTranslucent = testAttribute(Qt::WA_TranslucentBackground);
+        const bool hadNoSystemBackground = testAttribute(Qt::WA_NoSystemBackground);
+        const auto oldMargins = _frameMargins;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         setWindowFlags((this->windowFlags()) & (~Qt::WindowType::FramelessWindowHint));
 #endif
         setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground);
-        WindowController::extendFrameIntoClientArea(hWnd);
-        WindowController::setDwmWindowEffect(hWnd, effect);
-        WindowController::setWindowThemeMode(hWnd, ThemeModeController::controller().appTheme());
+        // Qt 属性或标志改变后再获取句柄，避免使用已被重建的 HWND
+        const auto hWnd = reinterpret_cast<HWND>(winId());
+        const bool frameReady = applyFrameMargins({-1, 0, 0, 0});
+        if (!frameReady || !WindowController::setDwmWindowEffect(hWnd, effect))
+        {
+            qWarning() << "Failed to enable DWM backdrop; retaining the previous effect state";
+            if (windowFlags() != oldFlags)
+                setWindowFlags(oldFlags);
+            setAttribute(Qt::WA_TranslucentBackground, wasTranslucent);
+            setAttribute(Qt::WA_NoSystemBackground, hadNoSystemBackground);
+            if (frameReady)
+                applyFrameMargins(oldMargins);
+            update();
+            return;
+        }
+        _useWindowEffects = true;
+        _dwmWindowEffect = effect;
+        _titleBar->setTransparency();
+        // 主题不是材料启用的必要条件，失败仅报告
+        if (!WindowController::setWindowThemeMode(hWnd, ThemeModeController::controller().appTheme()))
+            qWarning() << "Backdrop enabled, but native window theme could not be applied";
+        update();
     }
 
     void Window::setCompositionWindowEffect(CompositionWindowEffect effect, const QColor &color)
@@ -500,12 +536,19 @@ namespace fancy
             qWarning() << "Must restart the application to switch window effects";
             return;
         }
-        HWND hWnd = reinterpret_cast<HWND>(winId());
+        const auto oldMargins = _frameMargins;
+        if (!applyFrameMargins({0, 0, 1, 0}))
+            return;
+        const auto hWnd = reinterpret_cast<HWND>(winId());
+        if (!WindowController::setCompositionWindowEffect(hWnd, effect, ABGR(color.alpha(), color.red(), color.blue(), color.green())))
+        {
+            qWarning() << "Failed to enable composition effect; retaining the previous effect state";
+            applyFrameMargins(oldMargins);
+            return;
+        }
         _useWindowEffects = true;
         _useCompositionWindowEffect = true;
         _titleBar->setTransparency();
-        MARGINS margins{0, 0, 1, 0};
-        WindowController::setCompositionWindowEffect(hWnd, effect,ABGR(color.alpha(), color.red(), color.blue(), color.green()));
-        WindowController::extendFrameIntoClientArea(hWnd, margins);
+        update();
     }
 } // fancy
