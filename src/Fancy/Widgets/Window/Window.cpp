@@ -295,7 +295,7 @@ namespace fancy
             }
             break;
             case WM_NCMOUSELEAVE : // 光标从非工作区离开
-                if (_titleBar->_maximizeButton && !_titleBar->_minimizeButton->isHidden())
+                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
                 {
                     if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
                         emit _titleBar->_maximizeButton->mouseMove(false);
@@ -305,7 +305,7 @@ namespace fancy
                 break;
             case WM_NCLBUTTONDBLCLK : [[fallthrough]]; // 鼠标左键位于窗口非工作区双击时发出
             case WM_NCLBUTTONUP : // 鼠标左键非客户区松开,相当于点击最大化按钮
-                if (_titleBar->_maximizeButton && !_titleBar->_minimizeButton->isHidden())
+                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
                 {
                     if (msg->wParam == HTMAXBUTTON)
                     {
@@ -322,14 +322,14 @@ namespace fancy
                 }
                 break;
             case WM_LBUTTONUP : // 客户区鼠标左键松开
-                if (_titleBar->_maximizeButton && !_titleBar->_minimizeButton->isHidden())
+                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
                 {
                     if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
                         emit _titleBar->_maximizeButton->leave();
                 }
                 break;
             case WM_NCLBUTTONDOWN : // 鼠标左键位于窗口非工作区按下时发出
-                if (_titleBar->_maximizeButton && !_titleBar->_minimizeButton->isHidden())
+                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
                 {
                     if (msg->wParam == HTMAXBUTTON)
                     {
