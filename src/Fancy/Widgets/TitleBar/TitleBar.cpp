@@ -138,8 +138,15 @@ namespace fancy
 
     void TitleBar::mousePressEvent(QMouseEvent *event)
     {
-        Q_UNUSED(event)
-        window()->windowHandle()->startSystemMove();
+        if (event->button() == Qt::LeftButton && event->buttons() == Qt::LeftButton)
+        {
+            if (auto *handle = window()->windowHandle(); handle && handle->startSystemMove())
+            {
+                event->accept();
+                return;
+            }
+        }
+        QWidget::mousePressEvent(event);
     }
 
     void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
