@@ -57,7 +57,7 @@ namespace fancy
                          GetWindowLongPtr(
                              hwnd,
                              GWL_STYLE
-                         ) | WS_BORDER | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU
+                         ) | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU
         );
         if (previousStyle == 0 && GetLastError() != ERROR_SUCCESS)
             qWarning() << "Failed to configure native window style";
@@ -223,6 +223,15 @@ namespace fancy
     {
         switch (const MSG *msg = static_cast<MSG *>(message); msg->message)
         {
+            case WM_NCACTIVATE :
+                if (_useWindowEffects && !_useCompositionWindowEffect)
+                {
+                    // Qt 6.11 的无边框路径会吞掉此消息，使 DWM 材料停留在失活外观。
+                    // 更新原生激活状态，但不让 DefWindowProc 重绘系统标题栏。
+                    *result = DefWindowProc(msg->hwnd, msg->message, msg->wParam, -1);
+                    return true;
+                }
+                break;
             case WM_NCCALCSIZE : // 取消原有的标题栏和边框
                 // *result = msg->wParam ? 0 : WVR_REDRAW;
                 *result = 0;
@@ -500,7 +509,8 @@ namespace fancy
         setAttribute(Qt::WidgetAttribute::WA_TranslucentBackground);
         // Qt 属性或标志改变后再获取句柄，避免使用已被重建的 HWND
         const auto hWnd = reinterpret_cast<HWND>(winId());
-        const bool frameReady = applyFrameMargins({-1, 0, 0, 0});
+        // 与 resizeEvent 使用同一扩展方式，避免负边距带出系统标题栏按钮。
+        const bool frameReady = applyFrameMargins({static_cast<int>(width() * devicePixelRatioF()) + 1, 0, 0, 0});
         if (!frameReady || !WindowController::setDwmWindowEffect(hWnd, effect))
         {
             qWarning() << "Failed to enable DWM backdrop; retaining the previous effect state";
@@ -519,6 +529,8 @@ namespace fancy
         // 主题不是材料启用的必要条件，失败仅报告
         if (!WindowController::setWindowThemeMode(hWnd, ThemeModeController::controller().appTheme()))
             qWarning() << "Backdrop enabled, but native window theme could not be applied";
+        // 动态启用时，先前的 WM_NCACTIVATE 可能已被 Qt 消费，不会自动重发。
+        DefWindowProc(hWnd, WM_NCACTIVATE, GetForegroundWindow() == hWnd, -1);
         update();
     }
 
