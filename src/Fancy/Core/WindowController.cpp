@@ -7,6 +7,21 @@
 
 namespace fancy
 {
+    namespace
+    {
+        bool removeWindowStyles(HWND hwnd, LONG_PTR mask)
+        {
+            SetLastError(ERROR_SUCCESS);
+            const LONG_PTR style = GetWindowLongPtr(hwnd, GWL_STYLE);
+            if (style == 0 && GetLastError() != ERROR_SUCCESS)
+                return false;
+
+            SetLastError(ERROR_SUCCESS);
+            const LONG_PTR previousStyle = SetWindowLongPtr(hwnd, GWL_STYLE, style & ~mask);
+            return previousStyle != 0 || GetLastError() == ERROR_SUCCESS;
+        }
+    }
+
     LRESULT WindowController::moveWindow(HWND hWnd)
     {
         ReleaseCapture();
@@ -15,26 +30,22 @@ namespace fancy
 
     bool WindowController::disableMaximize(HWND hWnd)
     {
-        LONG_PTR value = SetWindowLongPtr(hWnd, GWL_STYLE, GetWindowLongPtr(hWnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
-        return value == 0 && GetLastError() != 0 ? false : !GetLastError();
+        return removeWindowStyles(hWnd, WS_MAXIMIZEBOX);
     }
 
     bool WindowController::disableMinimize(HWND hWnd)
     {
-        LONG_PTR value = SetWindowLongPtr(hWnd, GWL_STYLE, GetWindowLongPtr(hWnd, GWL_STYLE) & ~WS_MINIMIZEBOX);
-        return value == 0 && GetLastError() != 0 ? false : !GetLastError();
+        return removeWindowStyles(hWnd, WS_MINIMIZEBOX);
     }
 
     bool WindowController::disablesResizingViaBorders(HWND hWnd)
     {
-        LONG_PTR value = SetWindowLongPtr(hWnd, GWL_STYLE, GetWindowLongPtr(hWnd, GWL_STYLE) & ~WS_SIZEBOX);
-        return value == 0 && GetLastError() != 0 ? false : !GetLastError();
+        return removeWindowStyles(hWnd, WS_SIZEBOX);
     }
 
     bool WindowController::disableTitleBar(HWND hWnd)
     {
-        LONG_PTR value = SetWindowLongPtr(hWnd,GWL_STYLE,GetWindowLongPtr(hWnd, GWL_STYLE) & ~WS_SYSMENU & ~WS_CAPTION);
-        return value == 0 && GetLastError() != 0 ? false : !GetLastError();
+        return removeWindowStyles(hWnd, WS_SYSMENU | WS_CAPTION);
     }
 
     bool WindowController::setWindowTop(HWND hWnd, bool top)

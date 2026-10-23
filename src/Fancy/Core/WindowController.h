@@ -20,6 +20,11 @@ namespace fancy
          */
         static LRESULT moveWindow(HWND hWnd);
 
+        // 下列四个样式接口仅修改 GWL_STYLE，返回值表示样式读写是否成功。
+        // 对已创建窗口立即应用框架变化时，调用方应在批量修改完成后调用 SetWindowPos，
+        // 使用 SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE。
+        // 框架刷新会触发 WM_NCCALCSIZE 等消息，需由调用方结合自定义非客户区处理安排。
+
         /**
          * 禁用原生标题栏中的最大化按钮，同时移除最大化动画，但窗口仍然可以最大化
          * @param hWnd 窗口句柄
