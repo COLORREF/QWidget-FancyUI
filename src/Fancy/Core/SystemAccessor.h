@@ -9,9 +9,7 @@
 #include <QMap>
 #include <QSize>
 #ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
-#include <dwmapi.h>
-#include <windows.h>
+#include "Win32Compat.h"
 #endif
 
 namespace fancy

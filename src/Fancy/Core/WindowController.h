@@ -103,8 +103,8 @@ namespace fancy
         /**
          * 设置窗口边框的颜色，若系统开启了“在标题栏和窗口边框上显示强调色”选项（个性化设置中），则窗口边框颜色默认为系统色
          * rgb参数不支持透明度，调用此函数后，修改系统色不会导致窗口边框颜色同步变化
-         * 将rgb值置为DWMWA_COLOR_NONE宏可在视觉上隐藏边框
-         * 将rgb值置为DWMWA_COLOR_DEFAULT宏可恢复默认的边框颜色，并跟随系统变化
+         * 将rgb值置为win32::dwmwa_color_none可在视觉上隐藏边框
+         * 将rgb值置为win32::dwmwa_color_default可恢复默认的边框颜色，并跟随系统变化
          * @param hWnd 窗口句柄
          * @param rgb 要设置的边框颜色值，使用RGB宏生成
          * @return 如果函数成功，则返回true,否则返回false
@@ -114,8 +114,8 @@ namespace fancy
         /**
          * 设置窗口标题栏文字的颜色，仅对原生标题栏生效
          * rgb参数不支持透明度
-         * 若要恢复系统默认的颜色将rgb参数值置为DWMWA_COLOR_DEFAULT即可
-         * rgb参数值置为DWMWA_COLOR_NONE宏时函数调用失败
+         * 若要恢复系统默认的颜色将rgb参数值置为win32::dwmwa_color_default即可
+         * rgb参数值置为win32::dwmwa_color_none时函数调用失败
          * @param hWnd 窗口句柄
          * @param rgb 要设置的标题栏文字的颜色值，使用RGB宏生成
          * @return 如果函数成功，则返回true,否则返回false
@@ -125,8 +125,8 @@ namespace fancy
         /**
          * 设置标题栏颜色，若系统开启了“在标题栏和窗口边框上显示强调色”选项（个性化设置中），则标题栏颜色默认为系统色
          * rgb参数不支持透明度，调用此函数后，修改系统色不会导致标题栏颜色同步变化
-         * 将rgb值置为DWMWA_COLOR_DEFAULT宏可恢复默认的标题栏颜色，并跟随系统变化
-         * 将rgb值置为DWMWA_COLOR_NONE宏效果与DWMWA_COLOR_DEFAULT一样
+         * 将rgb值置为win32::dwmwa_color_default可恢复默认的标题栏颜色，并跟随系统变化
+         * 将rgb值置为win32::dwmwa_color_none效果与win32::dwmwa_color_default一样
          * @param hWnd 窗口句柄
          * @param rgb 要设置的标题栏的颜色值，使用RGB宏生成
          * @return 如果函数成功，则返回true,否则返回false

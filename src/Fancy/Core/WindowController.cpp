@@ -106,24 +106,24 @@ namespace fancy
 
     bool WindowController::setDwmWindowEffect(HWND hWnd, DwmWindowEffect effect)
     {
-        DWM_SYSTEMBACKDROP_TYPE system_backdrop_type;
+        win32::dwm_systembackdrop_type system_backdrop_type;
 
         switch (effect)
         {
             case DwmWindowEffect::Acrylic :
-                system_backdrop_type = DWMSBT_TRANSIENTWINDOW;
+                system_backdrop_type = win32::dwm_systembackdrop_type::dwmsbt_transientwindow;
                 break;
             case DwmWindowEffect::Mica :
-                system_backdrop_type = DWMSBT_MAINWINDOW;
+                system_backdrop_type = win32::dwm_systembackdrop_type::dwmsbt_mainwindow;
                 break;
             case DwmWindowEffect::MicaAlt :
-                system_backdrop_type = DWMSBT_TABBEDWINDOW;
+                system_backdrop_type = win32::dwm_systembackdrop_type::dwmsbt_tabbedwindow;
                 break;
             case DwmWindowEffect::Auto :
-                system_backdrop_type = DWMSBT_AUTO;
+                system_backdrop_type = win32::dwm_systembackdrop_type::dwmsbt_auto;
                 break;
             case DwmWindowEffect::None :
-                system_backdrop_type = DWMSBT_NONE;
+                system_backdrop_type = win32::dwm_systembackdrop_type::dwmsbt_none;
                 break;
             default :
                 return false;
@@ -131,9 +131,9 @@ namespace fancy
 
         return SystemAccessor::DwmSetWindowAttribute(
             hWnd,
-            DWMWA_SYSTEMBACKDROP_TYPE,
+            win32::dwmwa_systembackdrop_type,
             &system_backdrop_type,
-            sizeof(DWM_SYSTEMBACKDROP_TYPE)
+            sizeof(system_backdrop_type)
         );
     }
 
@@ -153,7 +153,7 @@ namespace fancy
             hWnd,
             DWMWA_NCRENDERING_POLICY,
             &value,
-            sizeof(DWMWINDOWATTRIBUTE)
+            sizeof(value)
         );
     }
 
@@ -161,9 +161,9 @@ namespace fancy
     {
         return SystemAccessor::DwmSetWindowAttribute(
             hWnd,
-            DWMWA_BORDER_COLOR,
+            win32::dwmwa_border_color,
             &rgb,
-            sizeof(COLORREF)
+            sizeof(rgb)
         );
     }
 
@@ -171,9 +171,9 @@ namespace fancy
     {
         return SystemAccessor::DwmSetWindowAttribute(
             hWnd,
-            DWMWA_TEXT_COLOR,
+            win32::dwmwa_text_color,
             &rgb,
-            sizeof(COLORREF)
+            sizeof(rgb)
         );
     }
 
@@ -181,20 +181,20 @@ namespace fancy
     {
         return SystemAccessor::DwmSetWindowAttribute(
             hWnd,
-            DWMWA_CAPTION_COLOR,
+            win32::dwmwa_caption_color,
             &rgb,
-            sizeof(COLORREF)
+            sizeof(rgb)
         );
     }
 
     bool WindowController::setWindowThemeMode(HWND hWnd, Theme theme)
     {
-        // theme 的值恰好与此处 DwmSetWindowAttribute 所需的 BOOL 变量值对应，故为简化处理逻辑此处直接对 theme 取指，不再创建 BOOL 变量
+        const BOOL dark = theme == Theme::Dark;
         return SystemAccessor::DwmSetWindowAttribute(
             hWnd,
-            DWMWA_USE_IMMERSIVE_DARK_MODE,
-            &theme,
-            sizeof(BOOL)
+            win32::dwmwa_use_immersive_dark_mode,
+            &dark,
+            sizeof(dark)
         );
     }
 

@@ -21,30 +21,8 @@
 
 #define ABGR(a, b, g, r) ((COLORREF)(((a & 0xffu) << 24) | ((b & 0xffu) << 16) | ((g & 0xffu) << 8) | (r & 0xffu)))
 
-#ifdef __GNUC__
-#define DWMWA_COLOR_DEFAULT 0xFFFFFFFF
-#define DWMWA_COLOR_NONE    0xFFFFFFFE
-#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
-#define DWMWA_BORDER_COLOR 34
-#define DWMWA_CAPTION_COLOR 35
-#define DWMWA_TEXT_COLOR 36
-#define DWMWA_SYSTEMBACKDROP_TYPE 38
-
-enum DWM_SYSTEMBACKDROP_TYPE
-{
-    DWMSBT_AUTO,
-    DWMSBT_NONE,
-    DWMSBT_MAINWINDOW,
-    DWMSBT_TRANSIENTWINDOW,
-    DWMSBT_TABBEDWINDOW,
-};
-#endif
-
 #ifdef Q_OS_WIN
-#define WIN32_LEAN_AND_MEAN
-#include <dwmapi.h>
-#include <windows.h>
-#include <winnt.h>
+#include "Win32Compat.h"
 #define THEME_REGEDIT_PATH TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
 #define FULL_THEME_REGEDIT_PATH TEXT("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
 #define THEME_REGEDIT_KEY TEXT("AppsUseLightTheme")
