@@ -5,7 +5,6 @@
 #include "SystemAccessor.h"
 #include <bcrypt.h>
 #include <QDebug>
-#include <mutex>
 #include "Defs.h"
 
 namespace fancy
@@ -197,11 +196,8 @@ namespace fancy
                 return {x + padding, y + padding};
         }
 
-        static std::once_flag legacyWarning;
-        std::call_once(legacyWarning, [] {
-            qWarning() << "DPI-specific resize metrics unavailable; using legacy system metrics."
-                    " Per-monitor accuracy is limited when window DPI is unavailable.";
-        });
+        qWarning() << "DPI-specific resize metrics unavailable; using legacy system metrics."
+                << " Per-monitor accuracy is limited when window DPI is unavailable.";
 
         UINT systemDpi = getDpiForSystem ? getDpiForSystem() : 0;
         if (!systemDpi)
@@ -226,10 +222,7 @@ namespace fancy
             return {qMax(1, scale(x) + scale(padding)), qMax(1, scale(y) + scale(padding))};
         }
 
-        static std::once_flag fixedWarning;
-        std::call_once(fixedWarning, [] {
-            qWarning() << "Resize border metrics failed; using an approximate 8-pixel border at 96 DPI";
-        });
+        qWarning() << "Resize border metrics failed; using an approximate 8-pixel border at 96 DPI";
         const UINT dpi = windowDpi ? windowDpi : (systemDpi ? systemDpi : 96);
         const int fallback = qMax(1, ::MulDiv(8, static_cast<int>(dpi), 96));
         return {fallback, fallback};
