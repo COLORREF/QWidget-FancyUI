@@ -20,10 +20,26 @@ namespace fancy
          */
         static LRESULT moveWindow(HWND hWnd);
 
+        /**
+         * 为自绘无边框窗口保留系统菜单、缩放及最小化/最大化所需的原生样式
+         * @param hWnd 已存在的窗口句柄，本函数不会创建窗口
+         * @return 样式读取和写入均成功返回 true，否则返回 false
+         * @note 仅修改 GWL_STYLE，不主动刷新框架；调用方仍需接管 WM_NCCALCSIZE
+         */
+        static bool enableFramelessWindowStyles(HWND hWnd);
+
+        /**
+         * 更新原生非客户区的激活外观，同时禁止默认过程重绘系统标题栏
+         * @param hWnd 已存在的窗口句柄
+         * @param active 是否以激活状态呈现；本函数不会切换前台窗口或键盘焦点
+         * @return 默认窗口过程处理 WM_NCACTIVATE 的结果，可作为该消息的返回值
+         */
+        static LRESULT updateNonClientActivation(HWND hWnd, bool active);
+
         // 下列四个样式接口仅修改 GWL_STYLE，返回值表示样式读写是否成功。
         // 对已创建窗口立即应用框架变化时，调用方应在批量修改完成后调用 SetWindowPos，
-        // 使用 SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE。
-        // 框架刷新会触发 WM_NCCALCSIZE 等消息，需由调用方结合自定义非客户区处理安排。
+        // 使用 SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
+        // 框架刷新会触发 WM_NCCALCSIZE 等消息，需由调用方结合自定义非客户区处理安排
 
         /**
          * 禁用原生标题栏中的最大化按钮，同时移除最大化动画，但窗口仍然可以最大化

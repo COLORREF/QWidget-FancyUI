@@ -58,6 +58,17 @@ namespace fancy
 
         void setDoubleClickMaximize(bool allow);
 
+        /**
+         * @brief 设置调整窗口大小的边缘命中宽度，不影响最大化边距补偿
+         * @param width Qt 逻辑像素，默认 4；0 禁用边缘调整，负值忽略并输出警告
+         */
+        void setResizeBorderWidth(int width);
+
+        /**
+         * @brief 获取调整窗口大小的边缘命中宽度，单位为 Qt 逻辑像素
+         */
+        [[nodiscard]] int resizeBorderWidth() const;
+
         void removeCloseButton();
 
         void removeMaximizeButton();
@@ -75,6 +86,8 @@ namespace fancy
         QWidget *titleBar();
 
     protected:
+        bool event(QEvent *event) override;
+
         void paintEvent(QPaintEvent *event) override;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -86,11 +99,8 @@ namespace fancy
 
         void changeEvent(QEvent *event) override;
 
-        void resizeEvent(QResizeEvent *event) override;
-
     private:
-        int _xBorderWidth{};
-        int _yBorderWidth{};
+        int _resizeBorderWidth = 4; // 调整窗口大小的边缘命中宽度，Qt 逻辑像素
         bool _useWindowEffects;
         bool _useCompositionWindowEffect;
         bool _dwmPreviousNoSystemBackground{};
@@ -100,6 +110,7 @@ namespace fancy
         QWidget *_clientArea; // 客户区
         QVBoxLayout *_verticalLayout;
         QVariantAnimation *_animation;
+        WId _frameMarginsWindow{}; // 扩展边距所属的原生窗口；句柄变化时失效。
         std::array<int, 4> _frameMargins{}; //最近成功应用的框架边距（左、右、上、下），用于失败回退
 
         /**
@@ -107,9 +118,11 @@ namespace fancy
          */
         bool applyFrameMargins(const std::array<int, 4> &margins);
 
-        void setBorderWidth();
-
-        void updateMaximizedMargins();
+        /**
+         * @brief 按虚拟屏幕宽度预留 DWM 扩展，覆盖不足时增大；失败不更新记录
+         * @param force 强制重新查询预留范围并应用，用于显示变化、句柄重建及材料切换
+         */
+        bool extendDwmToClientArea(bool force = false);
 
         void setDwmWindowEffect(DwmWindowEffect effect);
 
@@ -120,7 +133,7 @@ namespace fancy
 
         void updateBkgColor(const QVariant &value);
 
-        void setDwmMargins();
+        void setDwmMargins(bool force = false);
     };
 } // fancy
 

@@ -5,6 +5,7 @@
 #include "SystemAccessor.h"
 #include <bcrypt.h>
 #include <QDebug>
+#include <mutex>
 #include "Defs.h"
 
 namespace fancy
@@ -164,11 +165,105 @@ namespace fancy
         return ver;
     }
 
-    QSize SystemAccessor::windowResizeBorderSize()
+    QSize SystemAccessor::windowResizeBorderSize(HWND hwnd)
     {
-        const int width = ::GetSystemMetrics(SM_CXSIZEFRAME);
-        const int height = ::GetSystemMetrics(SM_CYSIZEFRAME);
-        return {qMax(1, width), qMax(1, height)};
+        if (!hwnd || !::IsWindow(hwnd))
+        {
+            qWarning() << "Cannot query resize borders for an invalid HWND; retaining previous borders";
+            return {};
+        }
+
+        // 动态解析，避免旧系统因缺少 Win10 1607 的入口点而无法加载
+        static const auto getDpiForWindow = reinterpret_cast<UINT (WINAPI *)(HWND)>(
+            _user32dll ? GetProcAddress(_user32dll, "GetDpiForWindow") : nullptr);
+        static const auto getMetricsForDpi = reinterpret_cast<int (WINAPI *)(int, UINT)>(
+            _user32dll ? GetProcAddress(_user32dll, "GetSystemMetricsForDpi") : nullptr);
+        static const auto getDpiForSystem = reinterpret_cast<UINT (WINAPI *)()>(
+            _user32dll ? GetProcAddress(_user32dll, "GetDpiForSystem") : nullptr);
+
+        const UINT windowDpi = getDpiForWindow ? getDpiForWindow(hwnd) : 0;
+        if (getDpiForWindow && !windowDpi)
+        {
+            qWarning() << "GetDpiForWindow failed; retaining previous resize borders";
+            return {};
+        }
+        if (windowDpi && getMetricsForDpi)
+        {
+            const int x = getMetricsForDpi(SM_CXSIZEFRAME, windowDpi);
+            const int y = getMetricsForDpi(SM_CYSIZEFRAME, windowDpi);
+            const int padding = getMetricsForDpi(SM_CXPADDEDBORDER, windowDpi);
+            // padding 为零是合法结果，不能据此判断查询失败
+            if (x > 0 && y > 0 && padding >= 0)
+                return {x + padding, y + padding};
+        }
+
+        static std::once_flag legacyWarning;
+        std::call_once(legacyWarning, [] {
+            qWarning() << "DPI-specific resize metrics unavailable; using legacy system metrics."
+                    " Per-monitor accuracy is limited when window DPI is unavailable.";
+        });
+
+        UINT systemDpi = getDpiForSystem ? getDpiForSystem() : 0;
+        if (!systemDpi)
+        {
+            if (const HDC dc = ::GetDC(nullptr))
+            {
+                const int dpi = ::GetDeviceCaps(dc, LOGPIXELSX);
+                ::ReleaseDC(nullptr, dc);
+                if (dpi > 0)
+                    systemDpi = static_cast<UINT>(dpi);
+            }
+        }
+        const int x = ::GetSystemMetrics(SM_CXSIZEFRAME);
+        const int y = ::GetSystemMetrics(SM_CYSIZEFRAME);
+        const int padding = qMax(0, ::GetSystemMetrics(SM_CXPADDEDBORDER));
+        if (x > 0 && y > 0 && (!windowDpi || systemDpi))
+        {
+            // 旧指标已按系统 DPI 缩放；只有来源与目标 DPI 都已知时才重新换算
+            const auto scale = [windowDpi, systemDpi](int value) {
+                return windowDpi ? ::MulDiv(value, static_cast<int>(windowDpi), static_cast<int>(systemDpi)) : value;
+            };
+            return {qMax(1, scale(x) + scale(padding)), qMax(1, scale(y) + scale(padding))};
+        }
+
+        static std::once_flag fixedWarning;
+        std::call_once(fixedWarning, [] {
+            qWarning() << "Resize border metrics failed; using an approximate 8-pixel border at 96 DPI";
+        });
+        const UINT dpi = windowDpi ? windowDpi : (systemDpi ? systemDpi : 96);
+        const int fallback = qMax(1, ::MulDiv(8, static_cast<int>(dpi), 96));
+        return {fallback, fallback};
+    }
+
+    qint64 SystemAccessor::windowClientWidth(HWND hwnd)
+    {
+        RECT rect{};
+        if (!hwnd || !::GetClientRect(hwnd, &rect))
+            return -1;
+        return static_cast<qint64>(rect.right) - rect.left;
+    }
+
+    int SystemAccessor::virtualScreenWidth()
+    {
+        return qMax(0, GetSystemMetrics(SM_CXVIRTUALSCREEN));
+    }
+
+    bool SystemAccessor::screenToClientPoint(HWND hwnd, const POINT &screenPoint, POINT &clientPoint)
+    {
+        if (!hwnd)
+            return false;
+        POINT point = screenPoint;
+        // MapWindowPoints 返回零也可能表示成功且位移为零，必须同时检查错误码
+        SetLastError(ERROR_SUCCESS);
+        if (MapWindowPoints(HWND_DESKTOP, hwnd, &point, 1) == 0 && ::GetLastError() != ERROR_SUCCESS)
+        {
+            point = screenPoint;
+            // ScreenToClient 不适合镜像布局；此时保留失败，让调用方走默认命中处理
+            if (GetWindowLongPtr(hwnd, GWL_EXSTYLE) & WS_EX_LAYOUTRTL || !ScreenToClient(hwnd, &point))
+                return false;
+        }
+        clientPoint = point;
+        return true;
     }
 
     bool SystemAccessor::isWindows11()

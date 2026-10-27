@@ -38,5 +38,5 @@ endif ()
 
 # 链接 Windows 平台所需的系统库
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE user32 dwmapi advapi32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE user32 dwmapi advapi32 gdi32)
 endif ()

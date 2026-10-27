@@ -33,6 +33,23 @@ namespace fancy
         return removeWindowStyles(hWnd, WS_MAXIMIZEBOX);
     }
 
+    bool WindowController::enableFramelessWindowStyles(HWND hWnd)
+    {
+        SetLastError(ERROR_SUCCESS);
+        const LONG_PTR style = GetWindowLongPtr(hWnd, GWL_STYLE);
+        if (style == 0 && GetLastError() != ERROR_SUCCESS)
+            return false;
+        SetLastError(ERROR_SUCCESS);
+        const LONG_PTR previousStyle = SetWindowLongPtr(hWnd, GWL_STYLE, style | WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU);
+        return previousStyle != 0 || GetLastError() == ERROR_SUCCESS; // 返回零不一定失败，不能只根据旧样式值判断
+    }
+
+    LRESULT WindowController::updateNonClientActivation(HWND hWnd, bool active)
+    {
+        // lParam = -1 保留系统激活状态处理，但禁止重绘自绘窗口的原生标题栏
+        return DefWindowProc(hWnd, WM_NCACTIVATE, active ? TRUE : FALSE, -1);
+    }
+
     bool WindowController::disableMinimize(HWND hWnd)
     {
         return removeWindowStyles(hWnd, WS_MINIMIZEBOX);

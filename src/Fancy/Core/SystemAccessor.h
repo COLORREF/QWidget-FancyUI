@@ -95,10 +95,34 @@ namespace fancy
         static const WindowsVersion &windowsVersion(); //获取Windows版本信息 //单例模式,首次初始化
 
         /**
-         * 使用 GetSystemMetrics() 获取系统缩放边框尺寸，单位为 Win32 像素。
-         * 不进行 Qt DPR 换算，也不保证按窗口所在显示器的 DPI 查询。
+         * 获取目标窗口的缩放框架尺寸（含附加边框），不进行 Qt DPR 换算
+         * @param hwnd 有效的目标窗口句柄；应在窗口所属的 GUI 线程调用
+         * @return 窗口 DPI 下的原生像素尺寸；无效句柄返回空 QSize，调用方保留原值
+         * 旧系统无法查询窗口 DPI 时退回系统指标；指标不可用时使用固定值并输出警告
          */
-        static QSize windowResizeBorderSize();
+        static QSize windowResizeBorderSize(HWND hwnd);
+
+        /**
+         * 查询原生客户区宽度，不进行 Qt DPR 换算
+         * @param hwnd 已存在的窗口句柄；应在窗口所属的 GUI 线程调用
+         * @return 当前 DPI awareness 上下文中的原生像素宽度；失败返回 -1，零宽度有效
+         */
+        static qint64 windowClientWidth(HWND hwnd);
+
+        /**
+         * 查询虚拟屏幕包围矩形的宽度,应在目标窗口所属 GUI 线程的 DPI awareness 上下文中调用，不再乘以 Qt DPR
+         * @return 原生虚拟屏幕宽度；查询失败返回 0，由调用方决定回退方式。
+         */
+        static int virtualScreenWidth();
+
+        /**
+         * 将原生屏幕坐标转换为目标窗口的客户区坐标，不进行 Qt DPR 换算。
+         * @param hwnd 已存在的目标窗口句柄
+         * @param screenPoint 原生屏幕坐标
+         * @param clientPoint 成功时接收原生客户区坐标，失败时保持原值
+         * @return 转换成功返回 true，否则返回 false。
+         */
+        static bool screenToClientPoint(HWND hwnd, const POINT &screenPoint, POINT &clientPoint);
 
         /**
          * @return 是否是Windows11操作系统 若是则返回true否则返回false
