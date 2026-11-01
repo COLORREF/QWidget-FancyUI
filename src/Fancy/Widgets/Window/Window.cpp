@@ -26,7 +26,7 @@
 
 namespace fancy
 {
-    Window::Window(QWidget *parent) :
+    Window::Window(QWidget* parent) :
         QWidget(parent),
         _useWindowEffects(false),
         _useCompositionWindowEffect(false),
@@ -79,7 +79,7 @@ namespace fancy
         setCompositionWindowEffect(CompositionWindowEffect::Areo);
     }
 
-    void Window::setAreoEffect(const QColor &color)
+    void Window::setAreoEffect(const QColor& color)
     {
         setCompositionWindowEffect(CompositionWindowEffect::AreoWithColor, color);
     }
@@ -94,12 +94,12 @@ namespace fancy
         setCompositionWindowEffect(CompositionWindowEffect::SystemColor);
     }
 
-    void Window::setTransparentColorFillEffect(const QColor &color)
+    void Window::setTransparentColorFillEffect(const QColor& color)
     {
         setCompositionWindowEffect(CompositionWindowEffect::TransparentColor, color);
     }
 
-    void Window::setSolidColorFillEffect(const QColor &color)
+    void Window::setSolidColorFillEffect(const QColor& color)
     {
         setCompositionWindowEffect(CompositionWindowEffect::SolidColor, color);
     }
@@ -193,17 +193,17 @@ namespace fancy
         move(targetGeometry.left() + (targetGeometry.width() - width()) / 2, targetGeometry.top() + (targetGeometry.height() - height()) / 2);
     }
 
-    QWidget *Window::setupUiWidget()
+    QWidget* Window::setupUiWidget()
     {
         return _clientArea;
     }
 
-    QWidget *Window::titleBar()
+    QWidget* Window::titleBar()
     {
         return _titleBar;
     }
 
-    void Window::paintEvent(QPaintEvent *event)
+    void Window::paintEvent(QPaintEvent* event)
     {
         if (_useWindowEffects)
         {
@@ -219,177 +219,177 @@ namespace fancy
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    bool Window::nativeEvent(const QByteArray &eventType, void *message, qintptr *result)
+    bool Window::nativeEvent(const QByteArray& eventType, void* message, qintptr* result)
 #else
-    bool Window::nativeEvent(const QByteArray &eventType, void *message, long *result)
+    bool Window::nativeEvent(const QByteArray& eventType, void* message, long* result)
 #endif
     {
-        switch (const MSG *msg = static_cast<MSG *>(message); msg->message)
+        switch (const MSG* msg = static_cast<MSG*>(message); msg->message)
         {
-            case WM_NCACTIVATE :
-                if (_useWindowEffects && !_useCompositionWindowEffect)
-                {
-                    // Qt 6.11 的无边框路径会吞掉此消息，使 DWM 材料停留在失活外观
-                    // 更新原生激活状态，但不让 DefWindowProc 重绘系统标题栏
-                    *result = WindowController::updateNonClientActivation(msg->hwnd, msg->wParam != FALSE);
-                    return true;
-                }
-                break;
-            case WM_NCCALCSIZE :
+        case WM_NCACTIVATE:
+            if (_useWindowEffects && !_useCompositionWindowEffect)
             {
-                // 两种消息参数形式都包含待计算的原生窗口矩形
-                RECT *clientRect = msg->wParam
-                                       ? &reinterpret_cast<NCCALCSIZE_PARAMS *>(msg->lParam)->rgrc[0]
-                                       : reinterpret_cast<RECT *>(msg->lParam);
-                if (::IsZoomed(msg->hwnd) && !isFullScreen())
-                {
-                    const QSize border = SystemAccessor::windowResizeBorderSize(msg->hwnd);
-                    if (border.width() > 0 && border.height() > 0 &&
-                        clientRect->right - clientRect->left > 2 * border.width() &&
-                        clientRect->bottom - clientRect->top > 2 * border.height())
-                    {
-                        // 收缩客户区
-                        clientRect->left += border.width();
-                        clientRect->right -= border.width();
-                        clientRect->top += border.height();
-                        clientRect->bottom -= border.height();
-                    }
-                }
-                *result = 0;
+                // Qt 6.11 的无边框路径会吞掉此消息，使 DWM 材料停留在失活外观
+                // 更新原生激活状态，但不让 DefWindowProc 重绘系统标题栏
+                *result = WindowController::updateNonClientActivation(msg->hwnd, msg->wParam != FALSE);
                 return true;
             }
-            case WM_NCHITTEST : // 光标位置测试
+            break;
+        case WM_NCCALCSIZE:
+        {
+            // 两种消息参数形式都包含待计算的原生窗口矩形
+            RECT* clientRect = msg->wParam
+                                   ? &reinterpret_cast<NCCALCSIZE_PARAMS*>(msg->lParam)->rgrc[0]
+                                   : reinterpret_cast<RECT*>(msg->lParam);
+            if (::IsZoomed(msg->hwnd) && !isFullScreen())
             {
-                POINT p{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)}; // 获取鼠标的绝对坐标
-                if (!isMaximized() && !isFullScreen() && _resizeBorderWidth > 0 && minimumSize() != maximumSize())
+                const QSize border = SystemAccessor::windowResizeBorderSize(msg->hwnd);
+                if (border.width() > 0 && border.height() > 0 &&
+                    clientRect->right - clientRect->left > 2 * border.width() &&
+                    clientRect->bottom - clientRect->top > 2 * border.height())
                 {
-                    // 只换算命中宽度；坐标和窗口矩形继续使用原生像素
-                    const qreal borderWidth = std::ceil(_resizeBorderWidth * devicePixelRatioF());
-                    RECT widget_rect{0, 0, 0, 0};
-                    if (!GetWindowRect(msg->hwnd, &widget_rect))
-                        break;
-                    if (p.x < widget_rect.left || p.x >= widget_rect.right ||
-                        p.y < widget_rect.top || p.y >= widget_rect.bottom)
-                        break;
-
-                    // 调整窗口大小的边缘命中范围判断
-                    if (p.x < widget_rect.right && p.x >= widget_rect.right - borderWidth) // 右
-                    {
-                        if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - borderWidth) // 下
-                            *result = HTBOTTOMRIGHT;
-                        else if (p.y < widget_rect.top + borderWidth) // 上
-                            *result = HTTOPRIGHT;
-                        else
-                            *result = HTRIGHT;
-                        return true;
-                    }
-                    if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - borderWidth) // 下
-                    {
-                        if (p.x < widget_rect.left + borderWidth) // 左
-                            *result = HTBOTTOMLEFT;
-                        else
-                            *result = HTBOTTOM;
-                        return true;
-                    }
-                    if (p.y < widget_rect.top + borderWidth) // 上
-                    {
-                        if (p.x < widget_rect.left + borderWidth) // 左
-                            *result = HTTOPLEFT;
-                        else
-                            *result = HTTOP;
-                        return true;
-                    }
-                    if (p.x < widget_rect.left + borderWidth) // 左
-                    {
-                        *result = HTLEFT;
-                        return true;
-                    }
+                    // 收缩客户区
+                    clientRect->left += border.width();
+                    clientRect->right -= border.width();
+                    clientRect->top += border.height();
+                    clientRect->bottom -= border.height();
                 }
+            }
+            *result = 0;
+            return true;
+        }
+        case WM_NCHITTEST: // 光标位置测试
+        {
+            POINT p{GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam)}; // 获取鼠标的绝对坐标
+            if (!isMaximized() && !isFullScreen() && _resizeBorderWidth > 0 && minimumSize() != maximumSize())
+            {
+                // 只换算命中宽度；坐标和窗口矩形继续使用原生像素
+                const qreal borderWidth = std::ceil(_resizeBorderWidth * devicePixelRatioF());
+                RECT widget_rect{0, 0, 0, 0};
+                if (!GetWindowRect(msg->hwnd, &widget_rect))
+                    break;
+                if (p.x < widget_rect.left || p.x >= widget_rect.right ||
+                    p.y < widget_rect.top || p.y >= widget_rect.bottom)
+                    break;
 
-                // 最大化按钮区域判定
-                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+                // 调整窗口大小的边缘命中范围判断
+                if (p.x < widget_rect.right && p.x >= widget_rect.right - borderWidth) // 右
                 {
-                    POINT clientPoint{};
-                    if (!SystemAccessor::screenToClientPoint(msg->hwnd, p, clientPoint))
-                        break;
-                    QPointF widget_point(clientPoint.x, clientPoint.y); // Win32 客户区物理像素
-                    widget_point /= devicePixelRatioF(); // 除以缩放dpi
+                    if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - borderWidth) // 下
+                        *result = HTBOTTOMRIGHT;
+                    else if (p.y < widget_rect.top + borderWidth) // 上
+                        *result = HTTOPRIGHT;
+                    else
+                        *result = HTRIGHT;
+                    return true;
+                }
+                if (p.y < widget_rect.bottom && p.y >= widget_rect.bottom - borderWidth) // 下
+                {
+                    if (p.x < widget_rect.left + borderWidth) // 左
+                        *result = HTBOTTOMLEFT;
+                    else
+                        *result = HTBOTTOM;
+                    return true;
+                }
+                if (p.y < widget_rect.top + borderWidth) // 上
+                {
+                    if (p.x < widget_rect.left + borderWidth) // 左
+                        *result = HTTOPLEFT;
+                    else
+                        *result = HTTOP;
+                    return true;
+                }
+                if (p.x < widget_rect.left + borderWidth) // 左
+                {
+                    *result = HTLEFT;
+                    return true;
+                }
+            }
 
-                    QRectF max_btn_rect(_titleBar->_maximizeButton->mapTo(this, QPoint{0, 0}), _titleBar->_maximizeButton->size()); // 最大化按钮区域
-                    if (max_btn_rect.contains(widget_point)) // 鼠标在最大化按钮内
-                    {
-                        *result = HTMAXBUTTON;
-                        if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut) // 鼠标按下
-                            emit _titleBar->_maximizeButton->mouseMove(true);
-                        else
-                            emit _titleBar->_maximizeButton->enter();
-                        return true;
-                    }
+            // 最大化按钮区域判定
+            if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+            {
+                POINT clientPoint{};
+                if (!SystemAccessor::screenToClientPoint(msg->hwnd, p, clientPoint))
+                    break;
+                QPointF widget_point(clientPoint.x, clientPoint.y); // Win32 客户区物理像素
+                widget_point /= devicePixelRatioF(); // 除以缩放dpi
+
+                QRectF max_btn_rect(_titleBar->_maximizeButton->mapTo(this, QPoint{0, 0}), _titleBar->_maximizeButton->size()); // 最大化按钮区域
+                if (max_btn_rect.contains(widget_point)) // 鼠标在最大化按钮内
+                {
+                    *result = HTMAXBUTTON;
+                    if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut) // 鼠标按下
+                        emit _titleBar->_maximizeButton->mouseMove(true);
+                    else
+                        emit _titleBar->_maximizeButton->enter();
+                    return true;
+                }
+            }
+        }
+        break;
+        case WM_NCMOUSELEAVE: // 光标从非工作区离开
+            if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+            {
+                if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
+                    emit _titleBar->_maximizeButton->mouseMove(false);
+                else
+                    emit _titleBar->_maximizeButton->leave();
+            }
+            break;
+        case WM_NCLBUTTONDBLCLK: [[fallthrough]]; // 鼠标左键位于窗口非工作区双击时发出
+        case WM_NCLBUTTONUP: // 鼠标左键非客户区松开,相当于点击最大化按钮
+            if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+            {
+                if (msg->wParam == HTMAXBUTTON)
+                {
+                    emit _titleBar->_maximizeButton->leave();
+                    if (isMaximized())
+                        // showNormal();//Qt 6.8会产生窗口动画消失、窗口大小无法复原等bug
+                        ::SendMessage(msg->hwnd, WM_SYSCOMMAND, SC_RESTORE, 0); // 使用Windows API可以避免这些bug
+                    else
+                        // showMaximized();
+                        ::SendMessage(msg->hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+                    *result = 0;
+                    return true;
                 }
             }
             break;
-            case WM_NCMOUSELEAVE : // 光标从非工作区离开
-                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+        case WM_LBUTTONUP: // 客户区鼠标左键松开
+            if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+            {
+                if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
+                    emit _titleBar->_maximizeButton->leave();
+            }
+            break;
+        case WM_NCLBUTTONDOWN: // 鼠标左键位于窗口非工作区按下时发出
+            if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
+            {
+                if (msg->wParam == HTMAXBUTTON)
                 {
-                    if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
-                        emit _titleBar->_maximizeButton->mouseMove(false);
-                    else
-                        emit _titleBar->_maximizeButton->leave();
+                    *result = 0;
+                    emit _titleBar->_maximizeButton->mousePress();
+                    return true;
                 }
-                break;
-            case WM_NCLBUTTONDBLCLK : [[fallthrough]]; // 鼠标左键位于窗口非工作区双击时发出
-            case WM_NCLBUTTONUP : // 鼠标左键非客户区松开,相当于点击最大化按钮
-                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
-                {
-                    if (msg->wParam == HTMAXBUTTON)
-                    {
-                        emit _titleBar->_maximizeButton->leave();
-                        if (isMaximized())
-                            // showNormal();//Qt 6.8会产生窗口动画消失、窗口大小无法复原等bug
-                            ::SendMessage(msg->hwnd, WM_SYSCOMMAND, SC_RESTORE, 0); // 使用Windows API可以避免这些bug
-                        else
-                            // showMaximized();
-                            ::SendMessage(msg->hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-                        *result = 0;
-                        return true;
-                    }
-                }
-                break;
-            case WM_LBUTTONUP : // 客户区鼠标左键松开
-                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
-                {
-                    if (_titleBar->_maximizeButton->_state == TitleBtnState::Pressed || _titleBar->_maximizeButton->_state == TitleBtnState::PressedOut)
-                        emit _titleBar->_maximizeButton->leave();
-                }
-                break;
-            case WM_NCLBUTTONDOWN : // 鼠标左键位于窗口非工作区按下时发出
-                if (_titleBar->_maximizeButton && !_titleBar->_maximizeButton->isHidden())
-                {
-                    if (msg->wParam == HTMAXBUTTON)
-                    {
-                        *result = 0;
-                        emit _titleBar->_maximizeButton->mousePress();
-                        return true;
-                    }
-                }
-                break;
-            case WM_SIZE :
-                // 此时原生客户区已更新；继续交给 Qt 处理尺寸事件
-                if (msg->wParam != SIZE_MINIMIZED)
-                    setDwmMargins();
-                break;
-            case WM_DISPLAYCHANGE :
-            case WM_DWMCOMPOSITIONCHANGED :
-                // 显示配置或合成状态改变后强制重新查询并应用预留范围。
-                setDwmMargins(true);
-                break;
-            default :
-                break;
+            }
+            break;
+        case WM_SIZE:
+            // 此时原生客户区已更新；继续交给 Qt 处理尺寸事件
+            if (msg->wParam != SIZE_MINIMIZED)
+                setDwmMargins();
+            break;
+        case WM_DISPLAYCHANGE:
+        case WM_DWMCOMPOSITIONCHANGED:
+            // 显示配置或合成状态改变后强制重新查询并应用预留范围。
+            setDwmMargins(true);
+            break;
+        default:
+            break;
         }
         return QWidget::nativeEvent(eventType, message, result);
     }
 
-    bool Window::event(QEvent *event)
+    bool Window::event(QEvent* event)
     {
         const bool handled = QWidget::event(event);
         if (event->type() == QEvent::WinIdChange)
@@ -401,11 +401,11 @@ namespace fancy
         return handled;
     }
 
-    void Window::changeEvent(QEvent *event)
+    void Window::changeEvent(QEvent* event)
     {
         if (event->type() == QEvent::Type::WindowStateChange)
         {
-            if (const auto *stateChangeEvent = dynamic_cast<QWindowStateChangeEvent *>(event))
+            if (const auto* stateChangeEvent = dynamic_cast<QWindowStateChangeEvent*>(event))
             {
                 // 最大化后最小化
                 if (stateChangeEvent->oldState() & Qt::WindowState::WindowMaximized && windowState() & Qt::WindowState::WindowMinimized)
@@ -451,13 +451,13 @@ namespace fancy
         }
     }
 
-    void Window::updateBkgColor(const QVariant &value)
+    void Window::updateBkgColor(const QVariant& value)
     {
         _bkgColor = value.value<QColor>();
         update();
     }
 
-    bool Window::applyFrameMargins(const std::array<int, 4> &margins)
+    bool Window::applyFrameMargins(const std::array<int, 4>& margins)
     {
         const MARGINS nativeMargins{margins[0], margins[1], margins[2], margins[3]};
         const WId currentId = winId();
@@ -475,12 +475,12 @@ namespace fancy
     {
         switch (_dwmWindowEffect)
         {
-            case DwmWindowEffect::Acrylic : // 亚克力
-            case DwmWindowEffect::Mica : // 云母
-            case DwmWindowEffect::MicaAlt : // 云母ALT
-                extendDwmToClientArea(force);
-            default :
-                break;
+        case DwmWindowEffect::Acrylic: // 亚克力
+        case DwmWindowEffect::Mica: // 云母
+        case DwmWindowEffect::MicaAlt: // 云母ALT
+            extendDwmToClientArea(force);
+        default:
+            break;
         }
     }
 
@@ -526,11 +526,11 @@ namespace fancy
             qWarning() << "The window has been initialized as the default window and will not use any DWM effects;";
             return;
         }
-        if (_useCompositionWindowEffect)
+        if (_useWindowEffects && _useCompositionWindowEffect)
         {
-            qWarning() << "The DWM effect cannot be enabled when the Composition window effect has been enabled;";
-            qWarning() << "Must restart the application to switch window effects";
-            return;
+            disabledWindowEffect();
+            if (_useWindowEffects)
+                return;
         }
         const auto oldFlags = windowFlags();
         const bool hadNoSystemBackground = testAttribute(Qt::WA_NoSystemBackground);
@@ -564,7 +564,7 @@ namespace fancy
         update();
     }
 
-    void Window::setCompositionWindowEffect(CompositionWindowEffect effect, const QColor &color)
+    void Window::setCompositionWindowEffect(CompositionWindowEffect effect, const QColor& color)
     {
         if (SystemAccessor::isBelowWindows10())
         {
@@ -572,11 +572,11 @@ namespace fancy
             qWarning() << "The window has been initialized as the default window and will not use any DWM effects;";
             return;
         }
-        if (_dwmWindowEffect != DwmWindowEffect::Last)
+        if (_useWindowEffects && !_useCompositionWindowEffect)
         {
-            qWarning() << "The Composition effect cannot be enabled when the DWM window effect has been enabled or set;";
-            qWarning() << "Must restart the application to switch window effects";
-            return;
+            disabledWindowEffect();
+            if (_useWindowEffects)
+                return;
         }
         const auto oldMargins = _frameMargins;
         if (!applyFrameMargins({0, 0, 1, 0}))

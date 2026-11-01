@@ -27,7 +27,7 @@ namespace fancy
         friend class StackWindow;
 
     public:
-        explicit Window(QWidget *parent = nullptr);
+        explicit Window(QWidget* parent = nullptr);
 
         /**
          * @brief 启用系统 Acrylic 材料，需要 Windows 11 Build 22621 或更新版本
@@ -41,15 +41,15 @@ namespace fancy
 
         void setAreoEffect();
 
-        void setAreoEffect(const QColor &color);
+        void setAreoEffect(const QColor& color);
 
         void setFullyTransparentEffect();
 
         void setSystemColorFillEffect();
 
-        void setTransparentColorFillEffect(const QColor &color);
+        void setTransparentColorFillEffect(const QColor& color);
 
-        void setSolidColorFillEffect(const QColor &color);
+        void setSolidColorFillEffect(const QColor& color);
 
         /**
          * @brief 关闭当前特效并恢复普通背景绘制；系统调用失败时保留已启用状态。
@@ -81,23 +81,23 @@ namespace fancy
 
         void moveToCenter();
 
-        QWidget *setupUiWidget();
+        QWidget* setupUiWidget();
 
-        QWidget *titleBar();
+        QWidget* titleBar();
 
     protected:
-        bool event(QEvent *event) override;
+        bool event(QEvent* event) override;
 
-        void paintEvent(QPaintEvent *event) override;
+        void paintEvent(QPaintEvent* event) override;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override;
+        bool nativeEvent(const QByteArray& eventType, void* message, qintptr* result) override;
 #else
-        bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+        bool nativeEvent(const QByteArray& eventType, void* message, long* result) override;
 #endif
 
 
-        void changeEvent(QEvent *event) override;
+        void changeEvent(QEvent* event) override;
 
     private:
         int _resizeBorderWidth = 4; // 调整窗口大小的边缘命中宽度，Qt 逻辑像素
@@ -106,17 +106,17 @@ namespace fancy
         bool _dwmPreviousNoSystemBackground{};
         DwmWindowEffect _dwmWindowEffect;
         QColor _bkgColor;
-        TitleBar *_titleBar; // 标题栏
-        QWidget *_clientArea; // 客户区
-        QVBoxLayout *_verticalLayout;
-        QVariantAnimation *_animation;
+        TitleBar* _titleBar; // 标题栏
+        QWidget* _clientArea; // 客户区
+        QVBoxLayout* _verticalLayout;
+        QVariantAnimation* _animation;
         WId _frameMarginsWindow{}; // 扩展边距所属的原生窗口；句柄变化时失效。
         std::array<int, 4> _frameMargins{}; //最近成功应用的框架边距（左、右、上、下），用于失败回退
 
         /**
          * @brief 应用框架扩展；成功后才记录边距，失败输出诊断
          */
-        bool applyFrameMargins(const std::array<int, 4> &margins);
+        bool applyFrameMargins(const std::array<int, 4>& margins);
 
         /**
          * @brief 按虚拟屏幕宽度预留 DWM 扩展，覆盖不足时增大；失败不更新记录
@@ -126,12 +126,12 @@ namespace fancy
 
         void setDwmWindowEffect(DwmWindowEffect effect);
 
-        void setCompositionWindowEffect(CompositionWindowEffect effect, const QColor &color = {});
+        void setCompositionWindowEffect(CompositionWindowEffect effect, const QColor& color = {});
 
     private slots:
         void onThemeChanged();
 
-        void updateBkgColor(const QVariant &value);
+        void updateBkgColor(const QVariant& value);
 
         void setDwmMargins(bool force = false);
     };
