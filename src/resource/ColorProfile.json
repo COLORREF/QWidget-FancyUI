@@ -42,7 +42,15 @@
       "TextEditPanelHover": "#F6F6F6",
       "TextEditBorder": "#E5E5E5",
       "TextEditIndicatorLine": "#868686",
-      "PlaceholderText": "#5F5F5F"
+      "PlaceholderText": "#5F5F5F",
+      "ToggleSwitchTrackOff": "#00000006",
+      "ToggleSwitchTrackOffHover": "#0000000F",
+      "ToggleSwitchTrackOffPressed": "#00000018",
+      "ToggleSwitchBorderOff": "#00000072",
+      "ToggleSwitchFillDisabled": "#00000037",
+      "ToggleSwitchKnobOff": "#0000009E",
+      "ToggleSwitchKnobOffDisabled": "#0000005C",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF"
     },
     "Dark": {
       "Window": "#202020",
@@ -86,7 +94,15 @@
       "TextEditPanelHover": "#323232",
       "TextEditBorder": "#303030",
       "TextEditIndicatorLine": "#9A9A9A",
-      "PlaceholderText": "#CFCFCF"
+      "PlaceholderText": "#CFCFCF",
+      "ToggleSwitchTrackOff": "#00000019",
+      "ToggleSwitchTrackOffHover": "#FFFFFF0B",
+      "ToggleSwitchTrackOffPressed": "#FFFFFF12",
+      "ToggleSwitchBorderOff": "#FFFFFF8B",
+      "ToggleSwitchFillDisabled": "#FFFFFF28",
+      "ToggleSwitchKnobOff": "#FFFFFFC5",
+      "ToggleSwitchKnobOffDisabled": "#FFFFFF5D",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF87"
     }
   },
   "Default": {
@@ -132,7 +148,15 @@
       "TextEditPanelHover": "#F6F6F6",
       "TextEditBorder": "#E5E5E5",
       "TextEditIndicatorLine": "#868686",
-      "PlaceholderText": "#5F5F5F"
+      "PlaceholderText": "#5F5F5F",
+      "ToggleSwitchTrackOff": "#00000006",
+      "ToggleSwitchTrackOffHover": "#0000000F",
+      "ToggleSwitchTrackOffPressed": "#00000018",
+      "ToggleSwitchBorderOff": "#00000072",
+      "ToggleSwitchFillDisabled": "#00000037",
+      "ToggleSwitchKnobOff": "#0000009E",
+      "ToggleSwitchKnobOffDisabled": "#0000005C",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF"
     },
     "Dark": {
       "Window": "#1A2034",
@@ -176,7 +200,15 @@
       "TextEditPanelHover": "#323232",
       "TextEditBorder": "#303030",
       "TextEditIndicatorLine": "#9A9A9A",
-      "PlaceholderText": "#CFCFCF"
+      "PlaceholderText": "#CFCFCF",
+      "ToggleSwitchTrackOff": "#00000019",
+      "ToggleSwitchTrackOffHover": "#FFFFFF0B",
+      "ToggleSwitchTrackOffPressed": "#FFFFFF12",
+      "ToggleSwitchBorderOff": "#FFFFFF8B",
+      "ToggleSwitchFillDisabled": "#FFFFFF28",
+      "ToggleSwitchKnobOff": "#FFFFFFC5",
+      "ToggleSwitchKnobOffDisabled": "#FFFFFF5D",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF87"
     }
   },
   "Custom": {
@@ -222,7 +254,15 @@
       "TextEditPanelHover": "#F6F6F6",
       "TextEditBorder": "#E5E5E5",
       "TextEditIndicatorLine": "#868686",
-      "PlaceholderText": "#5F5F5F"
+      "PlaceholderText": "#5F5F5F",
+      "ToggleSwitchTrackOff": "#00000006",
+      "ToggleSwitchTrackOffHover": "#0000000F",
+      "ToggleSwitchTrackOffPressed": "#00000018",
+      "ToggleSwitchBorderOff": "#00000072",
+      "ToggleSwitchFillDisabled": "#00000037",
+      "ToggleSwitchKnobOff": "#0000009E",
+      "ToggleSwitchKnobOffDisabled": "#0000005C",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF"
     },
     "Dark": {
       "Window": "#202020",
@@ -266,7 +306,15 @@
       "TextEditPanelHover": "#323232",
       "TextEditBorder": "#303030",
       "TextEditIndicatorLine": "#9A9A9A",
-      "PlaceholderText": "#CFCFCF"
+      "PlaceholderText": "#CFCFCF",
+      "ToggleSwitchTrackOff": "#00000019",
+      "ToggleSwitchTrackOffHover": "#FFFFFF0B",
+      "ToggleSwitchTrackOffPressed": "#FFFFFF12",
+      "ToggleSwitchBorderOff": "#FFFFFF8B",
+      "ToggleSwitchFillDisabled": "#FFFFFF28",
+      "ToggleSwitchKnobOff": "#FFFFFFC5",
+      "ToggleSwitchKnobOffDisabled": "#FFFFFF5D",
+      "ToggleSwitchKnobOnDisabled": "#FFFFFF87"
     }
   }
 }

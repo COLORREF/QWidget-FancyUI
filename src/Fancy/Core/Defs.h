@@ -108,6 +108,14 @@ namespace fancy
         TextEditBorder, // 文本编辑框边框色
         TextEditIndicatorLine, // 文本编辑框指示线通用色
         PlaceholderText, // 占位符文本通用色
+        ToggleSwitchTrackOff, // 开关关闭时的轨道填充色
+        ToggleSwitchTrackOffHover, // 开关关闭且悬停时的轨道填充色
+        ToggleSwitchTrackOffPressed, // 开关关闭且按下时的轨道填充色
+        ToggleSwitchBorderOff, // 开关关闭时的轨道边框色
+        ToggleSwitchFillDisabled, // 禁用开关的开启轨道和关闭边框色
+        ToggleSwitchKnobOff, // 开关关闭时的指示器色
+        ToggleSwitchKnobOffDisabled, // 禁用且关闭的指示器色
+        ToggleSwitchKnobOnDisabled, // 禁用且开启的指示器色
         Last
     };
 
