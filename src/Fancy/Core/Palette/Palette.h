@@ -8,6 +8,7 @@
 #include <QColor>
 #include <QHash>
 #include <QList>
+#include <QMap>
 #include <QObject>
 #include "utils/hash.h"
 
@@ -27,23 +28,23 @@ namespace fancy
         using ColorsHash = QHash<ColorRole, QColor>;
         using ColorGroup = QPair<ColorGroups, Theme>;
 
-        explicit Palette(QObject *parent = nullptr);
+        explicit Palette(QObject* parent = nullptr);
 
         /**
          * @brief 返回全局唯一的调色板对象
          * @return Palette 的引用
          */
-        static Palette &palette();
+        static Palette& palette();
 
-        ~Palette() override;
+        ~Palette() override = default;
 
-        [[nodiscard]] const QHash<ColorGroup, ColorsHash> &colors();
+        [[nodiscard]] const QHash<ColorGroup, ColorsHash>& colors();
 
-        [[nodiscard]] const QColor &color(ColorRole role);
+        [[nodiscard]] const QColor& color(ColorRole role);
 
-        [[nodiscard]] const QColor &color(ColorRole role, Theme theme);
+        [[nodiscard]] const QColor& color(ColorRole role, Theme theme);
 
-        [[nodiscard]] const QColor &operator[](ColorRole role); // 等价于 color(ColorRole)
+        [[nodiscard]] const QColor& operator[](ColorRole role); // 等价于 color(ColorRole)
 
         /**
          * @brief 设置使用的颜色组策略
@@ -51,14 +52,14 @@ namespace fancy
          * @param custom 自定义颜色
          * - 仅当颜色组为自定义（ColorGroups::Custom）时 custom 参数生效
          */
-        void setColorGroups(ColorGroups group, const QColor &custom = {});
+        void setColorGroups(ColorGroups group, const QColor& custom = {});
 
         /**
          * @brief 设置自定义颜色
          * @param color 将要设置的自定义颜色
          * - 仅当颜色组为自定义（ColorGroups::Custom）时函数生效
          */
-        void setCustomColor(const QColor &color);
+        void setCustomColor(const QColor& color);
 
         /**
          * @brief 线性插值颜色混合
@@ -67,7 +68,7 @@ namespace fancy
          * @param amount 插值参数(0-1)
          * @return 混合后的颜色
          */
-        static QColor mix(const QColor &c1, const QColor &c2, double amount = 0.5);
+        static QColor mix(const QColor& c1, const QColor& c2, double amount = 0.5);
 
         /**
          * @brief 将给定颜色在HSL色彩空间按指定比例变暗
@@ -75,7 +76,7 @@ namespace fancy
          * @param amount 变暗的程度(0-1)
          * @return 变暗后的新颜色
          */
-        static QColor darken(const QColor &c, double amount = 0.1);
+        static QColor darken(const QColor& c, double amount = 0.1);
 
         /**
          * @brief 在HSL色彩空间中旋转颜色色相
@@ -83,7 +84,7 @@ namespace fancy
          * @param amount 色相旋转的角度（单位：度，支持正负值）
          * @return 旋转色相后的新颜色
          */
-        static QColor spin(const QColor &c, double amount);
+        static QColor spin(const QColor& c, double amount);
 
         /**
          * @brief 对srgb颜色空间的单个颜色通道进行伽马解码
@@ -99,7 +100,7 @@ namespace fancy
          * @param gamma 伽马校正值
          * @return 感知亮度 (0-1)
          */
-        static double relativeLuminance(const QColor &c, double gamma = 2.4);
+        static double relativeLuminance(const QColor& c, double gamma = 2.4);
 
         /**
          * @brief 计算两种颜色之间的对比度（基于 WCAG 2.0 对比度算法）
@@ -108,7 +109,7 @@ namespace fancy
          * @param gamma 伽马校正值，用于相对亮度计算
          * @return double 颜色对比度比值（≥1.0）
          */
-        static double wcag2Contrast(const QColor &c1, const QColor &c2, double gamma = 2.4);
+        static double wcag2Contrast(const QColor& c1, const QColor& c2, double gamma = 2.4);
 
         /**
          * @brief 基于 APCA 可访问的感知对比度算法计算背景颜色和文本颜色的人眼的实际感受程度
@@ -129,7 +130,7 @@ namespace fancy
          * - 无关紧要的 UI 辅助性文字（水印、禁用项） |Lc| 可以低至 15–30
          * - 注意：这是方向性阈值，仅供参考
          */
-        static int apcaContrast(const QColor &bg, const QColor &text);
+        static int apcaContrast(const QColor& bg, const QColor& text);
 
         /**
          * @brief 由于WCAG的缺陷，此函数基于APCA算法，文字色默认采用白色和黑色计算，结果采取APCA对比度绝对值高的颜色，它总是返回白色或者黑色
@@ -139,7 +140,7 @@ namespace fancy
          * - 该返回值只是表明返回的颜色（白色/黑色）相对于另一种颜色（黑色/白色）而言，APCA对比度的绝对值更高，更加合适作为前景色
          * - 若返回值颜色作为文字颜色视觉效果不佳，应当考虑更换背景色
          */
-        static QColor apcaTextColor(const QColor &bg);
+        static QColor apcaTextColor(const QColor& bg);
 
         /**
          * @brief 基于Ant Design 2.x 的调色板生成算法改写并做了一些拓展，基于给定的基色和索引位置生成对应的调色板颜色
@@ -155,7 +156,7 @@ namespace fancy
          * - 索引1 ~ (int)(max / 2 + 1): 生成比基色更浅的颜色（与白色混合）
          * - 索引(int)(max / 2 + 2) ~ max: 生成比基色更深的颜色（与阴影色混合）
          */
-        static QColor colorPalette(const QColor &c, int index, int max = 10);
+        static QColor colorPalette(const QColor& c, int index, int max = 10);
 
         /**
          * @brief 对给定的基础色采用 Ant Design 2.x 的调色板生成算法生成 10 种由浅到深的衍生色
@@ -163,12 +164,12 @@ namespace fancy
          * @return 符合 Ant Design 2.x 的 10 种由浅到深的颜色
          * @note 返回 QList 的元素数量总是为 10
          */
-        static QList<QColor> antDesign2ColorPalettes(const QColor &base);
+        static QList<QColor> antDesign2ColorPalettes(const QColor& base);
 
         [[nodiscard]] ColorGroup groupTheme() const { return _group_theme; }
 
     private:
-        void loadSchemes(const QColor &custom = QColor());
+        void loadSchemes(const QColor& custom = QColor());
 
         /**
          * @brief 读取并解析颜色配置文件，返回对应颜色组的 json 对象
@@ -183,7 +184,7 @@ namespace fancy
          * @param raw 待解析的 json 值字符串
          * @return 解析后的颜色，解析失败返回空颜色
          */
-        static QColor parseColorFromJsonStr(const QColor &custom, const QString &raw);
+        static QColor parseColorFromJsonStr(const QColor& custom, const QString& raw);
 
     private slots:
         void onAppThemeChanged(Theme theme);

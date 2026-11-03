@@ -17,12 +17,7 @@ namespace fancy
         connect(&SystemThemeMonitor::monitor(), &SystemThemeMonitor::systemThemeChanged, this, &ThemeModeController::onSystemThemeChanged);
     }
 
-    ThemeModeController::~ThemeModeController()
-    {
-        if (SystemThemeMonitor::monitor().isRunning())
-            SystemThemeMonitor::monitor().stop();
-        SystemThemeMonitor::monitor().wait();
-    }
+    ThemeModeController::~ThemeModeController() = default;
 
     void ThemeModeController::setAppTheme(const Theme theme)
     {

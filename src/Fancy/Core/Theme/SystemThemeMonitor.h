@@ -23,8 +23,10 @@ namespace fancy
         explicit SystemThemeMonitor(QObject *parent = nullptr);
 
         HKEY _regs[2] = {nullptr}; // 注册表项句柄
-        HANDLE _hEvent_array[3] = {nullptr}; // 事件对象数组
+        HANDLE _hEvent_array[3] = {nullptr}; // [0、1] 每次 run 创建并释放；[2] 从构造保留到析构
     public:
+        ~SystemThemeMonitor() override;
+
         static SystemThemeMonitor &monitor();
 
         [[nodiscard]] static Theme SystemTheme();

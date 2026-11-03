@@ -19,58 +19,58 @@
 
 namespace fancy
 {
-    Palette::Palette(QObject *parent) :
+    Palette::Palette(QObject* parent) :
         QObject(parent)
     {
         SystemThemeMonitor::monitor().start();
 
         // 默认颜色组
         _group_theme = {ColorGroups::System, ThemeModeController::controller().appTheme()};
-        loadSchemes(QColor(212,78,125));
+        loadSchemes(QColor(212, 78, 125));
         connect(&ThemeModeController::controller(), &ThemeModeController::appThemeChange, this, &Palette::onAppThemeChanged);
         connect(&SystemThemeMonitor::monitor(), &SystemThemeMonitor::systemAccentColorsChanged, this, &Palette::onSystemAccentColorsChanged);
     }
 
-    Palette &Palette::palette()
+    Palette& Palette::palette()
     {
-        static auto *p = new Palette(qApp);
+        static auto* p = new Palette(qApp);
         return *p;
     }
 
-    Palette::~Palette()
-    {
-        if (SystemThemeMonitor::monitor().isRunning())
-            SystemThemeMonitor::monitor().stop();
-        SystemThemeMonitor::monitor().wait();
-    }
-
-    const QHash<Palette::ColorGroup, Palette::ColorsHash> &Palette::colors()
+    const QHash<Palette::ColorGroup, Palette::ColorsHash>& Palette::colors()
     {
         return _schemes;
     }
 
-    const QColor &Palette::color(const ColorRole role)
+    const QColor& Palette::color(const ColorRole role)
     {
         return _schemes[_group_theme][role];
     }
 
-    const QColor &Palette::color(ColorRole role, Theme theme)
+    const QColor& Palette::color(ColorRole role, Theme theme)
     {
         return _schemes[{_group_theme.first, theme}][role];
     }
 
-    const QColor &Palette::operator[](const ColorRole role)
+    const QColor& Palette::operator[](const ColorRole role)
     {
         return _schemes[_group_theme][role];
     }
 
-    void Palette::setColorGroups(ColorGroups group, const QColor &custom)
+    void Palette::setColorGroups(ColorGroups group, const QColor& custom)
     {
         _group_theme = {group, ThemeModeController::controller().appTheme()};
-        setCustomColor(custom);
+        if (group == ColorGroups::Custom)
+            setCustomColor(custom);
+        else
+        {
+            // 切换到系统或默认配色时也要加载方案，避免首次访问该组得到无效颜色
+            loadSchemes(QColor(212, 78, 125));
+            emit appColorChange();
+        }
     }
 
-    void Palette::setCustomColor(const QColor &color)
+    void Palette::setCustomColor(const QColor& color)
     {
         if (_group_theme.first == ColorGroups::Custom)
         {
@@ -82,7 +82,7 @@ namespace fancy
         }
     }
 
-    QColor Palette::mix(const QColor &c1, const QColor &c2, double amount)
+    QColor Palette::mix(const QColor& c1, const QColor& c2, double amount)
     {
         amount = qBound(0.0, amount, 1.0);
         if (amount == 0.0)
@@ -97,7 +97,7 @@ namespace fancy
         );
     }
 
-    QColor Palette::darken(const QColor &c, double amount)
+    QColor Palette::darken(const QColor& c, double amount)
     {
         QColor hsl = c.toHsl();
         const double l = qBound(0.0, hsl.lightnessF() - amount, 1.0);
@@ -105,7 +105,7 @@ namespace fancy
         return hsl;
     }
 
-    QColor Palette::spin(const QColor &c, double amount)
+    QColor Palette::spin(const QColor& c, double amount)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         float h, s, l, alpha;
@@ -117,21 +117,21 @@ namespace fancy
         return QColor::fromHslF((h < 0 ? h + 360.0 : h) / 360.0, s, l, alpha);
     }
 
-    double Palette::relativeLuminance(const QColor &c, double gamma)
+    double Palette::relativeLuminance(const QColor& c, double gamma)
     {
         return 0.2126729 * gammaDecode(c.redF(), gamma) +
-               0.7151522 * gammaDecode(c.greenF(), gamma) +
-               0.0721750 * gammaDecode(c.blueF(), gamma);
+            0.7151522 * gammaDecode(c.greenF(), gamma) +
+            0.0721750 * gammaDecode(c.blueF(), gamma);
     }
 
-    double Palette::wcag2Contrast(const QColor &c1, const QColor &c2, double gamma)
+    double Palette::wcag2Contrast(const QColor& c1, const QColor& c2, double gamma)
     {
         double l1 = relativeLuminance(c1, gamma);
         double l2 = relativeLuminance(c2, gamma);
         return l1 == l2 ? 1.0 : l2 < l1 ? (l1 + 0.05) / (l2 + 0.05) : (l2 + 0.05) / (l1 + 0.05);
     }
 
-    int Palette::apcaContrast(const QColor &bg, const QColor &text)
+    int Palette::apcaContrast(const QColor& bg, const QColor& text)
     {
         constexpr double mainTRC = 2.4; // sRGB 传输曲线指数
         constexpr double normBG = 0.56; // 正常极性：背景幂次
@@ -146,7 +146,7 @@ namespace fancy
         constexpr double Wclamp = 0.1;
         constexpr double Woffset = 0.027; // 反转极性：偏置
 
-        auto calcAPCAcontrast = [&](const QColor &textColor, const QColor &bgColor)-> int {
+        auto calcAPCAcontrast = [&](const QColor& textColor, const QColor& bgColor)-> int {
             auto softclp = [&](double Yc)-> double {
                 if (Yc < 0)
                     return 0;
@@ -175,14 +175,14 @@ namespace fancy
         return calcAPCAcontrast(text, bg);
     }
 
-    QColor Palette::apcaTextColor(const QColor &bg)
+    QColor Palette::apcaTextColor(const QColor& bg)
     {
         int LcBlack = apcaContrast(Qt::GlobalColor::black, bg);
         int LcWhite = apcaContrast(Qt::GlobalColor::white, bg);
         return qAbs(LcBlack) > qAbs(LcWhite) ? Qt::GlobalColor::black : Qt::GlobalColor::white;
     }
 
-    QColor Palette::colorPalette(const QColor &c, int index, int max)
+    QColor Palette::colorPalette(const QColor& c, int index, int max)
     {
         constexpr double warmDark = 0.5; // 暖色变暗系数
         constexpr double warmRotate = -26.0; // 暖色旋转角度
@@ -199,7 +199,7 @@ namespace fancy
         const int midIndex = max / 2 + 1;
 
         // 根据颜色特性生成的阴影颜色
-        auto getShadeColor = [&](const QColor &ori)-> QColor {
+        auto getShadeColor = [&](const QColor& ori)-> QColor {
             // 暖色
             if (ori.redF() > ori.blueF())
                 return spin(darken(ori, ori.lightnessF() * warmDark), warmRotate);
@@ -218,7 +218,7 @@ namespace fancy
         return mix(getShadeColor(c), c, 1 - (currentEasing - primaryEasing) / (1 - primaryEasing));
     }
 
-    QList<QColor> Palette::antDesign2ColorPalettes(const QColor &base)
+    QList<QColor> Palette::antDesign2ColorPalettes(const QColor& base)
     {
         QList<QColor> colors;
         for (int index = 1; index <= 10; index++)
@@ -226,11 +226,11 @@ namespace fancy
         return colors;
     }
 
-    void Palette::loadSchemes(const QColor &custom)
+    void Palette::loadSchemes(const QColor& custom)
     {
         const QJsonObject group_obj = loadColorProfile(_group_theme.first);
         static const QStringList theme_names = {"Light", "Dark"}; // 预定义的主题名称列表
-        for (const QString &theme_name: theme_names) // 遍历每个主题
+        for (const QString& theme_name : theme_names) // 遍历每个主题
         {
             // ------------------------------------------------------------
             // 1. 将主题名称字符串（如 "Light"）转换为枚举值 Theme
@@ -245,7 +245,7 @@ namespace fancy
             const QJsonObject theme_obj = group_obj[theme_name].toObject();
 
             // 获取该颜色组 + 主题对应的方案存储引用
-            ColorsHash &scheme = _schemes[{_group_theme.first, theme_enum.value()}];
+            ColorsHash& scheme = _schemes[{_group_theme.first, theme_enum.value()}];
 
             // ------------------------------------------------------------
             // 2. 记录需要延迟计算的 ColorRole，以 "$calc:" 开头（用户自定义颜色）
@@ -277,19 +277,19 @@ namespace fancy
             }
 
             // 第2次遍遍历：处理所有延迟计算的颜色
-            for (const ColorRole &role: deferred_roles)
+            for (const ColorRole& role : deferred_roles)
             {
                 switch (role)
                 {
-                    case ColorRole::AppAccentText :
-                        if (scheme.contains(ColorRole::AppAccent)) // AppAccentText 需要依赖已经解析好的 AppAccent 颜色
-                            scheme[role] = apcaTextColor(scheme[ColorRole::AppAccent]);
-                        else
-                            qWarning() << "Palette: AppAccent not resolved before AppAccentText"; // 如果 AppAccent 未被解析，无法计算，输出警告
-                        break;
-                    default : // 其他 $calc 角色暂不支持，输出警告并显示角色名
-                        qWarning() << "Palette: Unsupported $calc role:" << magic_enum::enum_name(role).data();
-                        break;
+                case ColorRole::AppAccentText:
+                    if (scheme.contains(ColorRole::AppAccent)) // AppAccentText 需要依赖已经解析好的 AppAccent 颜色
+                        scheme[role] = apcaTextColor(scheme[ColorRole::AppAccent]);
+                    else
+                        qWarning() << "Palette: AppAccent not resolved before AppAccentText"; // 如果 AppAccent 未被解析，无法计算，输出警告
+                    break;
+                default: // 其他 $calc 角色暂不支持，输出警告并显示角色名
+                    qWarning() << "Palette: Unsupported $calc role:" << magic_enum::enum_name(role).data();
+                    break;
                 }
             }
         }
@@ -337,7 +337,7 @@ namespace fancy
         return root[group_name].toObject(); // 成功返回
     }
 
-    QColor Palette::parseColorFromJsonStr(const QColor &custom, const QString &raw)
+    QColor Palette::parseColorFromJsonStr(const QColor& custom, const QString& raw)
     {
         const QMap<SysAccentPalette, QColor> sys_colors = SystemAccessor::sysAccentColors();
 
@@ -397,8 +397,8 @@ namespace fancy
         const auto froup = _group_theme.first;
         if (froup == ColorGroups::System)
         {
-            ColorsHash &sys_light_scheme = _schemes[{ColorGroups::System, Theme::Light}];
-            ColorsHash &sys_dark_scheme = _schemes[{ColorGroups::System, Theme::Dark}];
+            ColorsHash& sys_light_scheme = _schemes[{ColorGroups::System, Theme::Light}];
+            ColorsHash& sys_dark_scheme = _schemes[{ColorGroups::System, Theme::Dark}];
 
             sys_light_scheme[ColorRole::Link] = colors[SysAccentPalette::AccentLight2];
             sys_light_scheme[ColorRole::ImportantLink] = colors[SysAccentPalette::AccentDark2];
@@ -414,8 +414,8 @@ namespace fancy
         }
         else if (froup == ColorGroups::Default)
         {
-            ColorsHash &def_light_scheme = _schemes[{ColorGroups::Default, Theme::Light}];
-            ColorsHash &def_dark_scheme = _schemes[{ColorGroups::Default, Theme::Dark}];
+            ColorsHash& def_light_scheme = _schemes[{ColorGroups::Default, Theme::Light}];
+            ColorsHash& def_dark_scheme = _schemes[{ColorGroups::Default, Theme::Dark}];
 
             def_light_scheme[ColorRole::SysAccent] = colors[SysAccentPalette::Accent];
             def_dark_scheme[ColorRole::SysAccent] = colors[SysAccentPalette::Accent];
