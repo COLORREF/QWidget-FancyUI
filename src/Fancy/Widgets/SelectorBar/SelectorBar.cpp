@@ -22,7 +22,7 @@ namespace fancy
         outerLayout->setContentsMargins(0, 0, 0, 0);
         outerLayout->addWidget(_scrollArea);
 
-        connect(_buttonGroup, &QButtonGroup::buttonToggled, this, &SelectorBar::syncSelection);
+        connect(_buttonGroup, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), this, &SelectorBar::syncSelection);
         connect(_scrollArea, &detail::SelectorBarScrollArea::sizeHintChanged, this, &QWidget::updateGeometry);
     }
 
