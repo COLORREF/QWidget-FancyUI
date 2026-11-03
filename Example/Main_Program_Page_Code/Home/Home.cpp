@@ -20,7 +20,7 @@ HomePage::HomePage(QWidget *parent) :
     _fastBlurSignalCount(-1)
 {
     initializeUi();
-    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::FastTPixmapUpdate, this, &HomePage::onFastPixmapUpdate);
+    connect(_uiHome->homeImage, &fancy::CenteredImageWidget::FastTPixmapUpdate, this, &HomePage::onFastPixmapUpdate, Qt::QueuedConnection);
     connect(_uiHome->homeImage, &fancy::CenteredImageWidget::SmoothPixmapUpdate, this, &HomePage::updateSmoothBlur);
     connect(&fancy::Palette::palette(), &fancy::Palette::appThemeChange, this, &HomePage::onThemeChanged);
 }
