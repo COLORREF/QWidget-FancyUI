@@ -120,13 +120,14 @@ namespace fancy
                 return;
             }
             const qreal penWidth = diameter * trackRatio;
-            const qreal capRadius = penWidth / 2;
+            // 轨道两端对齐滑块的极限中心位置，圆帽留在端点滑块内
+            const qreal halfHandle = handleRect.width() / 2.0;
             const QRectF groove(grooveRect);
             const QPointF handleCenter = QRectF(handleRect).center();
-            const QPointF start = isHorizontal ? QPointF(groove.left() + capRadius, handleCenter.y())
-                                               : QPointF(handleCenter.x(), groove.top() + capRadius);
-            const QPointF end = isHorizontal ? QPointF(groove.right() - capRadius, handleCenter.y())
-                                             : QPointF(handleCenter.x(), groove.bottom() - capRadius);
+            const QPointF start = isHorizontal ? QPointF(groove.left() + halfHandle, handleCenter.y())
+                                               : QPointF(handleCenter.x(), groove.top() + halfHandle);
+            const QPointF end = isHorizontal ? QPointF(groove.right() - halfHandle, handleCenter.y())
+                                             : QPointF(handleCenter.x(), groove.bottom() - halfHandle);
             const QLineF primaryLine(slider->upsideDown ? end : start, handleCenter);
             const QLineF secondaryLine(handleCenter, slider->upsideDown ? start : end);
 
