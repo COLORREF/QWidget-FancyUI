@@ -4,6 +4,7 @@
 
 #ifndef QWIDGET_FANCYUI_BEZIEREASING_H
 #define QWIDGET_FANCYUI_BEZIEREASING_H
+#include <QtMath>
 #include <QDebug>
 #include <QVector>
 
@@ -62,7 +63,7 @@ namespace fancy
             {
                 currentT = a + (b - a) / 2.0;
                 currentX = calcBezier(currentT, x1, x2) - x;
-                if (std::fabs(currentX) < SUBDIVISION_PRECISION)
+                if (qFabs(currentX) < SUBDIVISION_PRECISION)
                     return currentT;
                 if (currentX > 0.0)
                     b = currentT;

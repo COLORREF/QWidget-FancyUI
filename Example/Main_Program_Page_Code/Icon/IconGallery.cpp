@@ -12,7 +12,7 @@
 #include <QScrollArea>
 #include <QStyledItemDelegate>
 #include <QTimer>
-#include <cmath>
+#include <QtMath>
 
 #include "Core/Palette/Palette.h"
 #include "Core/Theme/ThemeModeController.h"
@@ -124,7 +124,7 @@ namespace
             else
             {
                 pixmap = renderIcon(item->id, IconSize, dpr, colors.text);
-                const int cost = qMax(1, static_cast<int>(std::ceil(pixmap.width() * pixmap.height() * 4.0 / 1024)));
+                const int cost = qMax(1, static_cast<int>(qCeil(pixmap.width() * pixmap.height() * 4.0 / 1024)));
                 _cache.insert(key, new QPixmap(pixmap), cost);
             }
             // Viewbox 的下边距为 16，图标中心位于格子中心上方 8

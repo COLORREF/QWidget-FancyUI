@@ -5,6 +5,7 @@
 #ifndef QWIDGET_FANCYUI_PALETTE_H
 #define QWIDGET_FANCYUI_PALETTE_H
 
+#include <QtMath>
 #include <QColor>
 #include <QHash>
 #include <QList>
@@ -92,7 +93,7 @@ namespace fancy
          * @param gamma 伽马值（默认2.4，sRGB标准等效值）
          * @return 解码后的物理线性光强度(0-1)
          */
-        static double gammaDecode(double v, double gamma = 2.4) noexcept { return v <= 0.04045f ? v / 12.92f : std::pow((v + 0.055f) / 1.055f, gamma); }
+        static double gammaDecode(double v, double gamma = 2.4) noexcept { return v <= 0.04045f ? v / 12.92f : qPow((v + 0.055f) / 1.055f, gamma); }
 
         /**
          * @brief 计算颜色伽马解码后的感知亮度，该亮度值是符合人眼感知和非线性的
