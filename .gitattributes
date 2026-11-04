@@ -1,10 +1,27 @@
-*.txt linguist-language=CMake
+# Normalize text to LF in Git and use LF in working trees by default.
+* text=auto eol=lf
+
+# Windows batch scripts use CRLF in working trees.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets are not normalized or diffed as text.
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ttf binary
+
+# GitHub Linguist language statistics.
+CMakeLists.txt linguist-language=CMake
+*.py linguist-language=Python linguist-detectable=true
 *.cpp linguist-language=C++
 *.h linguist-language=C++
 *.hpp linguist-language=C++
 
-*.py linguist-detectable=false  
-*.svg  linguist-detectable=false
-*.ui  linguist-detectable=false
-*.qrc  linguist-detectable=false
-*.md  linguist-detectable=false
+*.svg linguist-detectable=false
+*.ui linguist-detectable=false
+*.qrc linguist-detectable=false
+*.md linguist-detectable=false
