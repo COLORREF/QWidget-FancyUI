@@ -88,14 +88,24 @@
     "fancy::CheckBox *checkBox = new fancy::CheckBox(\"小尺寸双态复选框\", parent, true);",
     ""
   ],
+  "StandaloneTristateCheckbox": [
+    "",
+    "auto *checkBox = new fancy::CheckBox(\"三态复选框\", parent);",
+    "checkBox->setTristate(true);",
+    ""
+  ],
   "TristateCheckbox": [
     "",
-    "fancy::CheckBox *selectAll = new fancy::CheckBox(\"全选\", parent);",
-    " selectAll->setTristate(true);",
-    " selectAll->setAnimationEnabled(false);",
+    "auto *selectAll = new fancy::CheckBox(\"全选\", parent);",
+    "selectAll->setTristate(true);",
+    "groupLayout->addWidget(selectAll);",
     "",
-    "fancy::CheckBox *item_1 = new fancy::CheckBox(\"选项 1\", parent, true);",
-    "// 其余子项的创建、布局设置略......",
+    "for (int i = 1; i <= 3; ++i)",
+    "{",
+    "    auto *item = new fancy::CheckBox(QString(\"选项 %1\").arg(i), parent, true);",
+    "    itemsLayout->addWidget(item);",
+    "}",
+    "groupLayout->addLayout(itemsLayout);",
     "",
     "// 全选与子项的状态联动逻辑略......",
     ""

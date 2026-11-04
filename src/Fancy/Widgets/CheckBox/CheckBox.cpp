@@ -10,7 +10,7 @@ namespace fancy
     CheckBox::CheckBox(QWidget *parent, bool smallIndicatorSize) :
         QCheckBox(parent)
     {
-        smallIndicatorSize ? setStyle(new CheckBoxStyle_SM(this)) : setStyle(new CheckBoxStyle(this));
+        setStyle(new CheckBoxStyle(this, smallIndicatorSize));
         QFont font = this->font();
         font.setPointSize(smallIndicatorSize ? 10 : 12);
         setFont(font);
@@ -26,16 +26,12 @@ namespace fancy
     {
         if (auto *checkBoxStyle = qobject_cast<CheckBoxStyle *>(style()))
             checkBoxStyle->setAnimationEnabled(enabled);
-        else if (auto *smallCheckBoxStyle = qobject_cast<CheckBoxStyle_SM *>(style()))
-            smallCheckBoxStyle->setAnimationEnabled(enabled);
     }
 
     bool CheckBox::isAnimationEnabled() const
     {
         if (auto *checkBoxStyle = qobject_cast<CheckBoxStyle *>(style()))
             return checkBoxStyle->isAnimationEnabled();
-        if (auto *smallCheckBoxStyle = qobject_cast<CheckBoxStyle_SM *>(style()))
-            return smallCheckBoxStyle->isAnimationEnabled();
         return false;
     }
 } // fancy

@@ -205,6 +205,17 @@ BasicInput::BasicInput(QWidget *parent) :
         layout->addStretch(1);
     }
 
+    // StandaloneTristateCheckbox
+    {
+        auto *checkBox_Card = makeCardLayout("三态复选框", "StandaloneTristateCheckbox");
+        auto *content = checkBox_Card->controlAreaWidget();
+        auto *layout = qobject_cast<QHBoxLayout *>(content->layout());
+        auto *checkBox = new fancy::CheckBox("三态复选框", content);
+        checkBox->setTristate(true);
+        layout->addWidget(checkBox, 0);
+        layout->addStretch(1);
+    }
+
     // TristateCheckbox
     {
         auto *checkBox_Card = makeCardLayout("三态复选框", "TristateCheckbox");
@@ -217,14 +228,13 @@ BasicInput::BasicInput(QWidget *parent) :
 
         auto *selectAll = new fancy::CheckBox("全选", wrap);
         selectAll->setTristate(true);
-        selectAll->setAnimationEnabled(false);
         groupLayout->addWidget(selectAll);
 
         auto *itemsLayout = new QVBoxLayout;
         itemsLayout->setContentsMargins(24, 0, 0, 0);
         itemsLayout->setSpacing(10);
         QList<fancy::CheckBox *> items;
-        for (int i = 1; i <= 4; ++i)
+        for (int i = 1; i <= 3; ++i)
         {
             auto *item = new fancy::CheckBox(QString("选项 %1").arg(i), wrap, true);
             items.append(item);
