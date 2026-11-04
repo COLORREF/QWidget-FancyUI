@@ -1,0 +1,131 @@
+{
+  "PushButton": [
+    "",
+    "fancy::PushButton *pushButton = new fancy::PushButton(\"标准按钮\", parent);",
+    ""
+  ],
+  "ToggleButton": [
+    "",
+    "fancy::PushButton *toggleButton = new fancy::PushButton(\"状态按钮\", parent);",
+    " toggleButton->setCheckable(true);",
+    ""
+  ],
+  "ThemeButton": [
+    "",
+    "fancy::ThemeButton *themeButton = new fancy::ThemeButton(\"主题色按钮\", parent);",
+    ""
+  ],
+  "TransparentButton": [
+    "",
+    "fancy::TransparentButton *transparentButton = new fancy::TransparentButton(\"透明按钮\", parent);",
+    ""
+  ],
+  "TransparentButtonWithBorder": [
+    "",
+    "fancy::TransparentButton *transparentButtonWithBorder = new fancy::TransparentButton(\"带有边框的透明按钮\", parent);",
+    " transparentButtonWithBorder->setDrawBorder(true);",
+    ""
+  ],
+  "TransparentToggleButton": [
+    "",
+    "fancy::TransparentButton *transparentToggleButton = new fancy::TransparentButton(\"透明状态按钮\", parent);",
+    " transparentToggleButton->setCheckable(true);",
+    ""
+  ],
+  "RippleButton": [
+    "",
+    "fancy::RippleButton *rippleButton = new fancy::RippleButton(\"涟漪按钮\", parent);",
+    ""
+  ],
+  "ButtonWithIcon": [
+    "",
+    "fancy::RippleButton *buttonWithIcon_1 = new fancy::RippleButton(parent);",
+    " buttonWithIcon_1->setIcon(fancy::AntDesignIcons::Translation); // 使用 Ant Design 图标",
+    " buttonWithIcon_1->setIconSize(QSize(28, 28));",
+    "",
+    "// 使用 Bootstrap 图标",
+    "// 也在构造函数中直接指定图标和文本",
+    "fancy::PushButton *buttonWithIcon_2 = new fancy::PushButton(fancy::BootstrapIcons::PencilSquare, \"带有图标的按钮\", parent);",
+    " buttonWithIcon_2->setIconSize(QSize(20, 20));",
+    "",
+    "fancy::PushButton *buttonWithIcon_3 = new fancy::PushButton(parent);",
+    " buttonWithIcon_3->setIcon(QIcon(\":/Slices.png\")); // 使用 png 图片作为图标",
+    " buttonWithIcon_3->setIconSize(QSize(30, 30));",
+    "",
+    "fancy::TransparentButton *buttonWithIcon_4 = new fancy::TransparentButton(parent);",
+    " buttonWithIcon_4->setIcon(fancy::IconPark::WinkingFaceWithOpenEyes); // 使用 IconPark 图标",
+    " buttonWithIcon_4->setIconSize(QSize(30, 30));",
+    ""
+  ],
+  "RoundedButton": [
+    "",
+    "fancy::PushButton *roundedButton_1 = new fancy::PushButton(\"圆角按钮\", parent);",
+    " roundedButton_1->setRadius(10); // 设置圆角半径",
+    "",
+    "fancy::ThemeButton *roundedButton_2 = new fancy::ThemeButton(parent);",
+    " roundedButton_2->setIcon(fancy::IconPark::Cycle);",
+    " roundedButton_2->setIconSize(QSize(28, 28));",
+    " roundedButton_2->setRadius(10); // 设置圆角半径",
+    "",
+    "auto *slider = new fancy::Slider(Qt::Orientation::Horizontal, parent);",
+    "",
+    "// slider的布局、大小、范围值等设置略......",
+    "",
+    "// 信号槽连接示例：根据滑块值动态调整按钮圆角半径",
+    " connect(slider,&fancy::Slider::valueChanged,this,[roundedButton_1,roundedButton_2](int value) {",
+    "     roundedButton_1->setRadius(value);",
+    "     roundedButton_2->setRadius(value);",
+    " });",
+    ""
+  ],
+  "Checkbox": [
+    "",
+    "fancy::CheckBox *checkBox = new fancy::CheckBox(\"双态复选框\", parent);",
+    ""
+  ],
+  "SmallCheckbox": [
+    "",
+    "fancy::CheckBox *checkBox = new fancy::CheckBox(\"小尺寸双态复选框\", parent, true);",
+    ""
+  ],
+  "TristateCheckbox": [
+    "",
+    "fancy::CheckBox *selectAll = new fancy::CheckBox(\"全选\", parent);",
+    " selectAll->setTristate(true);",
+    " selectAll->setAnimationEnabled(false);",
+    "",
+    "fancy::CheckBox *item_1 = new fancy::CheckBox(\"选项 1\", parent, true);",
+    "// 其余子项的创建、布局设置略......",
+    "",
+    "// 全选与子项的状态联动逻辑略......",
+    ""
+  ],
+  "RadioButton": [
+    "",
+    "fancy::RadioButton *radioButton_1 = new fancy::RadioButton(\"选项 1\", parent);",
+    "fancy::RadioButton *radioButton_2 = new fancy::RadioButton(\"选项 2\", parent);",
+    "fancy::RadioButton *radioButton_3 = new fancy::RadioButton(\"选项 3\", parent);",
+    "// 添加到布局、按钮组等中.......略",
+    ""
+  ],
+  "Slider": [
+    "",
+    "// 水平滚动条",
+    "fancy::Slider *horizontalSlider = new fancy::Slider(Qt::Orientation::Horizontal, parent);",
+    "",
+    "// 垂直滚动条",
+    "fancy::Slider *verticalSlider = new fancy::Slider(Qt::Orientation::Vertical, parent);",
+    ""
+  ],
+  "AntDesign2.xPalettes": [
+    "",
+    "// 使用 fancy::Palette::antDesign2ColorPalettes 静态函数获取10种由浅到深颜色，它将返回一个QList<QColor>容器",
+    "QList<QColor> colors = fancy::Palette::antDesign2ColorPalettes(baseColor);",
+    "",
+    "for (const QColor &color: colors)",
+    " {",
+    "     // 使用颜色....",
+    " }",
+    ""
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "colors": {
+    "text": [
+      "#080808",
+      "#BCBEC4"
+    ],
+    "keyword": [
+      "#0033B3",
+      "#CF8E6D"
+    ],
+    "type": [
+      "#008080",
+      "#B5B6E3"
+    ],
+    "namespace": [
+      "#008080",
+      "#B5B6E3"
+    ],
+    "enum": [
+      "#871094",
+      "#C77DBB"
+    ],
+    "string": [
+      "#067D17",
+      "#6AAB73"
+    ],
+    "comment": [
+      "#8C8C8C",
+      "#7A7E85"
+    ],
+    "number": [
+      "#1750EB",
+      "#2AACB8"
+    ]
+  },
+  "symbols": {
+    "type": [
+      "QColor",
+      "QIcon",
+      "QList",
+      "QSize",
+      "fancy::CheckBox",
+      "fancy::PushButton",
+      "fancy::RadioButton",
+      "fancy::RippleButton",
+      "fancy::Slider",
+      "fancy::ThemeButton",
+      "fancy::TransparentButton"
+    ],
+    "namespace": [
+      "Qt::Orientation::",
+      "fancy::AntDesignIcons::",
+      "fancy::BootstrapIcons::",
+      "fancy::IconPark::",
+      "fancy::Palette::",
+      "fancy::Slider::"
+    ],
+    "enum": [
+      "Cycle",
+      "Horizontal",
+      "PencilSquare",
+      "Translation",
+      "Vertical",
+      "WinkingFaceWithOpenEyes"
+    ]
+  }
+}
