@@ -1,22 +1,26 @@
+# Build output
+*build/
+cmake-build*/
+build-mini-blur*/
+out/
+*.exe
 *.dll
 *.lib
 *.a
-*.user
-*.idea/  
-build/
-*build/
-build-mini-blur*/
-opencv2/
-.vscode/
-OpenCV_static/
-.vs/
-.idea/
+
+# Local CMake and IDE settings
 CMakePresets.json
 CMakeUserPresets.json
-OpenCV/
-out/
-*.py
+*.user
+*.idea/
+.vscode/
+.vs/
+
+# Python bytecode
+__pycache__/
 *.pyc
-*.exe
+
+# Local development files
 tests/
 benchmarks/
+local/
